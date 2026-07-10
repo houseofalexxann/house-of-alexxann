@@ -4,6 +4,9 @@ import { requireAdmin } from "@/lib/admin-auth";
 import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { formatPrice } from "@/lib/services";
+import { computeChart, type ChartResult } from "@hoa/engine";
+import { localBirthToUtc, searchPlaces } from "@/lib/geocode";
+import { BODY_NAMES, ORDINALS, PLANET_GLYPHS, SIGN_NAMES } from "@/components/chart/glyphs";
 
 /**
  * The client book: every soul who has ever booked or joined, assembled
@@ -104,6 +107,47 @@ export default async function AdminClientsPage() {
   }
 
   const list = [...clients.values()].sort((a, b) => b.lastSeen.getTime() - a.lastSeen.getTime());
+
+  // Compute every client's placements automatically (western + vedic).
+  // Coordinates come from their saved profile when they have an account,
+  // otherwise from a one-shot geocode of the birthplace they typed.
+  const profileByEmail = new Map(
+    users.map((u) => [u.email.toLowerCase(), u.profiles[0] ?? null])
+  );
+  const charts = new Map<string, { western: ChartResult; vedic: ChartResult }>();
+  for (const c of list) {
+    if (!c.birthDate) continue;
+    try {
+      const prof = profileByEmail.get(c.email.toLowerCase());
+      let lat: number, lon: number, tz: string;
+      if (prof) {
+        lat = prof.latitude; lon = prof.longitude; tz = prof.timezone;
+      } else if (c.birthPlace) {
+        const found = await searchPlaces(c.birthPlace);
+        if (!found[0]) continue;
+        lat = found[0].latitude; lon = found[0].longitude; tz = found[0].timezone;
+      } else continue;
+      const resolved = localBirthToUtc({
+        date: c.birthDate,
+        time: c.birthTime ?? "12:00",
+        timeKnown: Boolean(c.birthTime),
+        timezone: tz,
+      });
+      const base = { utc: resolved.utc, latitude: lat, longitude: lon, timeKnown: Boolean(c.birthTime) };
+      charts.set(c.email, {
+        western: computeChart({ ...base, system: "western" }),
+        vedic: computeChart({ ...base, system: "vedic" }),
+      });
+    } catch {
+      // One unresolvable birthplace must never break the book.
+    }
+  }
+
+  const pos = (chart: ChartResult, body: string) => {
+    const pl = chart.planets.find((x) => x.body === body);
+    if (!pl) return "—";
+    return `${pl.formatted} ${SIGN_NAMES[pl.sign]}${pl.retrograde ? " ℞" : ""}${pl.house ? ` · ${ORDINALS[pl.house - 1]} house` : ""}`;
+  };
   const tz = settings.practitionerTz;
   const fmt = (d: Date) => DateTime.fromJSDate(d).setZone(tz).toFormat("LLL d, yyyy");
 
@@ -165,6 +209,68 @@ export default async function AdminClientsPage() {
                 </p>
               )}
             </div>
+            {charts.has(c.email) && (() => {
+              const ch = charts.get(c.email)!;
+              const w = ch.western, v = ch.vedic;
+              const vMoon = v.planets.find((x) => x.body === "moon");
+              const now2 = Date.now();
+              const maha = v.vimshottari?.mahadashas.find(
+                (m) => now2 >= Date.parse(m.start) && now2 < Date.parse(m.end)
+              );
+              const CATS: [string, string[]][] = [
+                ["Keys", ["sun", "moon"]],
+                ["Personal", ["mercury", "venus", "mars"]],
+                ["Social & outer", ["jupiter", "saturn", "uranus", "neptune", "pluto"]],
+                ["Nodes", ["rahu", "ketu"]],
+              ];
+              return (
+                <details className="mt-3 rounded-lg border border-pearl-300 bg-white/50 p-3">
+                  <summary className="cursor-pointer text-sm font-medium text-rose-600">
+                    All placements, by category ▾
+                  </summary>
+                  <div className="mt-3 grid gap-x-8 gap-y-4 text-sm sm:grid-cols-2">
+                    {w.angles && (
+                      <div>
+                        <p className="text-[11px] font-semibold uppercase tracking-widest text-ink-400">Angles</p>
+                        <p className="text-ink-700">Rising: {w.angles.formattedAscendant} {SIGN_NAMES[w.angles.ascendantSign]}</p>
+                        <p className="text-ink-700">Midheaven: {w.angles.formattedMidheaven} {SIGN_NAMES[w.angles.midheavenSign]}</p>
+                      </div>
+                    )}
+                    {CATS.map(([cat, bodies]) => (
+                      <div key={cat}>
+                        <p className="text-[11px] font-semibold uppercase tracking-widest text-ink-400">{cat}</p>
+                        {bodies.map((b) => (
+                          <p key={b} className="text-ink-700">
+                            <span className="astro-glyph mr-1">{PLANET_GLYPHS[b as keyof typeof PLANET_GLYPHS]}</span>
+                            {BODY_NAMES[b as keyof typeof BODY_NAMES]}: {pos(w, b)}
+                          </p>
+                        ))}
+                      </div>
+                    ))}
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-widest text-ink-400">Vedic</p>
+                      {vMoon?.nakshatra && (
+                        <p className="text-ink-700">
+                          Moon nakshatra: {vMoon.nakshatra.name} · pada {vMoon.nakshatra.pada}
+                        </p>
+                      )}
+                      {maha && (
+                        <p className="text-ink-700">
+                          Current mahadasha: {BODY_NAMES[maha.lord]} (until {new Date(maha.end).getFullYear()})
+                        </p>
+                      )}
+                      <p className="text-ink-700">Sidereal Moon: {pos(v, "moon")}</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-widest text-ink-400">Traditional</p>
+                      {w.traditional.sect && <p className="text-ink-700">Sect: {w.traditional.sect.sect} chart</p>}
+                      <p className="text-ink-700">Moon phase: {w.traditional.moonPhase.phase}</p>
+                      {!c.birthTime && <p className="text-xs text-ink-400">Time unknown — houses & rising withheld.</p>}
+                    </div>
+                  </div>
+                </details>
+              );
+            })()}
             {c.birthDate && (
               <div className="mt-3">
                 <Link
