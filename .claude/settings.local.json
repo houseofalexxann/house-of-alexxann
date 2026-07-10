@@ -49,7 +49,9 @@
       "Bash(python3 \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/check_vedic.py\")",
       "Bash(python3 \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/check_outer.py\")",
       "Bash(python3 -)",
-      "Bash(git commit -q -m 'feat\\(web\\): trans-flag pastel palette + premium tiering + expanded experience *)"
+      "Bash(git commit -q -m 'feat\\(web\\): trans-flag pastel palette + premium tiering + expanded experience *)",
+      "mcp__2fd208f0-f762-4cd3-9426-ade9a1443f0a__generate-design",
+      "Bash(git commit -q -m 'docs: build log round 3 — trans-flag identity, premium gating, SW root cause, spend-limit note *)"
     ]
   }
 }

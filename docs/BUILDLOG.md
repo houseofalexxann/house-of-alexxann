@@ -75,6 +75,17 @@ Shipped this round:
 
 Still queued (large, multi-part): public accounts + membership paywall + dashboard + booking calendar; Transits tab; Human Design; Tarot; deep content + nakshatra deities + remedies + solar-return readings + human/liberatory voice rewrite.
 
+## 2026-07-10 — Owner direction round 3 (trans-flag identity + premium + experience)
+
+- **Trans-flag pastel palette** across the site: flag pink (#F5A9B8) + flag blue (#5BCEFA) fused with pastels on pearl white; ribbon divider (blue→pink→white→pink→blue); rose→sky gradient CTAs; pastel starfield.
+- **Premium model implemented (pre-accounts)**: `PremiumGate` with honest blurred preview + "peek" toggle; the deeper chart (dignities/sect/decans/bounds/lots/ZR) is now members-only — basic chart stays minimal per her spec. Transits / Human Design / Tarot tabs exist as gated members' rooms describing what will live there.
+- **Engine round 3**: angle nakshatras (Asc/MC with pada + lord, shown in the vedic table), Chaldean decans, canonical Egyptian bounds, Lots of Fortune/Spirit (sect-reversed), zodiacal releasing L1 from Spirit. +17 tests → **131/131**.
+- **Experience**: site search (⌘K, static index incl. Codex anchors), FAQ + Donate pages, sliding animated Western⇄Vedic switch, listening room defaults to Jhené Aiko's Trigger Protection Mantra (Kacey's Golden Hour/Deeper Well as moods), i18n chrome EN/ES/FR with switcher, accessibility statement page, Codex glossary rewritten — 35 extensive entries.
+- **Root cause found for all stale-CSS incidents**: our own PWA service worker served `_next/static` cache-first across dev restarts. Fix: SW registers only in production; dev actively unregisters + purges `hoa-*` caches; SW cache bumped to v2.
+- **Spend-limit incident**: the content-rewrite workflow hit the account's monthly subagent spend cap mid-run; 6.5 of 7 modules landed (all files verified intact, 513 entries), the truncated soft-aspects file was repaired by restoring 30 entries from git. **No further subagent workflows this month — remaining work runs inline.**
+- **Domain**: houseofalexxann.com is UNREGISTERED (whois no-match) — Alexandria to register it at any registrar; then point DNS at the host and set NEXT_PUBLIC_BASE_URL.
+- **Logo**: 4 Canva candidates generated (links in session notes) for her to choose from.
+
 ## Decision log
 
 | # | Decision | Why |
