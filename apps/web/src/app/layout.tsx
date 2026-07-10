@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Inter } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { PwaRegister } from "@/components/PwaRegister";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -25,6 +26,10 @@ export const metadata: Metadata = {
     "Professional Western and Vedic astrology: cast your natal chart free in the Chart Studio, then book a personal reading with Alexandria.",
   applicationName: "House of Alexxann",
   manifest: "/manifest.webmanifest",
+  icons: {
+    icon: "/icons/icon-192.png",
+    apple: "/icons/icon-192.png",
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -53,6 +58,7 @@ export default function RootLayout({
         <SiteHeader />
         <main className="flex-1">{children}</main>
         <SiteFooter />
+        <PwaRegister />
       </body>
     </html>
   );

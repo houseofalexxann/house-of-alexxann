@@ -203,6 +203,61 @@ export function StudioClient() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
   }, []);
 
+  // Prefill from query params (?name=&date=&time=&place=) — used by the admin
+  // "cast this client's chart" links — and auto-cast when complete.
+  const prefilledRef = useRef(false);
+  useEffect(() => {
+    if (prefilledRef.current) return;
+    prefilledRef.current = true;
+    const q = new URLSearchParams(window.location.search);
+    const date = q.get("date");
+    const place = q.get("place");
+    if (!date || !place) return;
+    const time = q.get("time");
+    (async () => {
+      try {
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(place)}`);
+        const data = await res.json();
+        const first = (data.results ?? [])[0];
+        if (!first) return;
+        const nextForm = {
+          name: q.get("name") ?? "",
+          date,
+          time: time ?? "",
+          timeKnown: Boolean(time),
+          place: first as PlaceResult,
+        };
+        setForm(nextForm);
+        setPlaceQuery(first.label);
+        // Compute directly with the prefilled data (state isn't set yet).
+        setLoading(true);
+        const chartRes = await fetch("/api/chart", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: nextForm.name || undefined,
+            date: nextForm.date,
+            time: nextForm.timeKnown ? nextForm.time : "12:00",
+            timeKnown: nextForm.timeKnown,
+            place: {
+              label: first.label,
+              latitude: first.latitude,
+              longitude: first.longitude,
+              timezone: first.timezone,
+            },
+            system: "western",
+          }),
+        });
+        const chartData = await chartRes.json();
+        if (chartRes.ok) setResult(chartData as ChartResponse);
+      } catch {
+        // Prefill is best-effort; the form remains usable.
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
   const chart = result?.chart ?? null;
   const vedic = chart?.input.system === "vedic";
 
