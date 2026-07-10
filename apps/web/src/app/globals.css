@@ -1,34 +1,43 @@
 @import "tailwindcss";
+/* Explicit scan root — auto-detection has missed newly created files when
+   running through the ~/hoa-repo symlink (Turbopack + spaces-in-path repo). */
+@source "../";
 
-/* ————— House of Alexxann design tokens: Venus in Libra —————
-   Bright & light: mother-of-pearl whites, pinks, pastels.
-   (Rebrand 2026-07-10 — supersedes the original dark night-sky theme.) */
+/* ————— House of Alexxann design tokens: the trans-flag pastels —————
+   Pearl white as the ground; the flag's rose pink and sky blue as the two
+   voices, fused with soft pastels everywhere. Liberation, worn lightly. */
 @theme {
-  /* Mother-of-pearl surface scale (light → deep) */
-  --color-pearl-50: #fdfbfa;
-  --color-pearl-100: #f9f3f2;
-  --color-pearl-200: #f4e9ea;
-  --color-pearl-300: #ecdcdf;
-  --color-pearl-400: #d9c3cb;
-  --color-pearl-500: #bfa3b0;
+  /* Mother-of-pearl surface scale (light → deep, warmed toward white) */
+  --color-pearl-50: #fdfcfc;
+  --color-pearl-100: #f9f5f6;
+  --color-pearl-200: #f3ecef;
+  --color-pearl-300: #e9dee4;
+  --color-pearl-400: #d5c4ce;
+  --color-pearl-500: #b5a0ae;
 
-  /* Venusian pinks */
-  --color-rose-300: #f8cede;
-  --color-rose-400: #f0a4c4;
-  --color-rose-500: #d4638f;
-  --color-rose-600: #b14c77;
+  /* Flag pink (F5A9B8 family, deepened for text-safe steps) */
+  --color-rose-300: #fad1da;
+  --color-rose-400: #f5a9b8;
+  --color-rose-500: #d96d8b;
+  --color-rose-600: #b65372;
 
-  /* Pastel lilac / periwinkle accents */
-  --color-lilac-400: #b9a8e8;
-  --color-lilac-500: #9f8ad0;
-  --color-lilac-600: #8672bb;
+  /* Flag blue (5BCEFA family, softened + text-safe steps) — replaces lilac */
+  --color-lilac-400: #a5dcf5;
+  --color-lilac-500: #5bcefa;
+  --color-lilac-600: #2f88b8;
 
-  /* Plum-ink text scale (dark → soft) */
-  --color-ink-900: #45304b;
-  --color-ink-800: #57405f;
-  --color-ink-700: #6b5375;
-  --color-ink-500: #8d7797;
-  --color-ink-400: #a794b0;
+  /* Sky utility scale (same family, for gradients & accents) */
+  --color-sky-300: #c8eafc;
+  --color-sky-400: #8ed7f8;
+  --color-sky-500: #4fb4dd;
+  --color-sky-600: #2f88b8;
+
+  /* Ink: soft slate-plum text scale (dark → soft) */
+  --color-ink-900: #3b3345;
+  --color-ink-800: #4e4459;
+  --color-ink-700: #645870;
+  --color-ink-500: #877b93;
+  --color-ink-400: #a195ad;
 
   --font-heading: var(--font-cormorant), "Cormorant Garamond", Georgia, serif;
   --font-body: var(--font-inter), "Inter", system-ui, sans-serif;
@@ -50,16 +59,18 @@ h1, h2, h3, h4 {
   letter-spacing: 0.01em;
 }
 
-/* ————— Modern-zen backdrop: airy light, the faintest dawn washes ————— */
+/* ————— Backdrop: trans-flag pastels breathing across pearl white ————— */
 .starfield {
   position: fixed;
   inset: 0;
   z-index: -1;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 80% 50% at 78% -12%, rgba(244, 190, 208, 0.13), transparent 60%),
-    radial-gradient(ellipse 68% 48% at 8% 16%, rgba(188, 210, 222, 0.11), transparent 58%),
-    radial-gradient(ellipse 82% 55% at 42% 110%, rgba(206, 224, 214, 0.14), transparent 66%),
+    radial-gradient(ellipse 78% 52% at 80% -10%, rgba(245, 169, 184, 0.16), transparent 62%),
+    radial-gradient(ellipse 70% 48% at 6% 14%, rgba(91, 206, 250, 0.12), transparent 58%),
+    radial-gradient(ellipse 60% 45% at 50% 45%, rgba(255, 255, 255, 0.55), transparent 70%),
+    radial-gradient(ellipse 80% 55% at 20% 108%, rgba(91, 206, 250, 0.10), transparent 64%),
+    radial-gradient(ellipse 82% 55% at 88% 104%, rgba(245, 169, 184, 0.14), transparent 66%),
     var(--color-pearl-50);
 }
 .starfield::before,
@@ -68,14 +79,14 @@ h1, h2, h3, h4 {
   position: absolute;
   inset: -50%;
   background-image:
-    radial-gradient(1px 1px at 25% 15%, rgba(214, 150, 175, 0.30), transparent 55%),
-    radial-gradient(1px 1px at 55% 45%, rgba(150, 175, 195, 0.26), transparent 55%),
-    radial-gradient(1.2px 1.2px at 80% 25%, rgba(226, 190, 120, 0.28), transparent 55%),
-    radial-gradient(1px 1px at 10% 65%, rgba(150, 190, 180, 0.26), transparent 55%),
-    radial-gradient(1px 1px at 40% 85%, rgba(214, 150, 175, 0.24), transparent 55%),
-    radial-gradient(1px 1px at 70% 70%, rgba(226, 190, 120, 0.24), transparent 55%),
-    radial-gradient(1px 1px at 92% 55%, rgba(150, 175, 195, 0.22), transparent 55%),
-    radial-gradient(1px 1px at 15% 35%, rgba(214, 150, 175, 0.24), transparent 55%);
+    radial-gradient(1.2px 1.2px at 25% 15%, rgba(217, 109, 139, 0.30), transparent 55%),
+    radial-gradient(1px 1px at 55% 45%, rgba(79, 180, 221, 0.30), transparent 55%),
+    radial-gradient(1.2px 1.2px at 80% 25%, rgba(226, 190, 120, 0.26), transparent 55%),
+    radial-gradient(1px 1px at 10% 65%, rgba(150, 200, 190, 0.24), transparent 55%),
+    radial-gradient(1px 1px at 40% 85%, rgba(245, 169, 184, 0.32), transparent 55%),
+    radial-gradient(1px 1px at 70% 70%, rgba(184, 166, 220, 0.26), transparent 55%),
+    radial-gradient(1px 1px at 92% 55%, rgba(91, 206, 250, 0.28), transparent 55%),
+    radial-gradient(1px 1px at 15% 35%, rgba(217, 109, 139, 0.24), transparent 55%);
   background-size: 460px 460px;
   animation: star-drift 260s linear infinite;
 }
@@ -113,13 +124,25 @@ h1, h2, h3, h4 {
   box-shadow: 0 10px 30px -18px rgba(212, 99, 143, 0.25);
 }
 
+/* The flag ribbon: blue → pink → white → pink → blue, worn as a hairline. */
 .gold-rule {
-  background: linear-gradient(90deg, transparent, var(--color-rose-400), transparent);
-  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #5bcefa 18%,
+    #f5a9b8 38%,
+    #ffffff 50%,
+    #f5a9b8 62%,
+    #5bcefa 82%,
+    transparent
+  );
+  height: 2px;
   border: 0;
+  border-radius: 999px;
+  opacity: 0.9;
 }
 
-/* Primary action — pink pearl. (Class name kept from v1 for stability.) */
+/* Primary action — the flag fused: rose into sky. (Class name kept from v1.) */
 .btn-gold {
   display: inline-flex;
   align-items: center;
@@ -129,9 +152,9 @@ h1, h2, h3, h4 {
   padding: 0.625rem 1.5rem;
   font-weight: 600;
   color: #ffffff;
-  background: linear-gradient(135deg, var(--color-rose-400), var(--color-rose-500));
-  border: 1px solid var(--color-rose-400);
-  box-shadow: 0 6px 18px -8px rgba(212, 99, 143, 0.55);
+  background: linear-gradient(120deg, var(--color-rose-500), #c583b8 52%, var(--color-sky-500));
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 6px 18px -8px rgba(155, 130, 190, 0.6);
   transition: filter 0.2s ease, transform 0.2s ease;
 }
 .btn-gold:hover {

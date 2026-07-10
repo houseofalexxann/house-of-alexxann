@@ -34,7 +34,13 @@ export function PlanetTable({ chart }: { chart: ChartResult }) {
                 </td>
                 {chart.input.timeKnown && <td className="py-2 pr-3 text-ink-500">1st cusp</td>}
                 <td className="py-2 pr-3 text-ink-400">—</td>
-                {vedic && <td className="py-2 text-ink-400">—</td>}
+                {vedic && (
+                  <td className="py-2 text-ink-700">
+                    {chart.angles.ascendantNakshatra
+                      ? `${chart.angles.ascendantNakshatra.name} · pada ${chart.angles.ascendantNakshatra.pada} · lord ${BODY_NAMES[chart.angles.ascendantNakshatra.lord as keyof typeof BODY_NAMES] ?? chart.angles.ascendantNakshatra.lord}`
+                      : "—"}
+                  </td>
+                )}
               </tr>
               <tr className="border-b border-pearl-300/60">
                 <td className="py-2 pr-3 text-rose-500">Midheaven</td>
@@ -44,7 +50,13 @@ export function PlanetTable({ chart }: { chart: ChartResult }) {
                 </td>
                 {chart.input.timeKnown && <td className="py-2 pr-3 text-ink-500">10th cusp</td>}
                 <td className="py-2 pr-3 text-ink-400">—</td>
-                {vedic && <td className="py-2 text-ink-400">—</td>}
+                {vedic && (
+                  <td className="py-2 text-ink-700">
+                    {chart.angles.midheavenNakshatra
+                      ? `${chart.angles.midheavenNakshatra.name} · pada ${chart.angles.midheavenNakshatra.pada} · lord ${BODY_NAMES[chart.angles.midheavenNakshatra.lord as keyof typeof BODY_NAMES] ?? chart.angles.midheavenNakshatra.lord}`
+                      : "—"}
+                  </td>
+                )}
               </tr>
             </>
           )}
@@ -72,7 +84,9 @@ export function PlanetTable({ chart }: { chart: ChartResult }) {
               </td>
               {vedic && (
                 <td className="py-2 text-ink-700">
-                  {p.nakshatra ? `${p.nakshatra.name} · pada ${p.nakshatra.pada}` : "—"}
+                  {p.nakshatra
+                    ? `${p.nakshatra.name} · pada ${p.nakshatra.pada} · lord ${BODY_NAMES[p.nakshatra.lord as keyof typeof BODY_NAMES] ?? p.nakshatra.lord}`
+                    : "—"}
                 </td>
               )}
             </tr>

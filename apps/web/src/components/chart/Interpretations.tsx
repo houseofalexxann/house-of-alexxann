@@ -18,6 +18,7 @@ import {
   PLANET_TAGLINES,
 } from "@/lib/interpretations/keywords";
 import { BODY_NAMES, ORDINALS, PLANET_GLYPHS, SIGN_NAMES } from "./glyphs";
+import { RichText } from "./RichText";
 
 function placementLabel(body: string, sign: number, house: number | null): string {
   const name = BODY_NAMES[body as keyof typeof BODY_NAMES] ?? body;
@@ -55,9 +56,9 @@ function KeyCard({
         <span aria-hidden className="mt-1 text-ink-400">{open ? "▴" : "▾"}</span>
       </button>
       {open && interp && (
-        <p className="border-t border-pearl-300/60 px-5 py-4 text-sm leading-relaxed text-ink-700">
-          {interp.body}
-        </p>
+        <div className="space-y-3 border-t border-pearl-300/60 px-5 py-4">
+          <RichText text={interp.body} className="text-sm leading-relaxed text-ink-700" />
+        </div>
       )}
     </article>
   );
@@ -68,7 +69,9 @@ function Entry({ interp, tagline }: { interp: Interpretation; tagline?: string }
     <article className="border-b border-pearl-300/60 py-4 last:border-0">
       <h4 className="font-heading text-lg text-rose-500">{interp.title}</h4>
       {tagline && <p className="text-xs text-ink-400">{tagline}</p>}
-      <p className="mt-1.5 text-sm leading-relaxed text-ink-700">{interp.body}</p>
+      <div className="mt-1.5 space-y-3">
+        <RichText text={interp.body} className="text-sm leading-relaxed text-ink-700" />
+      </div>
     </article>
   );
 }

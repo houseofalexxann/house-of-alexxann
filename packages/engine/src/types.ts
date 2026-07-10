@@ -62,6 +62,10 @@ export interface ChartInput {
 
 export interface PlanetPosition {
   body: Body;
+  /** Chaldean decan (face) this body occupies. */
+  decan?: Decan;
+  /** Egyptian bound (term) this body occupies. */
+  term?: EgyptianTerm;
   /** Ecliptic longitude 0–360 (tropical for western, sidereal for vedic). */
   longitude: number;
   /** Ecliptic latitude in degrees. */
@@ -98,6 +102,9 @@ export interface Angles {
   midheavenSign: number;
   formattedAscendant: string;
   formattedMidheaven: string;
+  /** Vedic only: nakshatra + pada + lord of each angle. */
+  ascendantNakshatra?: NakshatraPosition;
+  midheavenNakshatra?: NakshatraPosition;
 }
 
 export interface Aspect {
@@ -184,6 +191,44 @@ export interface TraditionalAnalysis {
   moonPhase: MoonPhase;
   /** Empty when the birth time is unknown. */
   angleAspects: AngleAspect[];
+  /** Null when the birth time is unknown (Lots need the Ascendant). */
+  lots: Lots | null;
+  /** Zodiacal releasing L1 periods from the Lot of Spirit; null w/o time. */
+  zodiacalReleasing: ZRPeriod[] | null;
+}
+
+/** A ten-degree face and its Chaldean ruler. */
+export interface Decan {
+  /** 0–35 across the zodiac. */
+  index: number;
+  sign: number;
+  /** 1–3 within the sign. */
+  decanOfSign: number;
+  ruler: Body;
+}
+
+/** Egyptian bound (term): the sub-rulership segment a degree falls in. */
+export interface EgyptianTerm {
+  sign: number;
+  ruler: Body;
+  startDegree: number;
+  endDegree: number;
+}
+
+export interface Lots {
+  /** Lot of Fortune, ecliptic longitude. */
+  fortune: number;
+  /** Lot of Spirit, ecliptic longitude. */
+  spirit: number;
+}
+
+export interface ZRPeriod {
+  level: 1 | 2;
+  sign: number;
+  ruler: Body;
+  start: string;
+  end: string;
+  years: number;
 }
 
 export interface ChartResult {

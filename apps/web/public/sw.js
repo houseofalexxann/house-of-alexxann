@@ -1,7 +1,7 @@
 /* House of Alexxann service worker: offline-friendly PWA.
  * Static assets: cache-first. Pages: network-first with offline fallback.
  * API calls are never cached (charts must stay fresh & deterministic). */
-const VERSION = "hoa-v1";
+const VERSION = "hoa-v2";
 const OFFLINE_URL = "/offline.html";
 const PRECACHE = [OFFLINE_URL, "/icons/icon-192.png"];
 

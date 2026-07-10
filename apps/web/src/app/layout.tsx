@@ -4,6 +4,8 @@ import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { PwaRegister } from "@/components/PwaRegister";
+import { ListeningRoom } from "@/components/ListeningRoom";
+import { LocaleProvider } from "@/lib/i18n";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -54,11 +56,14 @@ export default function RootLayout({
       className={`${cormorant.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <div className="starfield" aria-hidden />
-        <SiteHeader />
-        <main className="flex-1">{children}</main>
-        <SiteFooter />
-        <PwaRegister />
+        <LocaleProvider>
+          <div className="starfield" aria-hidden />
+          <SiteHeader />
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
+          <ListeningRoom />
+          <PwaRegister />
+        </LocaleProvider>
       </body>
     </html>
   );

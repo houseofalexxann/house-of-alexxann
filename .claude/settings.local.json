@@ -40,7 +40,16 @@
       "Bash(open -a \"Google Chrome\")",
       "Bash(grep -n -iE \"notes|clientName|birthPlace|clientEmail|innerHTML|<|\\\\`|\\\\$\\\\{\")",
       "Bash(git commit -q -m 'feat\\(web\\): authentic astrological glyphs \\(text-presentation, no emoji\\), per-sign colors, lighter zen background *)",
-      "Bash(git commit -q -m 'feat\\(engine,web\\): traditional depth — sect, dignities, moon phase, angle aspects, solar return \\(+11 tests, 114 total\\); surfaced as '\\\\''the deeper chart'\\\\'' in Studio *)"
+      "Bash(git commit -q -m 'feat\\(engine,web\\): traditional depth — sect, dignities, moon phase, angle aspects, solar return \\(+11 tests, 114 total\\); surfaced as '\\\\''the deeper chart'\\\\'' in Studio *)",
+      "mcp__08eec40b-f3e5-4edd-8a02-64db2e402c00__create_playlist",
+      "Bash(dig +short houseofalexxann.com A)",
+      "Bash(dig +short houseofalexxann.com NS)",
+      "Bash(whois houseofalexxann.com)",
+      "Bash(python3 -c ' *)",
+      "Bash(python3 \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/check_vedic.py\")",
+      "Bash(python3 \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/check_outer.py\")",
+      "Bash(python3 -)",
+      "Bash(git commit -q -m 'feat\\(web\\): trans-flag pastel palette + premium tiering + expanded experience *)"
     ]
   }
 }

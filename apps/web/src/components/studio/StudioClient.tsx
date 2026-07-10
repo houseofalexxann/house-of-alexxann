@@ -10,6 +10,7 @@ import { DashaTimeline } from "@/components/chart/DashaTimeline";
 import { RasiGrid } from "@/components/chart/RasiGrid";
 import { InterpretationsPanel } from "@/components/chart/Interpretations";
 import { TraditionalPanel } from "@/components/chart/TraditionalPanel";
+import { PremiumGate } from "@/components/PremiumGate";
 import { PLANET_GLYPHS, SIGN_NAMES } from "@/components/chart/glyphs";
 
 type System = "western" | "vedic";
@@ -377,16 +378,33 @@ export function StudioClient() {
         <div className="mt-14">
           {/* System toggle + settings */}
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <div className="flex overflow-hidden rounded-full border border-pearl-500">
+            {/* Sliding Western ⇄ Vedic switch */}
+            <div
+              className="relative grid grid-cols-2 overflow-hidden rounded-full border border-pearl-400 bg-pearl-100/70 p-1"
+              role="tablist"
+              aria-label="Chart system"
+            >
+              <span
+                aria-hidden
+                className="absolute bottom-1 top-1 w-[calc(50%-4px)] rounded-full shadow-md transition-transform duration-300 ease-out"
+                style={{
+                  left: 4,
+                  transform: system === "vedic" ? "translateX(calc(100% + 0px))" : "translateX(0)",
+                  background:
+                    system === "vedic"
+                      ? "linear-gradient(120deg, #d96d8b, #b98ac0)"
+                      : "linear-gradient(120deg, #4fb4dd, #7d9de0)",
+                }}
+              />
               {(["western", "vedic"] as const).map((s) => (
                 <button
                   key={s}
                   type="button"
+                  role="tab"
+                  aria-selected={system === s}
                   onClick={() => switchSystem(s)}
-                  className={`px-5 py-2 text-sm font-medium transition-colors ${
-                    system === s
-                      ? "bg-rose-600 text-pearl-50"
-                      : "bg-pearl-100/60 text-ink-700 hover:text-ink-900"
+                  className={`relative z-10 rounded-full px-5 py-2 text-sm font-medium transition-colors duration-300 ${
+                    system === s ? "text-white" : "text-ink-700 hover:text-ink-900"
                   }`}
                 >
                   {s === "western" ? "Western · tropical" : "Vedic · sidereal"}
@@ -503,14 +521,16 @@ export function StudioClient() {
             </div>
           </div>
 
-          {/* Traditional depth: sect, dignities, moon phase, angle aspects */}
+          {/* Traditional depth: premium — basic charts stay minimal */}
           <section className="card mt-8 p-6 sm:p-8">
             <h2 className="font-heading text-2xl text-ink-900">The deeper chart</h2>
             <p className="mb-6 mt-1 text-sm text-ink-500">
               The traditional layer — sect, essential dignity, your natal moon
-              phase, and the planets touching your angles.
+              phase, decans &amp; bounds, lots and zodiacal releasing.
             </p>
-            <TraditionalPanel chart={chart} />
+            <PremiumGate title="The deeper chart is a members' room">
+              <TraditionalPanel chart={chart} />
+            </PremiumGate>
           </section>
 
           {/* Vedic extras: D1 + D9 + dasha */}

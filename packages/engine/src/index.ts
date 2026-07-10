@@ -30,6 +30,12 @@ import {
   moonPhase,
   sectOf,
 } from "./traditional";
+import {
+  decanOf,
+  egyptianTermOf,
+  lots,
+  zodiacalReleasingL1,
+} from "./hellenistic";
 import { formatDegreeInSign, signOf } from "./format";
 import { VEDIC_BODIES, WESTERN_BODIES } from "./constants";
 
@@ -92,6 +98,13 @@ export function computeChart(input: ChartInput): ChartResult {
       midheavenSign: mc.sign,
       formattedAscendant: formatDegreeInSign(asc.degreeInSign),
       formattedMidheaven: formatDegreeInSign(mc.degreeInSign),
+      // Sidereal angles carry their lunar mansions too.
+      ...(sidereal
+        ? {
+            ascendantNakshatra: nakshatraOf(h.ascendant),
+            midheavenNakshatra: nakshatraOf(h.midheaven),
+          }
+        : {}),
     };
   }
 
@@ -109,6 +122,8 @@ export function computeChart(input: ChartInput): ChartResult {
       degreeInSign,
       formatted: formatDegreeInSign(degreeInSign),
       house: houseCusps ? houseOf(raw.longitude, houseCusps) : null,
+      decan: decanOf(raw.longitude),
+      term: egyptianTermOf(raw.longitude),
       ...(sidereal ? { nakshatra: nakshatraOf(raw.longitude) } : {}),
     };
   });
@@ -137,12 +152,23 @@ export function computeChart(input: ChartInput): ChartResult {
     navamsa: sidereal
       ? navamsaPositions(planets, angles ? angles.ascendant : null)
       : null,
-    traditional: {
-      sect: sectOf(planets),
-      dignities: dignities(planets),
-      moonPhase: moonPhase(sun.longitude, moon.longitude),
-      angleAspects: aspectsToAngles(planets, angles, input.orbs),
-    },
+    traditional: (() => {
+      const sect = sectOf(planets);
+      const theLots =
+        angles && sect
+          ? lots(angles.ascendant, sun.longitude, moon.longitude, sect.sect === "day")
+          : null;
+      return {
+        sect,
+        dignities: dignities(planets),
+        moonPhase: moonPhase(sun.longitude, moon.longitude),
+        angleAspects: aspectsToAngles(planets, angles, input.orbs),
+        lots: theLots,
+        zodiacalReleasing: theLots
+          ? zodiacalReleasingL1(theLots.spirit, input.utc)
+          : null,
+      };
+    })(),
     engineVersion: `${ENGINE_VERSION} (swisseph ${swephVersion()})`,
   };
 }
@@ -220,3 +246,11 @@ export function computeSolarReturn(
 }
 
 export { dignityOf, moonPhase } from "./traditional";
+export {
+  decanOf,
+  egyptianTermOf,
+  egyptianTermsTable,
+  lots,
+  zodiacalReleasingL1,
+  ZR_YEARS,
+} from "./hellenistic";

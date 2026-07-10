@@ -122,6 +122,122 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
           </ul>
         </div>
       )}
+
+      {/* Decans & Egyptian bounds — the finer rulers under each placement */}
+      <div>
+        <h4 className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
+          Decans &amp; bounds — the finer rulers
+        </h4>
+        <p className="mb-3 text-xs leading-relaxed text-ink-400">
+          Every degree sits inside a ten-degree <em>decan</em> (Chaldean face)
+          and an unequal <em>Egyptian bound</em> — sub-rulers the Hellenistic
+          astrologers read for texture.{" "}
+          <a href="/codex" className="text-rose-600 underline-offset-2 hover:underline">
+            Full tables in the Codex →
+          </a>
+        </p>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-pearl-400/60 text-left text-xs uppercase tracking-widest text-ink-400">
+                <th className="py-1.5 pr-3 font-medium">Body</th>
+                <th className="py-1.5 pr-3 font-medium">Decan</th>
+                <th className="py-1.5 font-medium">Bound</th>
+              </tr>
+            </thead>
+            <tbody>
+              {chart.planets
+                .filter((p) => p.decan && p.term)
+                .map((p) => (
+                  <tr key={p.body} className="border-b border-pearl-300/50 last:border-0">
+                    <td className="py-1.5 pr-3">
+                      <span className="astro-glyph mr-1.5">{PLANET_GLYPHS[p.body]}</span>
+                      {BODY_NAMES[p.body]}
+                    </td>
+                    <td className="py-1.5 pr-3 text-ink-700">
+                      {ordinalDecan(p.decan!.decanOfSign)} decan of {SIGN_NAMES[p.sign]} · ruled by{" "}
+                      <span className="astro-glyph">{PLANET_GLYPHS[p.decan!.ruler]}</span>{" "}
+                      {BODY_NAMES[p.decan!.ruler]}
+                    </td>
+                    <td className="py-1.5 text-ink-700">
+                      bound of{" "}
+                      <span className="astro-glyph">{PLANET_GLYPHS[p.term!.ruler]}</span>{" "}
+                      {BODY_NAMES[p.term!.ruler]}{" "}
+                      <span className="text-ink-400">
+                        ({p.term!.startDegree}°–{p.term!.endDegree}°)
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Lots + zodiacal releasing */}
+      {t.lots && (
+        <div>
+          <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
+            Lots &amp; the chapters of spirit — zodiacal releasing
+          </h4>
+          <p className="text-sm text-ink-700">
+            <span className="mr-4">
+              ⊗ Lot of Fortune: <strong>{formatLot(t.lots.fortune)}</strong>
+            </span>
+            <span>
+              Lot of Spirit: <strong>{formatLot(t.lots.spirit)}</strong>
+            </span>
+          </p>
+          {t.zodiacalReleasing && (
+            <ol className="mt-3 space-y-1">
+              {t.zodiacalReleasing.slice(0, 8).map((p, i) => {
+                const now = Date.now();
+                const current = now >= Date.parse(p.start) && now < Date.parse(p.end);
+                return (
+                  <li
+                    key={i}
+                    className={`flex items-center justify-between rounded-lg border px-4 py-2 text-sm ${
+                      current
+                        ? "border-rose-400/60 bg-rose-300/20 text-ink-900"
+                        : "border-pearl-300/70 bg-white/40 text-ink-700"
+                    }`}
+                  >
+                    <span>
+                      {SIGN_NAMES[p.sign]} period · {p.years} years · ruled by{" "}
+                      <span className="astro-glyph">{PLANET_GLYPHS[p.ruler]}</span>{" "}
+                      {BODY_NAMES[p.ruler]}
+                      {current && (
+                        <span className="ml-2 rounded-full bg-rose-400/20 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-rose-600">
+                          now
+                        </span>
+                      )}
+                    </span>
+                    <span className="tabular-nums text-xs text-ink-400">
+                      {new Date(p.start).getFullYear()}–{new Date(p.end).getFullYear()}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          )}
+          <p className="mt-2 text-xs text-ink-400">
+            L1 general periods from the Lot of Spirit (Valens). Sub-periods
+            arrive with membership.
+          </p>
+        </div>
+      )}
     </div>
   );
+}
+
+function ordinalDecan(n: number): string {
+  return n === 1 ? "1st" : n === 2 ? "2nd" : "3rd";
+}
+
+function formatLot(lon: number): string {
+  const sign = Math.floor(lon / 30) % 12;
+  const deg = lon - sign * 30;
+  const d = Math.floor(deg);
+  const m = Math.round((deg - d) * 60);
+  return `${d}°${String(m).padStart(2, "0")}' ${SIGN_NAMES[sign]}`;
 }
