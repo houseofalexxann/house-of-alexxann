@@ -1,0 +1,25 @@
+{
+  "name": "@hoa/engine",
+  "version": "0.1.0",
+  "description": "House of Alexxann astrology calculation engine — Swiss Ephemeris behind one isolated API",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "ephe"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "sweph": "2.10.3-7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "astronomy-engine": "^2.1.19",
+    "typescript": "^5.5.0",
+    "vitest": "^2.1.0"
+  }
+}
