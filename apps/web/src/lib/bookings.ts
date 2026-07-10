@@ -3,7 +3,7 @@
  * finalize after payment, and reminder dispatch.
  */
 import { DateTime } from "luxon";
-import type { Booking } from "@prisma/client";
+import { type Booking, Prisma } from "@prisma/client";
 import { prisma } from "./db";
 import { isSlotFree } from "./slots";
 import { getSettings } from "./settings";
@@ -59,30 +59,44 @@ export async function createBooking(
   const start = DateTime.fromISO(input.startUtc, { zone: "utc" });
   const end = start.plus({ minutes: service.durationMinutes });
 
-  const booking = await prisma.booking.create({
-    data: {
-      serviceId: service.id,
-      clientName: input.clientName,
-      clientEmail: input.clientEmail,
-      clientPhone: input.clientPhone ?? null,
-      format: input.format.replace("-", "_") as never,
-      startUtc: start.toJSDate(),
-      endUtc: end.toJSDate(),
-      clientTz: input.clientTz,
-      priceCents: tier.priceCents,
-      priceTier: tier.key,
-      paymentMode:
-        input.paymentMethod === "direct"
-          ? "direct"
-          : stripeEnabled()
-            ? "stripe"
-            : "mock",
-      birthDate: input.birthDate ?? null,
-      birthTime: input.birthTime ?? null,
-      birthPlace: input.birthPlace ?? null,
-      notes: input.notes ?? null,
-    },
-  });
+  let booking: Booking;
+  try {
+    booking = await prisma.booking.create({
+      data: {
+        serviceId: service.id,
+        clientName: input.clientName,
+        clientEmail: input.clientEmail,
+        clientPhone: input.clientPhone ?? null,
+        format: input.format.replace("-", "_") as never,
+        startUtc: start.toJSDate(),
+        endUtc: end.toJSDate(),
+        clientTz: input.clientTz,
+        priceCents: tier.priceCents,
+        priceTier: tier.key,
+        paymentMode:
+          input.paymentMethod === "direct"
+            ? "direct"
+            : stripeEnabled()
+              ? "stripe"
+              : "mock",
+        birthDate: input.birthDate ?? null,
+        birthTime: input.birthTime ?? null,
+        birthPlace: input.birthPlace ?? null,
+        notes: input.notes ?? null,
+      },
+    });
+  } catch (err) {
+    // The partial unique index (serviceId, startUtc) on active bookings is
+    // the atomic backstop for the check-then-create race: a concurrent second
+    // insert for the same slot fails here even though isSlotFree passed.
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      err.code === "P2002"
+    ) {
+      throw new Error("That time was just taken — please pick another slot.");
+    }
+    throw err;
+  }
 
   if (input.paymentMethod === "direct") {
     // Send payment instructions; the slot is held while Alexandria awaits
@@ -112,13 +126,48 @@ export async function createBooking(
   return { booking, paymentUrl: `${baseUrl()}/book/pay/${booking.token}` };
 }
 
-/** Mark a booking paid + confirmed and send the confirmation email. Idempotent. */
+/**
+ * Mark a booking paid + confirmed and send the confirmation email. Idempotent.
+ *
+ * Handles the late/async-payment edge: a canceled booking is never resurrected
+ * (it's recorded paid but left canceled for the admin to refund), and a slot
+ * taken by someone else while payment was pending is recorded paid but held at
+ * "pending" so the admin can reschedule or refund rather than double-book.
+ */
 export async function finalizePaidBooking(bookingId: string): Promise<Booking> {
   const booking = await prisma.booking.findUniqueOrThrow({
     where: { id: bookingId },
     include: { service: true },
   });
   if (booking.paymentStatus === "paid" && booking.confirmationSentAt) return booking;
+
+  // Payment landed on a booking the practitioner already canceled: bank the
+  // payment, but don't un-cancel and don't email a confirmation — the admin
+  // sees a paid+canceled booking and can refund.
+  if (booking.status === "canceled") {
+    return prisma.booking.update({
+      where: { id: booking.id },
+      data: { paymentStatus: "paid" },
+      include: { service: true },
+    });
+  }
+
+  // Slot was taken by another confirmed booking while this payment was
+  // pending (only possible on delayed/async payment methods): record the
+  // payment but keep this one pending for the admin to resolve.
+  const service = await prisma.service.findUniqueOrThrow({ where: { id: booking.serviceId } });
+  const stillFree = await isSlotFree(
+    service.slug,
+    DateTime.fromJSDate(booking.startUtc).toUTC().toISO()!,
+    booking.id
+  );
+  if (!stillFree) {
+    return prisma.booking.update({
+      where: { id: booking.id },
+      data: { paymentStatus: "paid" },
+      include: { service: true },
+    });
+  }
 
   const updated = await prisma.booking.update({
     where: { id: booking.id },

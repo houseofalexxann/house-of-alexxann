@@ -51,6 +51,17 @@ Alexandria added three requirements during the build (recorded as PRD deltas):
 - Perf: chart API measured at **~14 ms** in-browser (criterion: < 2 s).
 - Known pre-standard-time caveat: births before ~1890 use the IANA zone's reference-city LMT (e.g. Europe/Berlin LMT) rather than the exact birth-city LMT — can differ by a few minutes of clock time for 19th-century charts. Engine accuracy itself is unaffected (the test suite feeds exact UTC).
 
+## 2026-07-10 — Adversarial review of the money/auth path (fixed)
+
+Ran a multi-agent adversarial review (3 lenses × find→verify) over booking/payment/auth. Four confirmed defects, all now fixed and re-verified:
+
+1. **Admin cookie forgery (critical)** — `secret()` silently fell back to a hardcoded key when `SESSION_SECRET` was unset, so a prod deploy missing that env var was forgeable. Fix: throw in production if `SESSION_SECRET` is absent or <16 chars; dev keeps a labeled fallback. (`admin-auth.ts`)
+2. **Double-booking race** — non-atomic `isSlotFree()` check-then-create let concurrent requests both insert. Fix: partial unique index `Booking(serviceId,startUtc) WHERE status IN (pending,confirmed)` (migration `20260710120000_booking_slot_guard`) + P2002 catch → "just taken". **Verified: 6 concurrent requests for one slot → exactly 1 booked, 5 rejected.**
+3. **Canceled/expired resurrection on late payment** — `finalizePaidBooking` flipped any booking to confirmed on a delayed Stripe async payment, even if canceled or if the slot was rebooked. Fix: paid-but-canceled bookings are recorded paid and left canceled (admin refunds); a booking whose slot was taken during a pending async payment is recorded paid but held pending for admin resolution — never auto-double-booked. (`bookings.ts`)
+4. **DST slot drift** — slot start used elapsed-duration math (`day.plus({minutes})`), shifting every slot an hour on the two annual DST-transition days. Fix: wall-clock `day.set({hour,minute})`. **Verified: spring-forward 2027-03-14 NY window 10:00–18:00 now yields 10:00…17:30 (was 11:00…18:30).**
+
+Engine gate re-run after all fixes: **103/103 green.** App typecheck clean.
+
 ## Decision log
 
 | # | Decision | Why |

@@ -123,6 +123,10 @@ model Booking {
 
   @@index([startUtc])
   @@index([status, startUtc])
+  // A partial unique index (active bookings only) is added by migration
+  // 20260710_booking_slot_guard — it enforces one live booking per
+  // (serviceId, startUtc) at the database level, closing the check-then-insert
+  // race. Prisma can't express a partial index, so it lives in raw SQL.
 }
 
 // Weekly availability windows in the practitioner's timezone.

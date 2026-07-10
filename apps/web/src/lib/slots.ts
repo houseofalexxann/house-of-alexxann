@@ -19,7 +19,8 @@ const PENDING_HOLD_MINUTES = 30;
 export async function availableSlots(
   serviceSlug: string,
   fromIso: string,
-  toIso: string
+  toIso: string,
+  excludeBookingId?: string
 ): Promise<{ slots: Slot[]; durationMinutes: number }> {
   const service = await prisma.service.findUnique({ where: { slug: serviceSlug } });
   if (!service || !service.active) throw new Error("Unknown service");
@@ -49,6 +50,7 @@ export async function availableSlots(
         endUtc: { gt: earliest.minus({ days: 1 }).toJSDate() },
       },
       select: {
+        id: true,
         startUtc: true,
         endUtc: true,
         status: true,
@@ -64,6 +66,7 @@ export async function availableSlots(
   // outside the app; checkout holds expire with the Stripe session.
   const buffer = settings.bufferMinutes;
   const busy: Interval[] = bookings
+    .filter((b) => (excludeBookingId ? b.id !== excludeBookingId : true))
     .filter(
       (b) =>
         b.status === "confirmed" ||
@@ -120,7 +123,17 @@ export async function availableSlots(
         m + duration <= w.end;
         m += settings.slotStepMinutes
       ) {
-        const start = day.plus({ minutes: m });
+        // Wall-clock arithmetic, not elapsed-duration: `day.plus({minutes})`
+        // would drift by an hour across the two annual DST transitions,
+        // offering slots outside the declared window. `.set` fixes the local
+        // clock time; `.plus({minutes:duration})` for the end is fine because
+        // sessions don't span the 2am transition in practice.
+        const start = day.set({
+          hour: Math.floor(m / 60),
+          minute: m % 60,
+          second: 0,
+          millisecond: 0,
+        });
         const end = start.plus({ minutes: duration });
         if (start.toUTC() < earliest || start.toUTC() > latest) continue;
         const candidate = Interval.fromDateTimes(start, end);
@@ -138,16 +151,23 @@ export async function availableSlots(
   return { slots, durationMinutes: duration };
 }
 
-/** Re-validate one candidate slot right before booking (race protection). */
+/**
+ * Re-validate one candidate slot before booking. This is a best-effort guard;
+ * the authoritative race protection is the partial unique DB index. Pass
+ * excludeBookingId when re-checking a booking against itself (e.g. late
+ * payment finalization) so it isn't counted as its own conflict.
+ */
 export async function isSlotFree(
   serviceSlug: string,
-  startUtcIso: string
+  startUtcIso: string,
+  excludeBookingId?: string
 ): Promise<boolean> {
   const start = DateTime.fromISO(startUtcIso, { zone: "utc" });
   const { slots } = await availableSlots(
     serviceSlug,
     start.minus({ hours: 1 }).toISO()!,
-    start.plus({ hours: 25 }).toISO()!
+    start.plus({ hours: 25 }).toISO()!,
+    excludeBookingId
   );
   return slots.some((s) => s.startUtc === start.toISO({ suppressMilliseconds: true }));
 }

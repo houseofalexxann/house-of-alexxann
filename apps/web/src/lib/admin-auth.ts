@@ -10,7 +10,16 @@ const COOKIE = "hoa_admin";
 const SESSION_HOURS = 24 * 7;
 
 function secret(): string {
-  return process.env.SESSION_SECRET ?? "dev-secret-change-me";
+  const configured = process.env.SESSION_SECRET;
+  if (configured && configured.length >= 16) return configured;
+  // Never sign with a guessable key in production — a missing/weak
+  // SESSION_SECRET there is a fatal misconfiguration, not a soft fallback.
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      "SESSION_SECRET is required in production and must be at least 16 characters."
+    );
+  }
+  return "dev-secret-change-me-please";
 }
 
 function sign(payload: string): string {
