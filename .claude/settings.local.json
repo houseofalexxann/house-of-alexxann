@@ -17,7 +17,12 @@
       "Bash(cp \"/Users/alexandriaramirez/Library/Application Support/Claude/local-agent-mode-sessions/b69b6728-3ee7-4cfa-af6e-bf3130b2bf23/60e5fd92-95ca-4c4c-9522-d0ac15fa5093/local_4d87a776-8830-4146-a06f-30d6b49add19/outputs/Astrology-Platform-PRD.md\" docs/PRD.md)",
       "Bash(git add *)",
       "Bash(git commit -q -m 'chore: scaffold monorepo — workspaces, PRD, build log *)",
-      "Bash(mkdir -p \"/Users/alexandriaramirez/House of Alexxann/packages/engine/src\" \"/Users/alexandriaramirez/House of Alexxann/packages/engine/test\" \"/Users/alexandriaramirez/House of Alexxann/packages/engine/ephe\" && cp \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/\"*.se1 \"/Users/alexandriaramirez/House of Alexxann/packages/engine/ephe/\" && ls -la \"/Users/alexandriaramirez/House of Alexxann/packages/engine/ephe\")"
+      "Bash(mkdir -p \"/Users/alexandriaramirez/House of Alexxann/packages/engine/src\" \"/Users/alexandriaramirez/House of Alexxann/packages/engine/test\" \"/Users/alexandriaramirez/House of Alexxann/packages/engine/ephe\" && cp \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/\"*.se1 \"/Users/alexandriaramirez/House of Alexxann/packages/engine/ephe/\" && ls -la \"/Users/alexandriaramirez/House of Alexxann/packages/engine/ephe\")",
+      "Bash(xargs kill -9)",
+      "WebSearch",
+      "Bash(pkill -f \"next dev\")",
+      "Bash(ln -sfn \"/Users/alexandriaramirez/House of Alexxann\" /Users/alexandriaramirez/hoa-repo)",
+      "Bash(chmod +x \"/Users/alexandriaramirez/House of Alexxann/scripts/dev-web.sh\")"
     ]
   }
 }

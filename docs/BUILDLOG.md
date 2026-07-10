@@ -20,6 +20,14 @@ Running log of decisions and deviations during the Phase 1 build (PRD v1.1, froz
 - **Convention note:** Astrotheme "bumps" a planet within ~½° of the next Placidus cusp into the next house (2 of 36 published placements). Engine keeps strict geometric placement (astro.com data-table convention); tests accept exactly that documented case.
 - Vimshottari year length: 365.25 days (the common software convention); noted as configurable later if a client tradition needs 360-day years.
 
+## 2026-07-10 — App shell + two environment gotchas
+
+- Next.js 16 (Turbopack default) + Tailwind v4 scaffolded in `apps/web`; read the version-16 docs bundled in `node_modules/next/dist/docs` before writing code (async `params`/`cookies`, `proxy.ts` not `middleware.ts`, `manifest.ts`, hand-rolled service worker for PWA).
+- **Gotcha 1:** Turbopack spawns `node` child workers for PostCSS; the user-local Node install (`~/.local/node/bin`) wasn't on the global PATH → added to `~/.zshrc`/`~/.zprofile` and the dev launcher exports it.
+- **Gotcha 2:** Turbopack **panics when the project path contains a space** ("House of Alexxann") — `spawning node pooled process: No such file or directory`. Fix: all Next dev/build runs go through a space-free symlink `~/hoa-repo` → the repo folder keeps its name; `scripts/dev-web.sh` maintains the symlink automatically.
+- Design system: night-indigo base (#060917…), starlight-gold accents, Cormorant Garamond headings + Inter body, CSS-only drifting starfield (respects `prefers-reduced-motion`), card/btn primitives. Verified rendering in the browser.
+- Placeholder pricing on the three services ($175/90min natal, $125/60min transit, $175/90min vedic) — **Alexandria to set real prices before launch.**
+
 ## Decision log
 
 | # | Decision | Why |
