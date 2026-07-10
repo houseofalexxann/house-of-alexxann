@@ -10,9 +10,14 @@ try {
   // .env is optional — production supplies real env vars.
 }
 
+// Migrations must use Neon's DIRECT host — the pooled ("-pooler") string
+// breaks `migrate deploy`. Runtime keeps the pooled URL (good for
+// serverless); here we derive the direct URL automatically.
+const migrateUrl = (process.env.DATABASE_URL ?? "").replace("-pooler", "");
+
 export default defineConfig({
   schema: "prisma/schema.prisma",
   datasource: {
-    url: env("DATABASE_URL"),
+    url: migrateUrl || env("DATABASE_URL"),
   },
 });
