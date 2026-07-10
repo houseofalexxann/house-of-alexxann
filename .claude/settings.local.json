@@ -22,7 +22,15 @@
       "WebSearch",
       "Bash(pkill -f \"next dev\")",
       "Bash(ln -sfn \"/Users/alexandriaramirez/House of Alexxann\" /Users/alexandriaramirez/hoa-repo)",
-      "Bash(chmod +x \"/Users/alexandriaramirez/House of Alexxann/scripts/dev-web.sh\")"
+      "Bash(chmod +x \"/Users/alexandriaramirez/House of Alexxann/scripts/dev-web.sh\")",
+      "Bash(find '/Users/alexandriaramirez/House of Alexxann/node_modules/next/dist/docs/01-app' -iname *page* -o -iname *params* -o -iname *metadata* -o -iname *not-found* -o -iname *generate-static*)",
+      "Bash(npx tsc *)",
+      "Bash(node -e ' *)",
+      "Bash(ls node_modules/sweph/prebuilds/)",
+      "Bash(ls node_modules/sweph/build/Release/*.node)",
+      "Bash(ls \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/sweph-probe/node_modules/sweph/prebuilds\")",
+      "Bash(ls \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/sweph-probe/node_modules/sweph/build/Release/\"*.node)",
+      "Bash(git commit -q -m 'feat\\(web\\): Chart Studio — geocoding+DST resolution, chart API, SVG wheel, D1/D9 grids, dasha timeline, 513 authored interpretations, CHANI-style keys/taglines/legend; services+about pages; sliding-scale price tiers *)"
     ]
   }
 }

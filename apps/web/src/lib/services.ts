@@ -79,6 +79,59 @@ export const FORMAT_LABELS: Record<SessionFormat, string> = {
   "in-person": "In person",
 };
 
+/**
+ * Sliding-scale pricing (Alexandria, 2026-07-10): every reading offers three
+ * honor-system tiers so cost isn't a barrier. Standard is the listed price;
+ * community is ~70% and sustainer ~125%, rounded to $5.
+ */
+export type PriceTierKey = "community" | "standard" | "sustainer";
+
+export interface PriceTier {
+  key: PriceTierKey;
+  label: string;
+  priceCents: number;
+  blurb: string;
+}
+
+function roundTo5(cents: number): number {
+  return Math.round(cents / 500) * 500;
+}
+
+export function priceTiers(service: ServiceDef): PriceTier[] {
+  return [
+    {
+      key: "community",
+      label: "Community rate",
+      priceCents: roundTo5(service.priceCents * 0.7),
+      blurb: "For tighter seasons — no questions, no proof, same reading.",
+    },
+    {
+      key: "standard",
+      label: "Standard rate",
+      priceCents: service.priceCents,
+      blurb: "The true cost of the work.",
+    },
+    {
+      key: "sustainer",
+      label: "Sustainer rate",
+      priceCents: roundTo5(service.priceCents * 1.25),
+      blurb: "Helps hold the community rate open for someone else.",
+    },
+  ];
+}
+
+/**
+ * Payment options surfaced at checkout. Card is always available; the
+ * pay-over-time options ride on Stripe (Klarna pay-in-4, Afterpay,
+ * Affirm monthly installments) and appear automatically in Checkout once
+ * enabled on the Stripe account.
+ */
+export const PAYMENT_OPTIONS = [
+  { key: "card", label: "Card", note: "Pay in full today" },
+  { key: "pay-in-4", label: "Pay in 4", note: "Four interest-free payments (Klarna/Afterpay)" },
+  { key: "installments", label: "Monthly installments", note: "Spread it further with Affirm" },
+] as const;
+
 export function serviceBySlug(slug: string): ServiceDef | undefined {
   return SERVICES.find((s) => s.slug === slug);
 }
