@@ -4,6 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import type { PlaceResult } from "@/lib/geocode";
 import { PremiumGate } from "@/components/PremiumGate";
 import { useUser } from "@/components/UserProvider";
+import {
+  HD_CENTERS,
+  HD_CHANNELS,
+  HD_GATES,
+  HD_GLOSSARY,
+  HD_LINES,
+  HD_TYPES,
+} from "@/lib/hd-data";
 
 interface Activation { body: string; gate: number; line: number }
 interface HDResult {
@@ -171,7 +179,10 @@ export function HumanDesignClient() {
                 ["Type", result.type],
                 ["Strategy", result.strategy],
                 ["Authority", result.authority],
-                ["Profile", result.profile],
+                [
+                  "Profile",
+                  `${result.profile} — ${HD_LINES[Number(result.profile[0])]}/${HD_LINES[Number(result.profile[2])]}`,
+                ],
               ] as const
             ).map(([k, v]) => (
               <div key={k} className="card p-5 text-center">
@@ -180,6 +191,18 @@ export function HumanDesignClient() {
               </div>
             ))}
           </div>
+          {HD_TYPES[result.type] && (
+            <div className="card mt-4 p-5">
+              <p className="text-sm leading-relaxed text-ink-700">{HD_TYPES[result.type].note}</p>
+              <p className="mt-2 text-xs text-ink-500">
+                Living it well feels like{" "}
+                <strong className="text-ink-900">{HD_TYPES[result.type].signature.toLowerCase()}</strong>;
+                living against it feels like{" "}
+                <strong className="text-ink-900">{HD_TYPES[result.type].notSelf.toLowerCase()}</strong> —
+                that feeling is a compass, not a verdict.
+              </p>
+            </div>
+          )}
 
           {/* Members layer: bodygraph + gates + channels */}
           <div className="card mt-8 p-6 sm:p-8">
@@ -197,30 +220,78 @@ export function HumanDesignClient() {
                   </p>
                   <div>
                     <p className="font-semibold text-ink-900">Active channels</p>
-                    <p className="mt-1 text-ink-700">
-                      {result.activeChannels.length
-                        ? result.activeChannels.map(([a, b]) => `${a}–${b}`).join(" · ")
-                        : "None — a Reflector's open weave."}
+                    {result.activeChannels.length ? (
+                      <ul className="mt-1 space-y-1 text-ink-700">
+                        {result.activeChannels.map(([a, b]) => (
+                          <li key={`${a}-${b}`}>
+                            <strong className="text-ink-900">{a}–{b}</strong>{" "}
+                            {HD_CHANNELS[`${a}-${b}`] ?? HD_CHANNELS[`${b}-${a}`] ?? ""}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p className="mt-1 text-ink-700">None — a Reflector&apos;s open weave.</p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="font-semibold text-ink-900">Personality gates (conscious · black)</p>
+                    <p className="mt-1 leading-relaxed text-ink-700">
+                      {result.personality.map((a) => `${a.gate}.${a.line} ${HD_GATES[a.gate] ?? ""}`).join(" · ")}
                     </p>
                   </div>
                   <div>
-                    <p className="font-semibold text-ink-900">Personality gates (conscious)</p>
-                    <p className="mt-1 text-ink-700">
-                      {result.personality.map((a) => `${a.gate}.${a.line}`).join(" · ")}
+                    <p className="font-semibold text-ink-900">Design gates (body · red, ~88 days before)</p>
+                    <p className="mt-1 leading-relaxed text-ink-700">
+                      {result.design.map((a) => `${a.gate}.${a.line} ${HD_GATES[a.gate] ?? ""}`).join(" · ")}
                     </p>
                   </div>
-                  <div>
-                    <p className="font-semibold text-ink-900">Design gates (body, ~88 days before)</p>
-                    <p className="mt-1 text-ink-700">
-                      {result.design.map((a) => `${a.gate}.${a.line}`).join(" · ")}
-                    </p>
-                  </div>
-                  <p className="text-xs text-ink-400">
-                    Open centers: {result.openCenters.join(", ") || "none"} — where you take the world in and learn its wisdom.
-                  </p>
                 </div>
               </div>
             </PremiumGate>
+          </div>
+
+          {/* Your nine centers, explained */}
+          <div className="card mt-8 p-6 sm:p-8">
+            <h2 className="font-heading text-2xl text-ink-900">Your nine centers, explained</h2>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {Object.entries(HD_CENTERS).map(([key, c]) => {
+                const isDefined = result.definedCenters.includes(key);
+                return (
+                  <div
+                    key={key}
+                    className={`rounded-xl border p-4 ${isDefined ? "border-rose-400/60 bg-rose-300/15" : "border-pearl-300 bg-white/50"}`}
+                  >
+                    <p className="text-sm font-semibold text-ink-900">
+                      {c.label}{" "}
+                      <span className={`ml-1 rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider ${isDefined ? "bg-rose-400/25 text-rose-600" : "bg-pearl-200 text-ink-500"}`}>
+                        {isDefined ? "defined" : "open"}
+                      </span>
+                    </p>
+                    <p className="mt-0.5 text-xs text-ink-400">{c.theme}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-ink-700">
+                      {isDefined ? c.defined : c.open}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* HD glossary */}
+          <div className="card mt-8 p-6 sm:p-8">
+            <h2 className="font-heading text-2xl text-ink-900">Learn the Human Design language</h2>
+            <p className="mt-1 text-sm text-ink-500">Keys, terms and legend — tap any to open.</p>
+            <div className="mt-4 space-y-2">
+              {HD_GLOSSARY.map(([term, def]) => (
+                <details key={term} className="group rounded-lg border border-pearl-300 bg-white/50 px-4 py-2.5">
+                  <summary className="cursor-pointer list-none text-sm font-medium text-rose-600 marker:content-none">
+                    <span className="mr-2 inline-block transition-transform group-open:rotate-45">＋</span>
+                    {term}
+                  </summary>
+                  <p className="mt-2 pl-6 text-sm leading-relaxed text-ink-700">{def}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       )}
