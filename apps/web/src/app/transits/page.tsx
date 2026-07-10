@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PremiumGate } from "@/components/PremiumGate";
+import { SkyWeek } from "@/components/transits/SkyWeek";
 
 export const metadata: Metadata = {
   title: "Transits — the sky right now",
@@ -21,9 +21,7 @@ export default function TransitsPage() {
           and the dates worth circling.
         </p>
       </header>
-      <PremiumGate title="Transits live in the members' House" preview={false}>
-        <div />
-      </PremiumGate>
+      <SkyWeek />
       <div className="card mt-8 p-6 text-sm leading-relaxed text-ink-700">
         <h2 className="font-heading text-xl text-ink-900">What this tab will hold</h2>
         <ul className="mt-3 list-disc space-y-1.5 pl-6">

@@ -55,7 +55,9 @@
       "Bash(cd \"/Users/alexandriaramirez/House of Alexxann/apps/web/src/app\" && mkdir -p 'blog/[slug]' admin/blog admin/members api/admin/posts api/admin/members && echo ok)",
       "Bash(sed -i '' 's|<StudioClient initialSystem=\"western\" />|<StudioClient initialSystem=\"western\" locked />|' app/western/page.tsx)",
       "Bash(sed -i '' 's|<StudioClient initialSystem=\"vedic\" />|<StudioClient initialSystem=\"vedic\" locked />|' app/vedic/page.tsx)",
-      "Bash(git commit -q -m 'feat: Human Design calculator \\(engine + bodygraph UI\\), doll-vernacular tiers, sources & lineage citations *)"
+      "Bash(git commit -q -m 'feat: Human Design calculator \\(engine + bodygraph UI\\), doll-vernacular tiers, sources & lineage citations *)",
+      "Bash(kill -9 33921)",
+      "Bash(git commit -q -m 'feat\\(web\\): 7-day sky forecast on Transits tab — computed astro weather \\(moon sign/phase, ingresses, stations, exact aspects\\); today free, week for Icons *)"
     ]
   }
 }
