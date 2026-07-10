@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { DateTime } from "luxon";
 import type { Prisma } from "@prisma/client";
 import { requireAdmin } from "@/lib/admin-auth";
@@ -6,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { FORMAT_LABELS, formatPrice, type SessionFormat } from "@/lib/services";
 import { MarkPaidButton, CancelButton } from "@/components/admin/BookingActions";
+import { SkyWeek } from "@/components/transits/SkyWeek";
 
 export const metadata: Metadata = { title: "The House ledger" };
 
@@ -87,7 +89,9 @@ export default async function AdminBookingsPage() {
   const monthStart = now.setZone(settings.practitionerTz).startOf("month");
   const monthEnd = monthStart.plus({ months: 1 });
 
-  const [awaiting, upcoming, recent, paidThisMonth, revenueAll, bookingsAll, usersTotal, membersTotal, postsTotal, recentUsers] = await Promise.all([
+  const dayStart = now.setZone(settings.practitionerTz).startOf("day");
+  const dayEnd = dayStart.plus({ days: 1 });
+  const [awaiting, upcoming, recent, paidThisMonth, revenueAll, bookingsAll, usersTotal, membersTotal, postsTotal, recentUsers, today] = await Promise.all([
     prisma.booking.findMany({
       where: {
         status: "pending",
@@ -129,6 +133,14 @@ export default async function AdminBookingsPage() {
     prisma.user.count({ where: { isMember: true } }),
     prisma.post.count({ where: { publishedAt: { not: null } } }),
     prisma.user.findMany({ orderBy: { createdAt: "desc" }, take: 6 }),
+    prisma.booking.findMany({
+      where: {
+        status: "confirmed",
+        startUtc: { gte: dayStart.toJSDate(), lt: dayEnd.toJSDate() },
+      },
+      orderBy: { startUtc: "asc" },
+      include: { service: true },
+    }),
   ]);
 
   const stats: Array<[string, string]> = [
@@ -157,6 +169,44 @@ export default async function AdminBookingsPage() {
           </div>
         ))}
       </div>
+
+      {/* Quick actions */}
+      <div className="mt-6 flex flex-wrap gap-2">
+        <Link href="/admin/blog" className="btn-gold text-xs">＋ Write today&#39;s sky post</Link>
+        <Link href="/admin/availability" className="btn-ghost text-xs">Set availability</Link>
+        <Link href="/admin/members" className="btn-ghost text-xs">Members</Link>
+        <Link href="/admin/charts" className="btn-ghost text-xs">Client charts</Link>
+        <Link href="/" className="btn-ghost text-xs">View site →</Link>
+      </div>
+
+      {/* Today, at a glance */}
+      <section className="mt-10">
+        <h2 className="text-xl text-ink-900">Today</h2>
+        {today.length === 0 ? (
+          <p className="card mt-3 p-5 text-sm text-ink-500">
+            No sessions today — a day for the House itself. ✦
+          </p>
+        ) : (
+          <ul className="mt-3 space-y-2">
+            {today.map((b) => (
+              <li key={b.id} className="card flex flex-wrap items-center justify-between gap-3 border-rose-300/60 p-4 text-sm">
+                <span className="text-ink-900">
+                  <strong>{DateTime.fromJSDate(b.startUtc).setZone(settings.practitionerTz).toFormat("h:mm a")}</strong>
+                  {" — "}{b.clientName} · {b.service.title} · {formatLabel(b.format)}
+                </span>
+                {b.birthDate && (
+                  <Link
+                    className="btn-ghost text-xs"
+                    href={`/western?name=${encodeURIComponent(b.clientName)}&date=${b.birthDate}${b.birthTime ? `&time=${b.birthTime}` : ""}${b.birthPlace ? `&place=${encodeURIComponent(b.birthPlace)}` : ""}`}
+                  >
+                    Cast chart →
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <section className="mt-10">
         <h2 className="text-xl text-ink-900">Awaiting payment</h2>
@@ -272,6 +322,13 @@ export default async function AdminBookingsPage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="mt-10">
+        <h2 className="text-xl text-ink-900">The week&#39;s sky — plan around it</h2>
+        <div className="mt-3">
+          <SkyWeek />
+        </div>
       </section>
 
     </div>
