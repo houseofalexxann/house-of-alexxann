@@ -155,7 +155,7 @@ export function StudioClient() {
     canvas.width = 1200;
     canvas.height = 1200;
     const ctx = canvas.getContext("2d")!;
-    ctx.fillStyle = "#060917";
+    ctx.fillStyle = "#fdfbfa";
     ctx.fillRect(0, 0, 1200, 1200);
     ctx.drawImage(img, 0, 0, 1200, 1200);
     URL.revokeObjectURL(url);
@@ -209,8 +209,8 @@ export function StudioClient() {
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 pt-12 sm:px-6">
       <header className="mb-10 text-center">
-        <h1 className="text-4xl text-moon-100 sm:text-5xl">Chart Studio</h1>
-        <p className="mx-auto mt-3 max-w-xl text-moon-400">
+        <h1 className="text-4xl text-ink-900 sm:text-5xl">Chart Studio</h1>
+        <p className="mx-auto mt-3 max-w-xl text-ink-500">
           Cast a natal chart with professional-grade precision — Western or
           Vedic, free. Exact time and place give the truest chart.
         </p>
@@ -226,17 +226,17 @@ export function StudioClient() {
       >
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block text-sm">
-            <span className="mb-1 block text-moon-300">Name (optional)</span>
+            <span className="mb-1 block text-ink-700">Name (optional)</span>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               placeholder="Whose sky is this?"
-              className="w-full rounded-lg border border-night-500 bg-night-900 px-3 py-2 text-moon-100 placeholder:text-moon-500 focus:border-gold-400 focus:outline-none"
+              className="w-full rounded-lg border border-pearl-500 bg-pearl-100 px-3 py-2 text-ink-900 placeholder:text-ink-400 focus:border-rose-600 focus:outline-none"
             />
           </label>
           <label className="relative block text-sm">
-            <span className="mb-1 block text-moon-300">Birthplace</span>
+            <span className="mb-1 block text-ink-700">Birthplace</span>
             <input
               type="text"
               required
@@ -246,15 +246,15 @@ export function StudioClient() {
               onBlur={() => setTimeout(() => setPlaceOpen(false), 150)}
               placeholder="City of birth…"
               autoComplete="off"
-              className="w-full rounded-lg border border-night-500 bg-night-900 px-3 py-2 text-moon-100 placeholder:text-moon-500 focus:border-gold-400 focus:outline-none"
+              className="w-full rounded-lg border border-pearl-500 bg-pearl-100 px-3 py-2 text-ink-900 placeholder:text-ink-400 focus:border-rose-600 focus:outline-none"
             />
             {placeOpen && placeResults.length > 0 && (
-              <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-night-500 bg-night-800 shadow-xl">
+              <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-pearl-500 bg-pearl-200 shadow-xl">
                 {placeResults.map((p) => (
                   <li key={p.id}>
                     <button
                       type="button"
-                      className="w-full px-3 py-2 text-left text-sm text-moon-200 hover:bg-night-700"
+                      className="w-full px-3 py-2 text-left text-sm text-ink-800 hover:bg-pearl-300"
                       onMouseDown={(e) => {
                         e.preventDefault();
                         setForm((f) => ({ ...f, place: p }));
@@ -263,7 +263,7 @@ export function StudioClient() {
                       }}
                     >
                       {p.label}
-                      <span className="ml-2 text-xs text-moon-500">{p.timezone}</span>
+                      <span className="ml-2 text-xs text-ink-400">{p.timezone}</span>
                     </button>
                   </li>
                 ))}
@@ -271,7 +271,7 @@ export function StudioClient() {
             )}
           </label>
           <label className="block text-sm">
-            <span className="mb-1 block text-moon-300">Birth date</span>
+            <span className="mb-1 block text-ink-700">Birth date</span>
             <input
               type="date"
               required
@@ -279,11 +279,11 @@ export function StudioClient() {
               min="1800-01-01"
               max="2099-12-31"
               onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-              className="w-full rounded-lg border border-night-500 bg-night-900 px-3 py-2 text-moon-100 focus:border-gold-400 focus:outline-none"
+              className="w-full rounded-lg border border-pearl-500 bg-pearl-100 px-3 py-2 text-ink-900 focus:border-rose-600 focus:outline-none"
             />
           </label>
           <div className="text-sm">
-            <span className="mb-1 block text-moon-300">Birth time</span>
+            <span className="mb-1 block text-ink-700">Birth time</span>
             <div className="flex items-center gap-3">
               <input
                 type="time"
@@ -291,16 +291,16 @@ export function StudioClient() {
                 required={form.timeKnown}
                 disabled={!form.timeKnown}
                 onChange={(e) => setForm((f) => ({ ...f, time: e.target.value }))}
-                className="w-full rounded-lg border border-night-500 bg-night-900 px-3 py-2 text-moon-100 focus:border-gold-400 focus:outline-none disabled:opacity-40"
+                className="w-full rounded-lg border border-pearl-500 bg-pearl-100 px-3 py-2 text-ink-900 focus:border-rose-600 focus:outline-none disabled:opacity-40"
               />
-              <label className="flex shrink-0 cursor-pointer items-center gap-2 text-xs text-moon-400">
+              <label className="flex shrink-0 cursor-pointer items-center gap-2 text-xs text-ink-500">
                 <input
                   type="checkbox"
                   checked={!form.timeKnown}
                   onChange={(e) =>
                     setForm((f) => ({ ...f, timeKnown: !e.target.checked }))
                   }
-                  className="accent-[#cfa84e]"
+                  className="accent-[#d4638f]"
                 />
                 Time unknown
               </label>
@@ -321,7 +321,7 @@ export function StudioClient() {
         <div className="mt-14">
           {/* System toggle + settings */}
           <div className="flex flex-wrap items-center justify-center gap-3">
-            <div className="flex overflow-hidden rounded-full border border-night-500">
+            <div className="flex overflow-hidden rounded-full border border-pearl-500">
               {(["western", "vedic"] as const).map((s) => (
                 <button
                   key={s}
@@ -329,15 +329,15 @@ export function StudioClient() {
                   onClick={() => switchSystem(s)}
                   className={`px-5 py-2 text-sm font-medium transition-colors ${
                     system === s
-                      ? "bg-gold-400 text-night-950"
-                      : "bg-night-900/60 text-moon-300 hover:text-moon-100"
+                      ? "bg-rose-600 text-pearl-50"
+                      : "bg-pearl-100/60 text-ink-700 hover:text-ink-900"
                   }`}
                 >
                   {s === "western" ? "Western · tropical" : "Vedic · sidereal"}
                 </button>
               ))}
             </div>
-            <label className="flex items-center gap-2 text-xs text-moon-400">
+            <label className="flex items-center gap-2 text-xs text-ink-500">
               Houses
               <select
                 value={system === "western" ? houseWestern : houseVedic}
@@ -347,7 +347,7 @@ export function StudioClient() {
                   else setHouseVedic(hs);
                   void compute(system, { houseSystem: hs });
                 }}
-                className="rounded-lg border border-night-500 bg-night-900 px-2 py-1.5 text-sm text-moon-100"
+                className="rounded-lg border border-pearl-500 bg-pearl-100 px-2 py-1.5 text-sm text-ink-900"
               >
                 {HOUSE_SYSTEMS.map((h) => (
                   <option key={h.value} value={h.value}>
@@ -357,7 +357,7 @@ export function StudioClient() {
               </select>
             </label>
             {system === "vedic" && (
-              <label className="flex items-center gap-2 text-xs text-moon-400">
+              <label className="flex items-center gap-2 text-xs text-ink-500">
                 Ayanamsa
                 <select
                   value={ayanamsa}
@@ -366,7 +366,7 @@ export function StudioClient() {
                     setAyanamsa(ay);
                     void compute(system, { ayanamsa: ay });
                   }}
-                  className="rounded-lg border border-night-500 bg-night-900 px-2 py-1.5 text-sm text-moon-100"
+                  className="rounded-lg border border-pearl-500 bg-pearl-100 px-2 py-1.5 text-sm text-ink-900"
                 >
                   {AYANAMSAS.map((a) => (
                     <option key={a.value} value={a.value}>
@@ -380,16 +380,16 @@ export function StudioClient() {
 
           {/* Chart header */}
           <div className="mt-8 text-center">
-            <h2 className="text-3xl text-moon-100">
+            <h2 className="text-3xl text-ink-900">
               {result.meta.name || "Natal chart"}
             </h2>
-            <p className="mt-1 text-sm text-moon-400">
+            <p className="mt-1 text-sm text-ink-500">
               {result.meta.localDate}
               {result.meta.localTime ? ` · ${result.meta.localTime}` : " · time unknown"}
               {" · "}
               {result.meta.placeLabel}
             </p>
-            <p className="mt-0.5 text-xs text-moon-500">
+            <p className="mt-0.5 text-xs text-ink-400">
               UTC {result.resolved.utc.replace("T", " ").replace("Z", "")} ·{" "}
               {vedic
                 ? `sidereal (${AYANAMSAS.find((a) => a.value === ayanamsa)?.label.replace(" (default)", "")}, ayanamsa ${chart.ayanamsaValue?.toFixed(2)}°)`
@@ -401,7 +401,7 @@ export function StudioClient() {
               houses
             </p>
             {result.resolved.warnings.map((w, i) => (
-              <p key={i} className="mx-auto mt-3 max-w-xl rounded-lg border border-gold-600/40 bg-gold-500/10 px-4 py-2 text-xs text-gold-300">
+              <p key={i} className="mx-auto mt-3 max-w-xl rounded-lg border border-rose-600/40 bg-rose-400/10 px-4 py-2 text-xs text-rose-500">
                 {w}
               </p>
             ))}
@@ -425,21 +425,21 @@ export function StudioClient() {
 
             <div className="space-y-8">
               <section className="card p-5">
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+                <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
                   Positions
                 </h3>
                 <PlanetTable chart={chart} />
               </section>
               {chart.houseCusps && (
                 <section className="card p-5">
-                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+                  <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
                     House cusps
                   </h3>
                   <HouseCuspTable chart={chart} />
                 </section>
               )}
               <section className="card p-5">
-                <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+                <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
                   Aspects
                 </h3>
                 <AspectTable chart={chart} />
@@ -451,7 +451,7 @@ export function StudioClient() {
           {vedic && chart.navamsa && (
             <div className="mt-12 grid gap-8 md:grid-cols-2">
               <section className="card p-6">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+                <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
                   Rasi — D1
                 </h3>
                 <RasiGrid
@@ -465,7 +465,7 @@ export function StudioClient() {
                 />
               </section>
               <section className="card p-6">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+                <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
                   Navamsa — D9
                 </h3>
                 <RasiGrid title="Navamsa" entries={chart.navamsa} />
@@ -474,7 +474,7 @@ export function StudioClient() {
           )}
           {vedic && chart.vimshottari && (
             <section className="card mt-8 p-6">
-              <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+              <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
                 Vimshottari dasha — the chapters of time
               </h3>
               <DashaTimeline dasha={chart.vimshottari} />
@@ -483,11 +483,11 @@ export function StudioClient() {
 
           {/* Interpretations */}
           <section className="card mt-12 p-6 sm:p-8">
-            <h2 className="font-heading text-2xl text-moon-100">Your reading</h2>
-            <p className="mb-6 mt-1 text-sm text-moon-400">
+            <h2 className="font-heading text-2xl text-ink-900">Your reading</h2>
+            <p className="mb-6 mt-1 text-sm text-ink-500">
               Baseline interpretations, written by the House. A live reading
               goes much deeper —{" "}
-              <Link href="/services" className="text-gold-400 underline-offset-2 hover:underline">
+              <Link href="/services" className="text-rose-600 underline-offset-2 hover:underline">
                 book time with Alexandria
               </Link>
               .

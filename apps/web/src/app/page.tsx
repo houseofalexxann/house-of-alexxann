@@ -6,14 +6,14 @@ export default function HomePage() {
     <div className="mx-auto max-w-6xl px-4 sm:px-6">
       {/* Hero */}
       <section className="relative flex flex-col items-center pb-20 pt-24 text-center sm:pt-32">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-gold-400">
+        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-rose-600">
           Western · Vedic · Modern &amp; Mystical
         </p>
-        <h1 className="max-w-3xl text-5xl leading-tight text-moon-100 sm:text-6xl">
+        <h1 className="max-w-3xl text-5xl leading-tight text-ink-900 sm:text-6xl">
           The sky you were born under
-          <span className="block italic text-gold-300">still remembers you.</span>
+          <span className="block italic text-rose-500">still remembers you.</span>
         </h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-moon-300">
+        <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-700">
           Cast your natal chart free — Western or Vedic, computed with
           professional-grade precision — then sit with Alexandria for a reading
           that makes it yours.
@@ -31,12 +31,12 @@ export default function HomePage() {
         <svg
           aria-hidden
           viewBox="0 0 200 200"
-          className="pointer-events-none absolute -z-10 h-[560px] w-[560px] opacity-[0.07]"
+          className="pointer-events-none absolute -z-10 h-[560px] w-[560px] opacity-[0.16]"
           style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
         >
-          <circle cx="100" cy="100" r="98" fill="none" stroke="#e3c578" strokeWidth="0.5" />
-          <circle cx="100" cy="100" r="78" fill="none" stroke="#e3c578" strokeWidth="0.3" />
-          <circle cx="100" cy="100" r="58" fill="none" stroke="#8b97f8" strokeWidth="0.3" />
+          <circle cx="100" cy="100" r="98" fill="none" stroke="#d4638f" strokeWidth="0.5" />
+          <circle cx="100" cy="100" r="78" fill="none" stroke="#d4638f" strokeWidth="0.3" />
+          <circle cx="100" cy="100" r="58" fill="none" stroke="#9f8ad0" strokeWidth="0.3" />
           {Array.from({ length: 12 }, (_, i) => {
             const a = (i * 30 * Math.PI) / 180;
             return (
@@ -46,7 +46,7 @@ export default function HomePage() {
                 y1={100 + 78 * Math.sin(a)}
                 x2={100 + 98 * Math.cos(a)}
                 y2={100 + 98 * Math.sin(a)}
-                stroke="#e3c578"
+                stroke="#d4638f"
                 strokeWidth="0.4"
               />
             );
@@ -58,27 +58,27 @@ export default function HomePage() {
 
       {/* Offerings */}
       <section className="py-20">
-        <h2 className="text-center text-3xl text-moon-100 sm:text-4xl">Readings</h2>
-        <p className="mx-auto mt-3 max-w-lg text-center text-moon-400">
+        <h2 className="text-center text-3xl text-ink-900 sm:text-4xl">Readings</h2>
+        <p className="mx-auto mt-3 max-w-lg text-center text-ink-500">
           Three ways to sit with your chart — live on video, by phone, or in
           person.
         </p>
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {SERVICES.map((s) => (
             <article key={s.slug} className="card flex flex-col p-6">
-              <h3 className="text-2xl text-gold-300">{s.title}</h3>
-              <p className="mt-1 text-sm italic text-moon-400">{s.tagline}</p>
-              <p className="mt-4 flex-1 text-sm leading-relaxed text-moon-300">
+              <h3 className="text-2xl text-rose-500">{s.title}</h3>
+              <p className="mt-1 text-sm italic text-ink-500">{s.tagline}</p>
+              <p className="mt-4 flex-1 text-sm leading-relaxed text-ink-700">
                 {s.description}
               </p>
-              <div className="mt-6 flex items-center justify-between border-t border-night-600/60 pt-4">
-                <span className="text-sm text-moon-400">
+              <div className="mt-6 flex items-center justify-between border-t border-pearl-400/60 pt-4">
+                <span className="text-sm text-ink-500">
                   {s.durationMinutes} min ·{" "}
-                  <span className="text-moon-100">{formatPrice(s.priceCents)}</span>
+                  <span className="text-ink-900">{formatPrice(s.priceCents)}</span>
                 </span>
                 <Link
                   href={`/services/${s.slug}`}
-                  className="text-sm font-medium text-gold-400 hover:text-gold-300"
+                  className="text-sm font-medium text-rose-600 hover:text-rose-500"
                 >
                   Details →
                 </Link>
@@ -91,8 +91,8 @@ export default function HomePage() {
       {/* Chart Studio strip */}
       <section className="card my-8 flex flex-col items-center gap-6 p-10 text-center md:flex-row md:text-left">
         <div className="flex-1">
-          <h2 className="text-3xl text-moon-100">The Chart Studio is open — and free.</h2>
-          <p className="mt-3 max-w-2xl leading-relaxed text-moon-300">
+          <h2 className="text-3xl text-ink-900">The Chart Studio is open — and free.</h2>
+          <p className="mt-3 max-w-2xl leading-relaxed text-ink-700">
             Enter a birth date, time and place; get a full chart wheel, exact
             degrees, aspects and plain-spoken interpretations. Flip between the
             Western and Vedic skies — including your nakshatra, dasha timeline
@@ -106,16 +106,16 @@ export default function HomePage() {
 
       {/* Testimonials placeholder (PRD §6.6) */}
       <section className="py-20">
-        <h2 className="text-center text-3xl text-moon-100">Kind words</h2>
+        <h2 className="text-center text-3xl text-ink-900">Kind words</h2>
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
             <figure key={i} className="card p-6">
-              <div aria-hidden className="text-gold-400">✦ ✦ ✦ ✦ ✦</div>
-              <blockquote className="mt-4 text-sm italic leading-relaxed text-moon-400">
+              <div aria-hidden className="text-rose-600">✦ ✦ ✦ ✦ ✦</div>
+              <blockquote className="mt-4 text-sm italic leading-relaxed text-ink-500">
                 Client testimonials will live here — this space is reserved for
                 the first voices of the House.
               </blockquote>
-              <figcaption className="mt-4 text-xs uppercase tracking-widest text-moon-500">
+              <figcaption className="mt-4 text-xs uppercase tracking-widest text-ink-400">
                 Coming soon
               </figcaption>
             </figure>

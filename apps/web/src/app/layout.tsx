@@ -27,13 +27,13 @@ export const metadata: Metadata = {
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
+    statusBarStyle: "default",
     title: "House of Alexxann",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#060917",
+  themeColor: "#fdfbfa",
   width: "device-width",
   initialScale: 1,
 };

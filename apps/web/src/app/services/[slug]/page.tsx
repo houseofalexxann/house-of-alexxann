@@ -33,18 +33,18 @@ export default async function ServiceDetailPage({
   return (
     <div className="mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-6">
       {/* Breadcrumb */}
-      <nav className="text-sm text-moon-500">
-        <Link href="/services" className="hover:text-moon-300">
+      <nav className="text-sm text-ink-400">
+        <Link href="/services" className="hover:text-ink-700">
           Readings
         </Link>{" "}
         <span aria-hidden>/</span>{" "}
-        <span className="text-moon-400">{service.title}</span>
+        <span className="text-ink-500">{service.title}</span>
       </nav>
 
       {/* Header */}
       <header className="mt-10 max-w-3xl">
-        <h1 className="text-4xl text-moon-100 sm:text-5xl">{service.title}</h1>
-        <p className="mt-3 text-xl italic text-gold-300">{service.tagline}</p>
+        <h1 className="text-4xl text-ink-900 sm:text-5xl">{service.title}</h1>
+        <p className="mt-3 text-xl italic text-rose-500">{service.tagline}</p>
       </header>
 
       <hr className="gold-rule mt-12" />
@@ -52,15 +52,15 @@ export default async function ServiceDetailPage({
       <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_20rem]">
         {/* The reading */}
         <div className="max-w-2xl">
-          <p className="text-lg leading-relaxed text-moon-300">
+          <p className="text-lg leading-relaxed text-ink-700">
             {service.description}
           </p>
 
-          <h2 className="mt-12 text-2xl text-moon-100">What we&apos;ll do</h2>
+          <h2 className="mt-12 text-2xl text-ink-900">What we&apos;ll do</h2>
           <ul className="mt-6 space-y-4">
             {service.bullets.map((b) => (
-              <li key={b} className="flex gap-3 leading-relaxed text-moon-300">
-                <span aria-hidden className="mt-0.5 text-gold-400">
+              <li key={b} className="flex gap-3 leading-relaxed text-ink-700">
+                <span aria-hidden className="mt-0.5 text-rose-600">
                   ✦
                 </span>
                 {b}
@@ -72,20 +72,20 @@ export default async function ServiceDetailPage({
         {/* Booking card */}
         <aside className="lg:sticky lg:top-24 lg:self-start">
           <div className="card p-8">
-            <p className="text-4xl text-moon-100">
+            <p className="text-4xl text-ink-900">
               {formatPrice(service.priceCents)}
             </p>
-            <p className="mt-1 text-moon-400">
+            <p className="mt-1 text-ink-500">
               {service.durationMinutes} minutes, one-on-one
             </p>
 
-            <h2 className="mt-8 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+            <h2 className="mt-8 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
               Session formats
             </h2>
             <ul className="mt-3 space-y-2">
               {service.formats.map((f) => (
-                <li key={f} className="flex gap-3 text-sm text-moon-300">
-                  <span aria-hidden className="text-gold-400">
+                <li key={f} className="flex gap-3 text-sm text-ink-700">
+                  <span aria-hidden className="text-rose-600">
                     ✦
                   </span>
                   {FORMAT_LABELS[f]}
@@ -99,7 +99,7 @@ export default async function ServiceDetailPage({
             >
               Choose a time
             </Link>
-            <p className="mt-4 text-center text-xs leading-relaxed text-moon-500">
+            <p className="mt-4 text-center text-xs leading-relaxed text-ink-400">
               You&apos;ll pick a format and share your birth details at booking.
             </p>
           </div>

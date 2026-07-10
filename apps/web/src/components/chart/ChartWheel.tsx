@@ -67,16 +67,16 @@ export function ChartWheel({ chart, className }: Props) {
     >
       <defs>
         <radialGradient id="wheel-bg" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stopColor="#121731" />
-          <stop offset="78%" stopColor="#0b0f22" />
-          <stop offset="100%" stopColor="#060917" />
+          <stop offset="0%" stopColor="#ffffff" />
+          <stop offset="78%" stopColor="#fdf6f8" />
+          <stop offset="100%" stopColor="#f7ebf0" />
         </radialGradient>
       </defs>
 
-      <circle cx={CX} cy={CY} r={R_OUTER} fill="url(#wheel-bg)" stroke="#3a4374" strokeWidth="1.5" />
-      <circle cx={CX} cy={CY} r={R_ZODIAC_INNER} fill="none" stroke="#3a4374" strokeWidth="1" />
-      <circle cx={CX} cy={CY} r={R_INNER} fill="none" stroke="#273059" strokeWidth="1" />
-      <circle cx={CX} cy={CY} r={R_ASPECT} fill="none" stroke="#1a2142" strokeWidth="0.75" />
+      <circle cx={CX} cy={CY} r={R_OUTER} fill="url(#wheel-bg)" stroke="#d9c3cb" strokeWidth="1.5" />
+      <circle cx={CX} cy={CY} r={R_ZODIAC_INNER} fill="none" stroke="#d9c3cb" strokeWidth="1" />
+      <circle cx={CX} cy={CY} r={R_INNER} fill="none" stroke="#ecdcdf" strokeWidth="1" />
+      <circle cx={CX} cy={CY} r={R_ASPECT} fill="none" stroke="#f0e2e6" strokeWidth="0.75" />
 
       {/* Zodiac ring: segment boundaries + glyphs + 10° ticks */}
       {Array.from({ length: 12 }, (_, s) => {
@@ -86,7 +86,7 @@ export function ChartWheel({ chart, className }: Props) {
         const mid = pt(start + 15, (R_OUTER + R_ZODIAC_INNER) / 2);
         return (
           <g key={s}>
-            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#3a4374" strokeWidth="1" />
+            <line x1={a.x} y1={a.y} x2={b.x} y2={b.y} stroke="#d9c3cb" strokeWidth="1" />
             <text
               x={mid.x}
               y={mid.y}
@@ -102,7 +102,7 @@ export function ChartWheel({ chart, className }: Props) {
               const t1 = pt(start + t, R_ZODIAC_INNER);
               const t2 = pt(start + t, R_ZODIAC_INNER + 8);
               return (
-                <line key={t} x1={t1.x} y1={t1.y} x2={t2.x} y2={t2.y} stroke="#3a4374" strokeWidth="0.6" />
+                <line key={t} x1={t1.x} y1={t1.y} x2={t2.x} y2={t2.y} stroke="#d9c3cb" strokeWidth="0.6" />
               );
             })}
           </g>
@@ -125,14 +125,14 @@ export function ChartWheel({ chart, className }: Props) {
                 y1={inner.y}
                 x2={outer.x}
                 y2={outer.y}
-                stroke={isAngle ? "#e3c578" : "#3a4374"}
+                stroke={isAngle ? "#d4638f" : "#d9c3cb"}
                 strokeWidth={isAngle ? 1.6 : 0.8}
                 opacity={isAngle ? 0.9 : 0.7}
               />
               <text
                 x={numPos.x}
                 y={numPos.y}
-                fill="#6f7499"
+                fill="#a794b0"
                 fontSize="11"
                 textAnchor="middle"
                 dominantBaseline="central"
@@ -158,7 +158,7 @@ export function ChartWheel({ chart, className }: Props) {
                 key={label}
                 x={p.x}
                 y={p.y}
-                fill="#e3c578"
+                fill="#d4638f"
                 fontSize="12"
                 fontWeight="600"
                 textAnchor="middle"
@@ -200,11 +200,11 @@ export function ChartWheel({ chart, className }: Props) {
         const deg = pt(lonDisplay, R_PLANET - 26);
         return (
           <g key={p.body}>
-            <line x1={tick1.x} y1={tick1.y} x2={tick2.x} y2={tick2.y} stroke="#eef0fa" strokeWidth="1.1" opacity="0.9" />
+            <line x1={tick1.x} y1={tick1.y} x2={tick2.x} y2={tick2.y} stroke="#45304b" strokeWidth="1.1" opacity="0.9" />
             <text
               x={g.x}
               y={g.y}
-              fill="#eef0fa"
+              fill="#45304b"
               fontSize="21"
               textAnchor="middle"
               dominantBaseline="central"
@@ -214,7 +214,7 @@ export function ChartWheel({ chart, className }: Props) {
             <text
               x={deg.x}
               y={deg.y}
-              fill="#9297bc"
+              fill="#8d7797"
               fontSize="9.5"
               textAnchor="middle"
               dominantBaseline="central"
@@ -229,7 +229,7 @@ export function ChartWheel({ chart, className }: Props) {
       <text
         x={CX}
         y={CY}
-        fill="#e3c578"
+        fill="#d4638f"
         fontSize="14"
         textAnchor="middle"
         dominantBaseline="central"

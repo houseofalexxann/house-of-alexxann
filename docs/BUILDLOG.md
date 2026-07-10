@@ -28,6 +28,21 @@ Running log of decisions and deviations during the Phase 1 build (PRD v1.1, froz
 - Design system: night-indigo base (#060917…), starlight-gold accents, Cormorant Garamond headings + Inter body, CSS-only drifting starfield (respects `prefers-reduced-motion`), card/btn primitives. Verified rendering in the browser.
 - Placeholder pricing on the three services ($175/90min natal, $125/60min transit, $175/90min vedic) — **Alexandria to set real prices before launch.**
 
+## 2026-07-10 — Owner direction changes (mid-build)
+
+Alexandria added three requirements during the build (recorded as PRD deltas):
+
+1. **Rebrand — "Venus in Libra"**: bright & light — pink, mother-of-pearl white, pastels — replacing the PRD §10 dark night-sky direction. Implemented as new tokens (pearl/rose/lilac/ink) + full re-theme of components, chart wheel, emails. *Deviation from frozen PRD §10, at owner's explicit request.*
+2. **Flexible payments**: sliding-scale tiers (community ≈70% / standard / sustainer ≈125%, rounded to $5) on every reading; pay-in-4 & installments (Klarna/Afterpay/Affirm), Cash App Pay and PayPal wallet via Stripe Checkout; **plus direct person-to-person payment (Venmo / Cash App / Zelle / PayPal.me)** — handles configurable in admin (seeded with placeholders), slot held 24h, admin marks payment received to confirm. Rationale: Venmo/Zelle expose no practitioner APIs; P2P-with-manual-confirm is the industry-standard solo-practitioner pattern.
+3. **CHANI-style presentation** (from her screenshots): keys-to-your-chart hierarchy, plain-language taglines, houses/planets cheat-sheet legend. Transits remain Phase 2 — not built.
+
+## 2026-07-10 — Booking subsystem verified end-to-end (dev)
+
+- Real PostgreSQL via embedded-postgres (`.pgdata/`, port 5502); Prisma 7 (new `prisma.config.ts` + driver-adapter model — `url` in schema is gone in v7).
+- Verified by API test: slot computation honors Tue–Sat 10–17 seeded windows, practitioner tz (America/Chicago), 12h lead, buffers; double-booking rejected; mock checkout completes → confirmation email written to `var/outbox/`; direct-pay booking sends handle instructions email; reminder engine sent the 24h reminder for a booking 20h out (in-process scheduler + `/api/cron/reminders`).
+- **Stripe runs in mock mode until keys exist** — real Checkout (incl. BNPL/Cash App/PayPal availability per Stripe account settings) needs `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`; webhook handler is implemented and signature-verified.
+- Turbopack gotcha #3: it serves stale CSS from `.next/dev` cache across restarts after big `globals.css` rewrites — fixed by clearing `.next`.
+
 ## Decision log
 
 | # | Decision | Why |

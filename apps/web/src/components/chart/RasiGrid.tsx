@@ -47,7 +47,7 @@ export function RasiGrid({
   return (
     <figure>
       <div
-        className="grid aspect-square grid-cols-4 grid-rows-4 overflow-hidden rounded-lg border border-night-500"
+        className="grid aspect-square grid-cols-4 grid-rows-4 overflow-hidden rounded-lg border border-pearl-500"
         role="img"
         aria-label={`${title} chart grid`}
       >
@@ -58,9 +58,9 @@ export function RasiGrid({
                 return (
                   <div
                     key={`${r}${c}`}
-                    className="col-span-2 row-span-2 flex items-center justify-center border border-night-700/50 bg-night-900/60"
+                    className="col-span-2 row-span-2 flex items-center justify-center border border-pearl-300/50 bg-pearl-100/60"
                   >
-                    <span className="font-heading text-lg italic text-gold-400/80">{title}</span>
+                    <span className="font-heading text-lg italic text-rose-600/80">{title}</span>
                   </div>
                 );
               }
@@ -70,9 +70,9 @@ export function RasiGrid({
             return (
               <div
                 key={`${r}${c}`}
-                className="relative flex min-h-16 flex-wrap content-start gap-x-1.5 gap-y-0.5 border border-night-700/50 bg-night-800/40 p-1.5 pt-5"
+                className="relative flex min-h-16 flex-wrap content-start gap-x-1.5 gap-y-0.5 border border-pearl-300/50 bg-pearl-200/40 p-1.5 pt-5"
               >
-                <span className="absolute left-1.5 top-1 text-[10px] text-moon-500">
+                <span className="absolute left-1.5 top-1 text-[10px] text-ink-400">
                   {SIGN_GLYPHS[cell.sign]}
                 </span>
                 {list.map((e) => (
@@ -80,8 +80,8 @@ export function RasiGrid({
                     key={e.body}
                     className={
                       e.body === "ascendant"
-                        ? "text-xs font-semibold text-gold-300"
-                        : "text-sm text-moon-100"
+                        ? "text-xs font-semibold text-rose-500"
+                        : "text-sm text-ink-900"
                     }
                     title={e.body}
                   >

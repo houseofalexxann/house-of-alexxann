@@ -19,19 +19,19 @@ export const BODY_NAMES: Record<Body, string> = {
   pluto: "Pluto", rahu: "Rahu ☊", ketu: "Ketu ☋",
 };
 
-/** Element hue per sign index: fire, earth, air, water repeating. */
+/** Element hue per sign index: fire, earth, air, water repeating (pastels). */
 export const SIGN_COLORS = [
-  "#e8a87c", "#a8c69f", "#9db8e8", "#8f9fd4",
-  "#e8a87c", "#a8c69f", "#9db8e8", "#8f9fd4",
-  "#e8a87c", "#a8c69f", "#9db8e8", "#8f9fd4",
+  "#e08a63", "#74b18a", "#6f9ed6", "#8b83cc",
+  "#e08a63", "#74b18a", "#6f9ed6", "#8b83cc",
+  "#e08a63", "#74b18a", "#6f9ed6", "#8b83cc",
 ];
 
 export const ASPECT_COLORS: Record<string, string> = {
-  conjunction: "#e3c578",
-  opposition: "#d4708a",
-  square: "#d4708a",
-  trine: "#7fc9a6",
-  sextile: "#8b97f8",
+  conjunction: "#cf9c3f",
+  opposition: "#d4638f",
+  square: "#d4638f",
+  trine: "#5fae85",
+  sextile: "#8b83cc",
 };
 
 export const ASPECT_SYMBOLS: Record<string, string> = {

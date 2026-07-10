@@ -1,0 +1,151 @@
+// House of Alexxann — Phase 1 data model (PRD §9).
+// Dev runs on embedded PostgreSQL; production points DATABASE_URL at any
+// managed Postgres. Birth data is sensitive PII — see PRD §11.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  seeker
+  client
+  admin
+}
+
+enum ChartSystem {
+  western
+  vedic
+}
+
+enum SessionFormat {
+  video
+  phone
+  in_person
+}
+
+enum BookingStatus {
+  pending
+  confirmed
+  canceled
+  completed
+}
+
+enum PaymentStatus {
+  unpaid
+  paid
+  refunded
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  role      Role     @default(seeker)
+  createdAt DateTime @default(now())
+  profiles  BirthProfile[]
+}
+
+model BirthProfile {
+  id         String    @id @default(cuid())
+  name       String
+  // Local birth data as entered + resolved place.
+  birthDate  String // YYYY-MM-DD (local)
+  birthTime  String? // HH:mm (local); null = time unknown
+  timeKnown  Boolean   @default(true)
+  placeLabel String
+  latitude   Float
+  longitude  Float
+  timezone   String
+  utc        DateTime // resolved birth instant
+  notes      String?
+  userId     String?
+  user       User?     @relation(fields: [userId], references: [id])
+  charts     Chart[]
+  createdAt  DateTime  @default(now())
+}
+
+model Chart {
+  id             String       @id @default(cuid())
+  birthProfileId String
+  birthProfile   BirthProfile @relation(fields: [birthProfileId], references: [id], onDelete: Cascade)
+  system         ChartSystem
+  houseSystem    String
+  ayanamsa       String?
+  payload        Json
+  computedAt     DateTime     @default(now())
+}
+
+model Service {
+  id              String    @id @default(cuid())
+  slug            String    @unique
+  type            String // natal | transit | vedic
+  title           String
+  durationMinutes Int
+  priceCents      Int
+  active          Boolean   @default(true)
+  bookings        Booking[]
+}
+
+model Booking {
+  id            String        @id @default(cuid())
+  // Public lookup token so the confirmation page needs no account.
+  token         String        @unique @default(cuid())
+  serviceId     String
+  service       Service       @relation(fields: [serviceId], references: [id])
+  clientName    String
+  clientEmail   String
+  clientPhone   String?
+  format        SessionFormat
+  startUtc      DateTime
+  endUtc        DateTime
+  clientTz      String
+  status        BookingStatus @default(pending)
+  paymentStatus PaymentStatus @default(unpaid)
+  // Sliding scale: which tier was chosen and the actual amount.
+  priceCents    Int
+  priceTier     String        @default("standard")
+  paymentMode   String? // "stripe" | "mock"
+  stripeSessionId String?     @unique
+  // Format-specific delivery detail (video link / phone / address).
+  meetingDetail String?
+  // Optional birth data so Alexandria can prepare the chart.
+  birthDate     String?
+  birthTime     String?
+  birthPlace    String?
+  notes         String?
+  confirmationSentAt DateTime?
+  reminderSentAt     DateTime?
+  createdAt     DateTime      @default(now())
+
+  @@index([startUtc])
+  @@index([status, startUtc])
+}
+
+// Weekly availability windows in the practitioner's timezone.
+model AvailabilityRule {
+  id          String  @id @default(cuid())
+  weekday     Int // 0 = Sunday … 6 = Saturday
+  startMinute Int // minutes from local midnight
+  endMinute   Int
+  active      Boolean @default(true)
+}
+
+// Date-specific overrides: block a day or open extra hours.
+model AvailabilityException {
+  id          String  @id @default(cuid())
+  date        String // YYYY-MM-DD in practitioner tz
+  blocked     Boolean @default(true)
+  startMinute Int?
+  endMinute   Int?
+  note        String?
+}
+
+// Practitioner settings (buffer, lead time, timezone, horizon).
+model Setting {
+  key   String @id
+  value String
+}

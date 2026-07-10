@@ -15,7 +15,7 @@ export function PlanetTable({ chart }: { chart: ChartResult }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-night-600 text-left text-xs uppercase tracking-widest text-moon-500">
+          <tr className="border-b border-pearl-400 text-left text-xs uppercase tracking-widest text-ink-400">
             <th className="py-2 pr-3 font-medium">Body</th>
             <th className="py-2 pr-3 font-medium">Position</th>
             {chart.input.timeKnown && <th className="py-2 pr-3 font-medium">House</th>}
@@ -26,52 +26,52 @@ export function PlanetTable({ chart }: { chart: ChartResult }) {
         <tbody>
           {chart.angles && (
             <>
-              <tr className="border-b border-night-700/60">
-                <td className="py-2 pr-3 text-gold-300">Ascendant</td>
+              <tr className="border-b border-pearl-300/60">
+                <td className="py-2 pr-3 text-rose-500">Ascendant</td>
                 <td className="py-2 pr-3">
                   {chart.angles.formattedAscendant}{" "}
-                  <span className="text-moon-300">{SIGN_NAMES[chart.angles.ascendantSign]}</span>
+                  <span className="text-ink-700">{SIGN_NAMES[chart.angles.ascendantSign]}</span>
                 </td>
-                {chart.input.timeKnown && <td className="py-2 pr-3 text-moon-400">1st cusp</td>}
-                <td className="py-2 pr-3 text-moon-500">—</td>
-                {vedic && <td className="py-2 text-moon-500">—</td>}
+                {chart.input.timeKnown && <td className="py-2 pr-3 text-ink-500">1st cusp</td>}
+                <td className="py-2 pr-3 text-ink-400">—</td>
+                {vedic && <td className="py-2 text-ink-400">—</td>}
               </tr>
-              <tr className="border-b border-night-700/60">
-                <td className="py-2 pr-3 text-gold-300">Midheaven</td>
+              <tr className="border-b border-pearl-300/60">
+                <td className="py-2 pr-3 text-rose-500">Midheaven</td>
                 <td className="py-2 pr-3">
                   {chart.angles.formattedMidheaven}{" "}
-                  <span className="text-moon-300">{SIGN_NAMES[chart.angles.midheavenSign]}</span>
+                  <span className="text-ink-700">{SIGN_NAMES[chart.angles.midheavenSign]}</span>
                 </td>
-                {chart.input.timeKnown && <td className="py-2 pr-3 text-moon-400">10th cusp</td>}
-                <td className="py-2 pr-3 text-moon-500">—</td>
-                {vedic && <td className="py-2 text-moon-500">—</td>}
+                {chart.input.timeKnown && <td className="py-2 pr-3 text-ink-500">10th cusp</td>}
+                <td className="py-2 pr-3 text-ink-400">—</td>
+                {vedic && <td className="py-2 text-ink-400">—</td>}
               </tr>
             </>
           )}
           {chart.planets.map((p) => (
-            <tr key={p.body} className="border-b border-night-700/60 last:border-0">
+            <tr key={p.body} className="border-b border-pearl-300/60 last:border-0">
               <td className="py-2 pr-3">
                 <span className="mr-2 text-base">{PLANET_GLYPHS[p.body]}</span>
                 {BODY_NAMES[p.body]}
               </td>
               <td className="py-2 pr-3 tabular-nums">
                 {p.formatted}{" "}
-                <span className="text-moon-300">{SIGN_NAMES[p.sign]}</span>
+                <span className="text-ink-700">{SIGN_NAMES[p.sign]}</span>
               </td>
               {chart.input.timeKnown && (
-                <td className="py-2 pr-3 text-moon-400">
+                <td className="py-2 pr-3 text-ink-500">
                   {p.house ? ORDINALS[p.house - 1] : "—"}
                 </td>
               )}
               <td className="py-2 pr-3">
                 {p.retrograde ? (
-                  <span className="text-gold-400">℞ retrograde</span>
+                  <span className="text-rose-600">℞ retrograde</span>
                 ) : (
-                  <span className="text-moon-500">direct</span>
+                  <span className="text-ink-400">direct</span>
                 )}
               </td>
               {vedic && (
-                <td className="py-2 text-moon-300">
+                <td className="py-2 text-ink-700">
                   {p.nakshatra ? `${p.nakshatra.name} · pada ${p.nakshatra.pada}` : "—"}
                 </td>
               )}
@@ -89,7 +89,7 @@ export function HouseCuspTable({ chart }: { chart: ChartResult }) {
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-night-600 text-left text-xs uppercase tracking-widest text-moon-500">
+          <tr className="border-b border-pearl-400 text-left text-xs uppercase tracking-widest text-ink-400">
             <th className="py-2 pr-3 font-medium">House</th>
             <th className="py-2 font-medium">Cusp</th>
           </tr>
@@ -101,11 +101,11 @@ export function HouseCuspTable({ chart }: { chart: ChartResult }) {
             const d = Math.floor(deg);
             const m = Math.round((deg - d) * 60);
             return (
-              <tr key={i} className="border-b border-night-700/60 last:border-0">
-                <td className="py-1.5 pr-3 text-moon-400">{ORDINALS[i]}</td>
+              <tr key={i} className="border-b border-pearl-300/60 last:border-0">
+                <td className="py-1.5 pr-3 text-ink-500">{ORDINALS[i]}</td>
                 <td className="py-1.5 tabular-nums">
                   {d}°{String(m).padStart(2, "0")}&#39;{" "}
-                  <span className="text-moon-300">{SIGN_NAMES[sign]}</span>
+                  <span className="text-ink-700">{SIGN_NAMES[sign]}</span>
                 </td>
               </tr>
             );
@@ -118,12 +118,12 @@ export function HouseCuspTable({ chart }: { chart: ChartResult }) {
 
 export function AspectTable({ chart }: { chart: ChartResult }) {
   if (chart.aspects.length === 0)
-    return <p className="text-sm text-moon-400">No major aspects within orb.</p>;
+    return <p className="text-sm text-ink-500">No major aspects within orb.</p>;
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-night-600 text-left text-xs uppercase tracking-widest text-moon-500">
+          <tr className="border-b border-pearl-400 text-left text-xs uppercase tracking-widest text-ink-400">
             <th className="py-2 pr-3 font-medium">Aspect</th>
             <th className="py-2 pr-3 font-medium">Orb</th>
             <th className="py-2 font-medium">Phase</th>
@@ -131,15 +131,15 @@ export function AspectTable({ chart }: { chart: ChartResult }) {
         </thead>
         <tbody>
           {chart.aspects.map((a, i) => (
-            <tr key={i} className="border-b border-night-700/60 last:border-0">
+            <tr key={i} className="border-b border-pearl-300/60 last:border-0">
               <td className="py-2 pr-3">
                 {BODY_NAMES[a.a]}{" "}
-                <span className="mx-1 text-gold-400">{ASPECT_SYMBOLS[a.type]}</span>{" "}
+                <span className="mx-1 text-rose-600">{ASPECT_SYMBOLS[a.type]}</span>{" "}
                 {BODY_NAMES[a.b]}
-                <span className="ml-2 text-xs text-moon-500">{a.type}</span>
+                <span className="ml-2 text-xs text-ink-400">{a.type}</span>
               </td>
-              <td className="py-2 pr-3 tabular-nums text-moon-300">{a.orb.toFixed(2)}°</td>
-              <td className="py-2 text-moon-400">
+              <td className="py-2 pr-3 tabular-nums text-ink-700">{a.orb.toFixed(2)}°</td>
+              <td className="py-2 text-ink-500">
                 {a.applying === null ? "—" : a.applying ? "applying" : "separating"}
               </td>
             </tr>

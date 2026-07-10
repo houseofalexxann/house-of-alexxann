@@ -30,7 +30,12 @@
       "Bash(ls node_modules/sweph/build/Release/*.node)",
       "Bash(ls \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/sweph-probe/node_modules/sweph/prebuilds\")",
       "Bash(ls \"/private/tmp/claude-501/-Users-alexandriaramirez-House-of-Alexxann/cc16d8ba-d825-4e72-b0d5-374bd3b86b15/scratchpad/sweph-probe/node_modules/sweph/build/Release/\"*.node)",
-      "Bash(git commit -q -m 'feat\\(web\\): Chart Studio — geocoding+DST resolution, chart API, SVG wheel, D1/D9 grids, dasha timeline, 513 authored interpretations, CHANI-style keys/taglines/legend; services+about pages; sliding-scale price tiers *)"
+      "Bash(git commit -q -m 'feat\\(web\\): Chart Studio — geocoding+DST resolution, chart API, SVG wheel, D1/D9 grids, dasha timeline, 513 authored interpretations, CHANI-style keys/taglines/legend; services+about pages; sliding-scale price tiers *)",
+      "Bash(date -u -v+14d +%Y-%m-%dT%H:%M:%SZ)",
+      "Bash(curl -s 'http://localhost:3000/api/slots?service=natal-reading&from=__TRACKED_VAR__&to=__TRACKED_VAR__')",
+      "Bash(curl -s -X POST http://localhost:3000/api/bookings -H 'Content-Type: application/json' -d '{ *)",
+      "Bash(curl -s -X POST http://localhost:3000/api/bookings/mock-pay -H \"Content-Type: application/json\" -d '{\"token\":\"cmreplrdk0001z460dvs2a179\"}')",
+      "Bash(curl -s -X POST http://localhost:3000/api/bookings -H \"Content-Type: application/json\" -d '{\"serviceSlug\":\"natal-reading\",\"startUtc\":\"2026-07-11T15:00:00Z\",\"format\":\"phone\",\"clientName\":\"Rival\",\"clientEmail\":\"r@example.com\",\"clientPhone\":\"+1 555 0100\",\"clientTz\":\"America/Chicago\",\"priceTier\":\"community\",\"paymentMethod\":\"checkout\"}')"
     ]
   }
 }

@@ -13,13 +13,13 @@ export default function ServicesPage() {
     <div className="mx-auto max-w-6xl px-4 pb-24 pt-16 sm:px-6">
       {/* Intro */}
       <header className="mx-auto max-w-2xl text-center">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-gold-400">
+        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-rose-600">
           Readings &amp; Pricing
         </p>
-        <h1 className="text-4xl text-moon-100 sm:text-5xl">
+        <h1 className="text-4xl text-ink-900 sm:text-5xl">
           Sit with your chart.
         </h1>
-        <p className="mt-6 text-lg leading-relaxed text-moon-300">
+        <p className="mt-6 text-lg leading-relaxed text-ink-700">
           Every reading begins the same way: your chart, cast to the minute and
           the meridian, and an hour or more of undivided attention. Choose the
           sky you want to look through — the map you were born with, the season
@@ -38,19 +38,19 @@ export default function ServicesPage() {
           >
             {/* What the reading is */}
             <div className="flex-1">
-              <h2 className="text-3xl text-gold-300">
-                <Link href={`/services/${s.slug}`} className="hover:text-gold-400">
+              <h2 className="text-3xl text-rose-500">
+                <Link href={`/services/${s.slug}`} className="hover:text-rose-600">
                   {s.title}
                 </Link>
               </h2>
-              <p className="mt-1 italic text-moon-400">{s.tagline}</p>
-              <p className="mt-5 leading-relaxed text-moon-300">
+              <p className="mt-1 italic text-ink-500">{s.tagline}</p>
+              <p className="mt-5 leading-relaxed text-ink-700">
                 {s.description}
               </p>
               <ul className="mt-6 space-y-2.5">
                 {s.bullets.map((b) => (
-                  <li key={b} className="flex gap-3 text-sm leading-relaxed text-moon-300">
-                    <span aria-hidden className="mt-0.5 text-gold-400">
+                  <li key={b} className="flex gap-3 text-sm leading-relaxed text-ink-700">
+                    <span aria-hidden className="mt-0.5 text-rose-600">
                       ✦
                     </span>
                     {b}
@@ -60,17 +60,17 @@ export default function ServicesPage() {
             </div>
 
             {/* How to book it */}
-            <div className="flex shrink-0 flex-col justify-between gap-6 border-t border-night-600/60 pt-6 md:w-56 md:border-l md:border-t-0 md:pl-8 md:pt-0">
+            <div className="flex shrink-0 flex-col justify-between gap-6 border-t border-pearl-400/60 pt-6 md:w-56 md:border-l md:border-t-0 md:pl-8 md:pt-0">
               <div>
-                <p className="text-3xl text-moon-100">
+                <p className="text-3xl text-ink-900">
                   {formatPrice(s.priceCents)}
                 </p>
-                <p className="mt-1 text-sm text-moon-400">
+                <p className="mt-1 text-sm text-ink-500">
                   {s.durationMinutes} minutes
                 </p>
                 <ul className="mt-5 space-y-1.5">
                   {s.formats.map((f) => (
-                    <li key={f} className="text-sm text-moon-400">
+                    <li key={f} className="text-sm text-ink-500">
                       {FORMAT_LABELS[f]}
                     </li>
                   ))}
@@ -82,7 +82,7 @@ export default function ServicesPage() {
                 </Link>
                 <Link
                   href={`/services/${s.slug}`}
-                  className="text-center text-sm font-medium text-gold-400 hover:text-gold-300"
+                  className="text-center text-sm font-medium text-rose-600 hover:text-rose-500"
                 >
                   Full details →
                 </Link>
@@ -93,9 +93,9 @@ export default function ServicesPage() {
       </section>
 
       {/* Studio aside */}
-      <p className="mt-16 text-center text-sm text-moon-400">
+      <p className="mt-16 text-center text-sm text-ink-500">
         Not ready for a reading?{" "}
-        <Link href="/studio" className="font-medium text-gold-400 hover:text-gold-300">
+        <Link href="/studio" className="font-medium text-rose-600 hover:text-rose-500">
           Cast your chart free in the Studio
         </Link>{" "}
         — it&apos;s the same engine Alexandria reads from.

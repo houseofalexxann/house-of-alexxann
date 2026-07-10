@@ -41,21 +41,21 @@ function KeyCard({
     <article className="card overflow-hidden">
       <button
         type="button"
-        className="flex w-full items-start gap-4 p-5 text-left transition-colors hover:bg-night-800/60"
+        className="flex w-full items-start gap-4 p-5 text-left transition-colors hover:bg-pearl-200/60"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >
-        <span aria-hidden className="mt-0.5 text-2xl text-gold-300">{glyph}</span>
+        <span aria-hidden className="mt-0.5 text-2xl text-rose-500">{glyph}</span>
         <span className="flex-1">
-          <span className="block font-heading text-lg leading-snug text-moon-100">
+          <span className="block font-heading text-lg leading-snug text-ink-900">
             {heading}
           </span>
-          <span className="mt-0.5 block text-sm text-moon-400">{tagline}</span>
+          <span className="mt-0.5 block text-sm text-ink-500">{tagline}</span>
         </span>
-        <span aria-hidden className="mt-1 text-moon-500">{open ? "▴" : "▾"}</span>
+        <span aria-hidden className="mt-1 text-ink-400">{open ? "▴" : "▾"}</span>
       </button>
       {open && interp && (
-        <p className="border-t border-night-700/60 px-5 py-4 text-sm leading-relaxed text-moon-300">
+        <p className="border-t border-pearl-300/60 px-5 py-4 text-sm leading-relaxed text-ink-700">
           {interp.body}
         </p>
       )}
@@ -65,10 +65,10 @@ function KeyCard({
 
 function Entry({ interp, tagline }: { interp: Interpretation; tagline?: string }) {
   return (
-    <article className="border-b border-night-700/60 py-4 last:border-0">
-      <h4 className="font-heading text-lg text-gold-300">{interp.title}</h4>
-      {tagline && <p className="text-xs text-moon-500">{tagline}</p>}
-      <p className="mt-1.5 text-sm leading-relaxed text-moon-300">{interp.body}</p>
+    <article className="border-b border-pearl-300/60 py-4 last:border-0">
+      <h4 className="font-heading text-lg text-rose-500">{interp.title}</h4>
+      {tagline && <p className="text-xs text-ink-400">{tagline}</p>}
+      <p className="mt-1.5 text-sm leading-relaxed text-ink-700">{interp.body}</p>
     </article>
   );
 }
@@ -77,43 +77,43 @@ function Entry({ interp, tagline }: { interp: Interpretation; tagline?: string }
 function Legend() {
   const [open, setOpen] = useState(false);
   return (
-    <section className="mt-10 rounded-xl border border-night-600/60">
+    <section className="mt-10 rounded-xl border border-pearl-400/60">
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
-        className="flex w-full items-center justify-between px-5 py-3 text-left text-sm font-semibold uppercase tracking-[0.2em] text-moon-400 hover:text-moon-100"
+        className="flex w-full items-center justify-between px-5 py-3 text-left text-sm font-semibold uppercase tracking-[0.2em] text-ink-500 hover:text-ink-900"
       >
         Make it make sense — houses &amp; planets, in one breath
         <span aria-hidden>{open ? "▴" : "▾"}</span>
       </button>
       {open && (
-        <div className="grid gap-8 border-t border-night-700/60 p-5 md:grid-cols-2">
+        <div className="grid gap-8 border-t border-pearl-300/60 p-5 md:grid-cols-2">
           <div>
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-moon-500">
+            <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-ink-400">
               The houses
             </h4>
             <ul className="space-y-2 text-sm">
               {HOUSE_MEANINGS.map((h) => (
                 <li key={h.title}>
-                  <span className="text-gold-300">{h.title}:</span>{" "}
-                  <span className="text-moon-300">{h.keywords}</span>
+                  <span className="text-rose-500">{h.title}:</span>{" "}
+                  <span className="text-ink-700">{h.keywords}</span>
                 </li>
               ))}
             </ul>
           </div>
           <div>
-            <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-moon-500">
+            <h4 className="mb-3 text-xs font-semibold uppercase tracking-widest text-ink-400">
               The planets &amp; what they carry
             </h4>
             <ul className="space-y-2 text-sm">
               {Object.entries(PLANET_SIGNIFICATIONS).map(([body, words]) => (
                 <li key={body}>
                   <span className="mr-1.5">{PLANET_GLYPHS[body as keyof typeof PLANET_GLYPHS]}</span>
-                  <span className="text-gold-300">
+                  <span className="text-rose-500">
                     {BODY_NAMES[body as keyof typeof BODY_NAMES]}:
                   </span>{" "}
-                  <span className="text-moon-300">{words.join(", ")}</span>
+                  <span className="text-ink-700">{words.join(", ")}</span>
                 </li>
               ))}
             </ul>
@@ -133,7 +133,7 @@ export function InterpretationsPanel({ chart }: { chart: ChartResult }) {
     <div>
       {/* ——— The keys to your chart: Rising, Sun, Moon ——— */}
       <section>
-        <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+        <h3 className="mb-3 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
           The keys to your chart
         </h3>
         <div className="space-y-3">
@@ -167,7 +167,7 @@ export function InterpretationsPanel({ chart }: { chart: ChartResult }) {
       {/* ——— Vedic: nakshatra + current chapter ——— */}
       {vedic && chart.vimshottari && (
         <section className="mt-10">
-          <h3 className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+          <h3 className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
             Your lunar mansion &amp; current chapter
           </h3>
           <div>
@@ -191,7 +191,7 @@ export function InterpretationsPanel({ chart }: { chart: ChartResult }) {
 
       {/* ——— Planets in signs & houses, taglined ——— */}
       <section className="mt-10">
-        <h3 className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+        <h3 className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
           Your planets
         </h3>
         <div>
@@ -214,7 +214,7 @@ export function InterpretationsPanel({ chart }: { chart: ChartResult }) {
       {/* ——— Houses (time known only) ——— */}
       {chart.input.timeKnown && (
         <section className="mt-10">
-          <h3 className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+          <h3 className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
             Where it lands — planets in houses
           </h3>
           <div>
@@ -239,7 +239,7 @@ export function InterpretationsPanel({ chart }: { chart: ChartResult }) {
 
       {/* ——— Aspects ——— */}
       <section className="mt-10">
-        <h3 className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-moon-500">
+        <h3 className="mb-1 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
           The conversations between planets
         </h3>
         <div>
