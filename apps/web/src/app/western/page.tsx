@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { StudioClient } from "@/components/studio/StudioClient";
+import { TabLearn } from "@/components/learn/TabLearn";
 
 export const metadata: Metadata = {
   title: "Western astrology — free natal charts",
@@ -8,5 +9,10 @@ export const metadata: Metadata = {
 };
 
 export default function WesternPage() {
-  return <StudioClient initialSystem="western" locked />;
+  return (
+    <>
+      <StudioClient initialSystem="western" locked />
+      <TabLearn system="western" />
+    </>
+  );
 }
