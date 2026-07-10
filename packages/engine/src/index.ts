@@ -254,3 +254,4 @@ export {
   zodiacalReleasingL1,
   ZR_YEARS,
 } from "./hellenistic";
+export * from "./humandesign";

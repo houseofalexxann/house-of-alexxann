@@ -54,7 +54,8 @@
       "Bash(git commit -q -m 'docs: build log round 3 — trans-flag identity, premium gating, SW root cause, spend-limit note *)",
       "Bash(cd \"/Users/alexandriaramirez/House of Alexxann/apps/web/src/app\" && mkdir -p 'blog/[slug]' admin/blog admin/members api/admin/posts api/admin/members && echo ok)",
       "Bash(sed -i '' 's|<StudioClient initialSystem=\"western\" />|<StudioClient initialSystem=\"western\" locked />|' app/western/page.tsx)",
-      "Bash(sed -i '' 's|<StudioClient initialSystem=\"vedic\" />|<StudioClient initialSystem=\"vedic\" locked />|' app/vedic/page.tsx)"
+      "Bash(sed -i '' 's|<StudioClient initialSystem=\"vedic\" />|<StudioClient initialSystem=\"vedic\" locked />|' app/vedic/page.tsx)",
+      "Bash(git commit -q -m 'feat: Human Design calculator \\(engine + bodygraph UI\\), doll-vernacular tiers, sources & lineage citations *)"
     ]
   }
 }

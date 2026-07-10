@@ -340,6 +340,36 @@ export default function CodexPage() {
         </dl>
       </section>
 
+      {/* Sources & lineage — credit where the knowledge lives */}
+      <section id="lineage" className="card mt-8 p-6 sm:p-8">
+        <h2 className="font-heading text-2xl text-ink-900">Sources &amp; lineage</h2>
+        <div className="mt-3 max-w-3xl space-y-3 text-sm leading-relaxed text-ink-700">
+          <p>
+            Nothing here is invented from nothing, and this House does not
+            pretend otherwise. The classical ground: <strong>Ptolemy</strong>{" "}
+            (<em>Tetrabiblos</em>), <strong>Vettius Valens</strong>{" "}
+            (<em>Anthology</em>), <strong>Dorotheus of Sidon</strong>, and{" "}
+            <strong>Abu Ma&#39;shar</strong> — read through the modern
+            Hellenistic revival, especially <strong>Chris Brennan</strong>&#39;s{" "}
+            <em>Hellenistic Astrology</em> and The Astrology Podcast.
+          </p>
+          <p>
+            The Vedic room follows the living Jyotish tradition — and
+            Alexandria&#39;s study leans with gratitude on{" "}
+            <strong>Adi Parashakti</strong>&#39;s teaching (find them on X),
+            alongside the classical <em>Brihat Parashara Hora Shastra</em>.
+            Where a reading reflects a teacher&#39;s specific insight, the
+            reading says so — teachers are cited, never quietly absorbed.
+          </p>
+          <p>
+            Inspirations honored: the warmth of CHANI, the depth of Héloïse
+            (heloAstro), the remedial craft of Sphere + Sundry, and the
+            liberatory clarity of Alok Vaid-Menon. All errors are our own; all
+            corrections are welcome.
+          </p>
+        </div>
+      </section>
+
       <div className="mt-10 text-center">
         <Link href="/studio" className="btn-gold">
           ✦ Cast your chart with all of this inside

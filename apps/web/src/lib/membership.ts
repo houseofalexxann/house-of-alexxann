@@ -15,16 +15,16 @@ export function isMember(): boolean {
 }
 
 /**
- * Tier names (Alexandria, 2026-07-10): deity-named circles.
- * Selene — the Moon who shines on everyone (free).
- * Asteria — titaness of falling stars and night divination (member).
- * Urania — muse of the heavens, patron of astrologers (sustaining member,
- * future higher tier). Rename here and the whole site follows.
+ * Tier vernacular (Alexandria, 2026-07-10): doll/ballroom lineage — this is
+ * a House, and houses have family. Everyone arrives a Doll; membership makes
+ * you an Icon; the sustaining tier is Legend. The House Mother is Alexandria
+ * herself (admin). Rename here and the whole site follows.
  */
 export const TIER_NAMES = {
-  free: "Selene Circle",
-  member: "Asteria Circle",
-  sustainer: "Urania Circle",
+  free: "The Dolls",
+  member: "Icon",
+  sustainer: "Legend",
+  admin: "House Mother",
 } as const;
 
 export const PREMIUM_FEATURES = [
