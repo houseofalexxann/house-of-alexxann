@@ -71,7 +71,10 @@
       "Bash(rm gh.zip)",
       "Bash(mv gh_2.96.0_macOS_arm64 gh-cli)",
       "Bash(ln -sf ~/.local/gh-cli/bin/gh ~/.local/node/bin/gh)",
-      "Bash(ls -la '/Users/alexandriaramirez/Downloads/house-of-alexxann-web – Deployment Overview.html')"
+      "Bash(ls -la '/Users/alexandriaramirez/Downloads/house-of-alexxann-web – Deployment Overview.html')",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__computer"
     ]
   }
 }
