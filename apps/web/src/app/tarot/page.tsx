@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { PremiumGate } from "@/components/PremiumGate";
+import { TarotClient } from "@/components/tarot/TarotClient";
 
 export const metadata: Metadata = {
-  title: "Tarot",
+  title: "Tarot — draws, spreads & message cards",
   description:
-    "The tarot room — draws and spreads with authored meanings, connected to the decans of your chart.",
+    "Interactive tarot from House of Alexxann: a free daily draw of the major arcana, three-card spreads, and the House's own divinity message cards.",
 };
 
 export default function TarotPage() {
@@ -16,23 +16,16 @@ export default function TarotPage() {
         </p>
         <h1 className="text-4xl text-ink-900 sm:text-5xl">The tarot room</h1>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-ink-500">
-          Seventy-eight doors. Daily draws, honest spreads, and card meanings
-          written in this House&#39;s voice — including each minor card&#39;s
-          decan, so the tarot and your chart speak to each other.
+          Twenty-two doors of the major arcana, read in this House&#39;s voice —
+          plus the House&#39;s own message cards, small blessings for heavy
+          pockets. Daily draw is free; spreads and messages open for Icons.
         </p>
       </header>
-      <PremiumGate title="The tarot room lives in the members' House" preview={false}>
-        <div />
-      </PremiumGate>
-      <div className="card mt-8 p-6 text-sm leading-relaxed text-ink-700">
-        <h2 className="font-heading text-xl text-ink-900">What this tab will hold</h2>
-        <ul className="mt-3 list-disc space-y-1.5 pl-6">
-          <li>A daily one-card draw with journal prompts</li>
-          <li>Spreads: three-card, relationship, decision, year-ahead</li>
-          <li>All 78 meanings, upright &amp; reversed, decans included</li>
-          <li>Draw history saved to your account</li>
-        </ul>
-      </div>
+      <TarotClient />
+      <p className="mt-14 text-center text-xs text-ink-400">
+        The full 78-card deck — each minor card with its decan from your chart
+        — is being illustrated and arrives with the members&#39; library.
+      </p>
     </div>
   );
 }

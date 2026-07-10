@@ -65,7 +65,12 @@
       "Bash(git commit -q -m 'feat\\(admin\\): full-picture ledger — today'\\\\''s schedule, quick actions, week'\\\\''s sky, metrics, queues, newest accounts in one view *)",
       "Bash(curl -s -b /tmp/hoa-admin3.jar http://localhost:3000/admin/clients)",
       "Read(//tmp/**)",
-      "Read(//private/tmp/**)"
+      "Read(//private/tmp/**)",
+      "Bash(curl -fsSL -o gh.zip https://github.com/cli/cli/releases/download/v2.96.0/gh_2.96.0_macOS_arm64.zip)",
+      "Bash(unzip -oq gh.zip)",
+      "Bash(rm gh.zip)",
+      "Bash(mv gh_2.96.0_macOS_arm64 gh-cli)",
+      "Bash(ln -sf ~/.local/gh-cli/bin/gh ~/.local/node/bin/gh)"
     ]
   }
 }
