@@ -6,6 +6,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { PwaRegister } from "@/components/PwaRegister";
 import { ListeningRoom } from "@/components/ListeningRoom";
 import { LocaleProvider } from "@/lib/i18n";
+import { UserProvider } from "@/components/UserProvider";
+import { CosmicDecor } from "@/components/CosmicDecor";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -57,12 +59,15 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <LocaleProvider>
+          <UserProvider>
           <div className="starfield" aria-hidden />
+          <CosmicDecor />
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter />
           <ListeningRoom />
           <PwaRegister />
+          </UserProvider>
         </LocaleProvider>
       </body>
     </html>

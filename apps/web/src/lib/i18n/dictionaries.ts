@@ -14,6 +14,12 @@ export const LOCALES: { code: Locale; label: string }[] = [
 type Dict = Record<string, string>;
 
 const en: Dict = {
+  "nav.western": "Western",
+  "nav.vedic": "Vedic",
+  "nav.blog": "Blog",
+  "nav.learn": "Learn",
+  "nav.signIn": "Sign in",
+  "nav.join": "Join the House",
   "nav.transits": "Transits",
   "nav.humanDesign": "Human Design",
   "nav.tarot": "Tarot",
@@ -45,6 +51,12 @@ const en: Dict = {
 };
 
 const es: Dict = {
+  "nav.western": "Occidental",
+  "nav.vedic": "Védica",
+  "nav.blog": "Blog",
+  "nav.learn": "Aprende",
+  "nav.signIn": "Inicia sesión",
+  "nav.join": "Únete a la Casa",
   "nav.transits": "Tránsitos",
   "nav.humanDesign": "Diseño Humano",
   "nav.tarot": "Tarot",
@@ -76,6 +88,12 @@ const es: Dict = {
 };
 
 const fr: Dict = {
+  "nav.western": "Occidentale",
+  "nav.vedic": "Védique",
+  "nav.blog": "Blog",
+  "nav.learn": "Apprendre",
+  "nav.signIn": "Connexion",
+  "nav.join": "Rejoindre la Maison",
   "nav.transits": "Transits",
   "nav.humanDesign": "Human Design",
   "nav.tarot": "Tarot",

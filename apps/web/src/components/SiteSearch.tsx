@@ -5,7 +5,11 @@ import Link from "next/link";
 
 /** Static site index: pages, features, and Codex terms. */
 const INDEX: { label: string; href: string; keywords: string }[] = [
-  { label: "Chart Studio — cast a free chart", href: "/studio", keywords: "natal birth chart free western vedic wheel" },
+  { label: "Western astrology — cast a free chart", href: "/western", keywords: "natal birth chart free western tropical wheel studio" },
+  { label: "Vedic astrology — Jyotish charts", href: "/vedic", keywords: "vedic sidereal jyotish rasi navamsa dasha nakshatra studio" },
+  { label: "The daily sky — blog", href: "/blog", keywords: "blog posts astro weather history facts daily notes" },
+  { label: "Create an account", href: "/signup", keywords: "sign up join account register login" },
+  { label: "Sign in", href: "/login", keywords: "log in login account" },
   { label: "Readings & pricing", href: "/services", keywords: "book reading price sliding scale natal transit vedic session" },
   { label: "Transits — the sky right now", href: "/transits", keywords: "today current sky transit forecast" },
   { label: "Human Design", href: "/human-design", keywords: "bodygraph type strategy authority gates centers" },

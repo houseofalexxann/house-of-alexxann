@@ -50,7 +50,7 @@ interface BirthForm {
   place: PlaceResult | null;
 }
 
-export function StudioClient() {
+export function StudioClient({ initialSystem = "western" }: { initialSystem?: System } = {}) {
   const [form, setForm] = useState<BirthForm>({
     name: "",
     date: "",
@@ -58,7 +58,7 @@ export function StudioClient() {
     timeKnown: true,
     place: null,
   });
-  const [system, setSystem] = useState<System>("western");
+  const [system, setSystem] = useState<System>(initialSystem);
   const [houseWestern, setHouseWestern] = useState<HouseSystem>("placidus");
   const [houseVedic, setHouseVedic] = useState<HouseSystem>("whole-sign");
   const [ayanamsa, setAyanamsa] = useState<Ayanamsa>("lahiri");
@@ -247,7 +247,7 @@ export function StudioClient() {
               longitude: first.longitude,
               timezone: first.timezone,
             },
-            system: "western",
+            system: initialSystem,
           }),
         });
         const chartData = await chartRes.json();
