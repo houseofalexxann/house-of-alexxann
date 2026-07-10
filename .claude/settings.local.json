@@ -62,7 +62,10 @@
       "Bash(grep -n \"closing CTA\\\\|btn-gold\\\\|</div>\\\\s*$\\\\|^}\" \"/Users/alexandriaramirez/House of Alexxann/apps/web/src/app/about/page.tsx\")",
       "WebFetch(domain:astrobymax.com)",
       "WebFetch(domain:theastrologypodcast.com)",
-      "Bash(git commit -q -m 'feat\\(admin\\): full-picture ledger — today'\\\\''s schedule, quick actions, week'\\\\''s sky, metrics, queues, newest accounts in one view *)"
+      "Bash(git commit -q -m 'feat\\(admin\\): full-picture ledger — today'\\\\''s schedule, quick actions, week'\\\\''s sky, metrics, queues, newest accounts in one view *)",
+      "Bash(curl -s -b /tmp/hoa-admin3.jar http://localhost:3000/admin/clients)",
+      "Read(//tmp/**)",
+      "Read(//private/tmp/**)"
     ]
   }
 }

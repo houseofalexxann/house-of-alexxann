@@ -123,7 +123,10 @@ export default async function AdminClientsPage() {
       if (prof) {
         lat = prof.latitude; lon = prof.longitude; tz = prof.timezone;
       } else if (c.birthPlace) {
-        const found = await searchPlaces(c.birthPlace);
+        // Open-Meteo matches bare city names; "Dallas, TX" returns nothing —
+        // retry with the part before the comma.
+        let found = await searchPlaces(c.birthPlace);
+        if (!found[0]) found = await searchPlaces(c.birthPlace.split(",")[0].trim());
         if (!found[0]) continue;
         lat = found[0].latitude; lon = found[0].longitude; tz = found[0].timezone;
       } else continue;
@@ -138,8 +141,9 @@ export default async function AdminClientsPage() {
         western: computeChart({ ...base, system: "western" }),
         vedic: computeChart({ ...base, system: "vedic" }),
       });
-    } catch {
+    } catch (err) {
       // One unresolvable birthplace must never break the book.
+      console.error('[client-book] chart failed for', c.email, err);
     }
   }
 
