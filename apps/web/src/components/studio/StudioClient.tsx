@@ -50,7 +50,7 @@ interface BirthForm {
   place: PlaceResult | null;
 }
 
-export function StudioClient({ initialSystem = "western" }: { initialSystem?: System } = {}) {
+export function StudioClient({ initialSystem = "western", locked = false }: { initialSystem?: System; locked?: boolean } = {}) {
   const [form, setForm] = useState<BirthForm>({
     name: "",
     date: "",
@@ -378,7 +378,17 @@ export function StudioClient({ initialSystem = "western" }: { initialSystem?: Sy
         <div className="mt-14">
           {/* System toggle + settings */}
           <div className="flex flex-wrap items-center justify-center gap-3">
-            {/* Sliding Western ⇄ Vedic switch */}
+            {/* Sliding Western ⇄ Vedic switch (hidden on locked per-system tabs) */}
+            {locked ? (
+              <a
+                href={system === "western" ? "/vedic" : "/western"}
+                className="rounded-full border border-pearl-400 bg-white/70 px-4 py-2 text-sm text-ink-700 transition-colors hover:border-rose-400"
+              >
+                {system === "western"
+                  ? "Looking for the sidereal sky? Visit the Vedic room →"
+                  : "Looking for the tropical sky? Visit the Western room →"}
+              </a>
+            ) : (
             <div
               className="relative grid grid-cols-2 overflow-hidden rounded-full border border-pearl-400 bg-pearl-100/70 p-1"
               role="tablist"
@@ -411,6 +421,7 @@ export function StudioClient({ initialSystem = "western" }: { initialSystem?: Sy
                 </button>
               ))}
             </div>
+            )}
             <label className="flex items-center gap-2 text-xs text-ink-500">
               Houses
               <select

@@ -92,6 +92,36 @@ export default function CodexPage() {
         </p>
       </header>
 
+      {/* Dedication — the Library of Alexandria */}
+      <section className="card mb-8 border-rose-300/60 p-6 sm:p-8">
+        <h2 className="font-heading text-2xl text-ink-900">
+          For the Library of Alexandria
+        </h2>
+        <div className="mt-3 max-w-3xl space-y-3 leading-relaxed text-ink-700">
+          <p>
+            This page is kept in the spirit of the{" "}
+            <strong className="text-ink-900">Library of Alexandria</strong> —
+            the place where this craft was actually born. In that city, in the
+            centuries before and after Ptolemy wrote there, Babylonian
+            star-lists, Egyptian decans and temple medicine, and Greek geometry
+            were gathered under one roof and fused into the horoscopic
+            astrology we still practice: the Ascendant, the houses, the lots,
+            the bounds — Alexandrian inventions, every one. The Library held
+            the esoteric beside the factual and refused to treat them as
+            enemies: astronomy shelved with astrology, anatomy with healing
+            rites, mathematics with myth.
+          </p>
+          <p>
+            The House keeps that faith. Knowledge that liberates belongs to
+            everyone who walks in — precise where precision serves, mystical
+            where mystery is honest, and never locked away from the people who
+            need it most. What burned in Alexandria we rebuild in every open
+            notebook like this one — and this House, under a namesake&#39;s
+            care, keeps the lamps lit.
+          </p>
+        </div>
+      </section>
+
       {/* ——— The glyphs ——— */}
       <section id="legend" className="card p-6 sm:p-8">
         <h2 className="font-heading text-2xl text-ink-900">The glyphs</h2>

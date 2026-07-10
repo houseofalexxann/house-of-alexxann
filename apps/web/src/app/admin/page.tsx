@@ -7,7 +7,7 @@ import { getSettings } from "@/lib/settings";
 import { FORMAT_LABELS, formatPrice, type SessionFormat } from "@/lib/services";
 import { MarkPaidButton, CancelButton } from "@/components/admin/BookingActions";
 
-export const metadata: Metadata = { title: "Bookings" };
+export const metadata: Metadata = { title: "The House ledger" };
 
 type BookingWithService = Prisma.BookingGetPayload<{ include: { service: true } }>;
 
@@ -87,7 +87,7 @@ export default async function AdminBookingsPage() {
   const monthStart = now.setZone(settings.practitionerTz).startOf("month");
   const monthEnd = monthStart.plus({ months: 1 });
 
-  const [awaiting, upcoming, recent, paidThisMonth] = await Promise.all([
+  const [awaiting, upcoming, recent, paidThisMonth, revenueAll, bookingsAll, usersTotal, membersTotal, postsTotal, recentUsers] = await Promise.all([
     prisma.booking.findMany({
       where: {
         status: "pending",
@@ -123,19 +123,33 @@ export default async function AdminBookingsPage() {
         startUtc: { gte: monthStart.toJSDate(), lt: monthEnd.toJSDate() },
       },
     }),
+    prisma.booking.aggregate({ _sum: { priceCents: true }, where: { paymentStatus: "paid" } }),
+    prisma.booking.count(),
+    prisma.user.count(),
+    prisma.user.count({ where: { isMember: true } }),
+    prisma.post.count({ where: { publishedAt: { not: null } } }),
+    prisma.user.findMany({ orderBy: { createdAt: "desc" }, take: 6 }),
   ]);
 
   const stats: Array<[string, string]> = [
+    ["Revenue this month", formatPrice(paidThisMonth._sum.priceCents ?? 0)],
+    ["Revenue all-time", formatPrice(revenueAll._sum.priceCents ?? 0)],
     ["Upcoming", String(upcoming.length)],
     ["Awaiting payment", String(awaiting.length)],
-    ["Revenue this month", formatPrice(paidThisMonth._sum.priceCents ?? 0)],
+    ["Bookings ever", String(bookingsAll)],
+    ["Accounts", String(usersTotal)],
+    ["✦ Members", String(membersTotal)],
+    ["Published posts", String(postsTotal)],
   ];
 
   return (
     <div>
-      <h1 className="text-3xl text-ink-900">Bookings</h1>
+      <h1 className="text-3xl text-ink-900">The House ledger</h1>
+      <p className="mt-1 text-sm text-ink-500">
+        Every metric and every person, behind your admin key alone.
+      </p>
 
-      <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {stats.map(([label, value]) => (
           <div key={label} className="card px-5 py-4">
             <p className="text-xs uppercase tracking-wide text-ink-400">{label}</p>
@@ -243,6 +257,23 @@ export default async function AdminBookingsPage() {
           </div>
         )}
       </section>
+      <section className="mt-10">
+        <h2 className="text-xl text-ink-900">Newest accounts</h2>
+        <ul className="mt-3 space-y-1.5 text-sm">
+          {recentUsers.map((u) => (
+            <li key={u.id} className="flex justify-between gap-3 rounded-lg border border-pearl-300 bg-white/60 px-4 py-2">
+              <span className="text-ink-900">
+                {u.name ?? "—"} <span className="text-ink-400">· {u.email}</span>
+                {u.isMember && <span className="ml-1 text-rose-600">✦</span>}
+              </span>
+              <span className="tabular-nums text-ink-400">
+                {u.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
     </div>
   );
 }

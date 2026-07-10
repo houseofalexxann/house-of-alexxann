@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function WesternPage() {
-  return <StudioClient initialSystem="western" />;
+  return <StudioClient initialSystem="western" locked />;
 }

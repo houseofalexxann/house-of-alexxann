@@ -71,6 +71,23 @@ export const SERVICES: ServiceDef[] = [
     priceCents: 17500,
     formats: ["video", "phone", "in-person"],
   },
+  {
+    slug: "solar-return-reading",
+    type: "transit",
+    title: "Solar Return Reading",
+    tagline: "Your year, cast to the minute.",
+    description:
+      "Every year the Sun comes home to the exact degree it held when you were born — your true new year, accurate to the minute. We cast that return chart (for where you'll be on your birthday), read it as the year's weather, and lay it over your natal chart to see where it lands. Best booked in the month around your birthday.",
+    bullets: [
+      "Your solar return chart, cast to the minute for your birthday location",
+      "The year's themes: where it opens, where it asks patience",
+      "Return chart laid over your natal promise",
+      "Relocation advice — yes, where you spend your birthday matters",
+    ],
+    durationMinutes: 60,
+    priceCents: 13500,
+    formats: ["video", "phone"],
+  },
 ];
 
 export const FORMAT_LABELS: Record<SessionFormat, string> = {

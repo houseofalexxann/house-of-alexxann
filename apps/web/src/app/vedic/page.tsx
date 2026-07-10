@@ -8,5 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function VedicPage() {
-  return <StudioClient initialSystem="vedic" />;
+  return <StudioClient initialSystem="vedic" locked />;
 }

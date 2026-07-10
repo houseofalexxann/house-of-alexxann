@@ -52,7 +52,9 @@
       "Bash(git commit -q -m 'feat\\(web\\): trans-flag pastel palette + premium tiering + expanded experience *)",
       "mcp__2fd208f0-f762-4cd3-9426-ade9a1443f0a__generate-design",
       "Bash(git commit -q -m 'docs: build log round 3 — trans-flag identity, premium gating, SW root cause, spend-limit note *)",
-      "Bash(cd \"/Users/alexandriaramirez/House of Alexxann/apps/web/src/app\" && mkdir -p 'blog/[slug]' admin/blog admin/members api/admin/posts api/admin/members && echo ok)"
+      "Bash(cd \"/Users/alexandriaramirez/House of Alexxann/apps/web/src/app\" && mkdir -p 'blog/[slug]' admin/blog admin/members api/admin/posts api/admin/members && echo ok)",
+      "Bash(sed -i '' 's|<StudioClient initialSystem=\"western\" />|<StudioClient initialSystem=\"western\" locked />|' app/western/page.tsx)",
+      "Bash(sed -i '' 's|<StudioClient initialSystem=\"vedic\" />|<StudioClient initialSystem=\"vedic\" locked />|' app/vedic/page.tsx)"
     ]
   }
 }

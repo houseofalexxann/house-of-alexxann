@@ -3,6 +3,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/user-auth";
 import { prisma } from "@/lib/db";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { TIER_NAMES } from "@/lib/membership";
 
 export const metadata: Metadata = { title: "Your House" };
 
@@ -39,7 +40,7 @@ export default async function AccountPage() {
           </h2>
           {user.isMember ? (
             <>
-              <p className="mt-2 font-heading text-2xl text-rose-500">Member ✦</p>
+              <p className="mt-2 font-heading text-2xl text-rose-500">{TIER_NAMES.member} ✦</p>
               <p className="mt-1 text-sm text-ink-500">
                 Every room is open to you — deeper chart, transits, and the
                 rooms still being furnished.
@@ -47,7 +48,7 @@ export default async function AccountPage() {
             </>
           ) : (
             <>
-              <p className="mt-2 font-heading text-2xl text-ink-900">Free</p>
+              <p className="mt-2 font-heading text-2xl text-ink-900">{TIER_NAMES.free}</p>
               <p className="mt-1 text-sm text-ink-500">
                 Charts are yours forever-free. Membership (the deeper chart,
                 transits, Human Design, tarot, the blog&#39;s inner posts)
