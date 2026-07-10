@@ -56,6 +56,41 @@ export default function HomePage() {
 
       <hr className="gold-rule" />
 
+      {/* One-stop shop: every room of the House */}
+      <section className="py-20">
+        <h2 className="text-center text-3xl text-ink-900 sm:text-4xl">
+          One House. Every door.
+        </h2>
+        <p className="mx-auto mt-3 max-w-2xl text-center leading-relaxed text-ink-500">
+          Western and Vedic astrology, Human Design, tarot, the daily sky, and
+          a library that explains it all — computed with professional
+          precision, written like a friend who tells the truth. This is your
+          one-stop sanctuary for self-knowledge.
+        </p>
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["/western", "\u2648\ufe0e", "Western astrology", "Your tropical natal chart — wheel, houses, aspects, the deeper dignities. Free, always."],
+            ["/vedic", "\u263d\ufe0e", "Vedic · Jyotish", "The sidereal sky: nakshatras with padas & lords, Rasi & Navamsa, your dasha timeline."],
+            ["/human-design", "\u25ec", "Human Design", "Type, strategy, authority & profile free — the full bodygraph for Icons."],
+            ["/tarot", "\u2736", "Tarot", "Seventy-eight doors, tied to the decans of your chart. The room is being furnished."],
+            ["/transits", "\u2609\ufe0e", "The sky now", "Today's astro weather free — the 7-day forecast for Icons."],
+            ["/blog", "\u270e", "The daily sky", "Astro weather, history and lore — posted from the House."],
+            ["/codex", "\u274b", "Learn", "Every glyph, every term, decans, bounds, zodiacal releasing — the open notebook."],
+            ["/services", "\u2726", "Readings", "Sit with Alexandria — natal, Vedic, transits, solar return. Sliding scale, every way to pay."],
+          ].map(([href, glyph, title, blurb]) => (
+            <Link key={href as string} href={href as string} className="card group p-5 transition-shadow hover:shadow-lg">
+              <span aria-hidden className="astro-glyph inline-block text-2xl text-rose-500 transition-transform group-hover:scale-110">
+                {glyph}
+              </span>
+              <h3 className="mt-2 font-heading text-xl text-ink-900">{title}</h3>
+              <p className="mt-1 text-sm leading-relaxed text-ink-500">{blurb}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <hr className="gold-rule" />
+
       {/* Offerings */}
       <section className="py-20">
         <h2 className="text-center text-3xl text-ink-900 sm:text-4xl">Readings</h2>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DateTime } from "luxon";
 import {
   FORMAT_LABELS,
@@ -10,6 +10,7 @@ import {
   type ServiceDef,
   type SessionFormat,
 } from "@/lib/services";
+import { useUser } from "@/components/UserProvider";
 
 interface Slot {
   startUtc: string;
@@ -47,6 +48,20 @@ export function BookingClient({ service, directPayAvailable }: Props) {
   const [birthTime, setBirthTime] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
   const [notes, setNotes] = useState("");
+
+  const { user } = useUser();
+  const prefilled = useRef(false);
+  useEffect(() => {
+    if (prefilled.current || !user) return;
+    prefilled.current = true;
+    setName((v) => v || user.name || "");
+    setEmail((v) => v || user.email);
+    if (user.profile) {
+      setBirthDate((v) => v || user.profile!.birthDate);
+      if (user.profile.birthTime) setBirthTime((v) => v || user.profile!.birthTime!);
+      setBirthPlace((v) => v || user.profile!.placeLabel);
+    }
+  }, [user]);
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);

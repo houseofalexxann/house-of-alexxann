@@ -8,6 +8,12 @@ export interface SessionUser {
   email: string;
   isMember: boolean;
   role: string;
+  profile: {
+    name: string;
+    birthDate: string;
+    birthTime: string | null;
+    placeLabel: string;
+  } | null;
 }
 
 const Ctx = createContext<{ user: SessionUser | null; loading: boolean }>({

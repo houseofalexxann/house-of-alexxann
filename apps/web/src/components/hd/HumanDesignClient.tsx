@@ -1,8 +1,9 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { PlaceResult } from "@/lib/geocode";
 import { PremiumGate } from "@/components/PremiumGate";
+import { useUser } from "@/components/UserProvider";
 
 interface Activation { body: string; gate: number; line: number }
 interface HDResult {
@@ -60,6 +61,22 @@ export function HumanDesignClient() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const { user } = useUser();
+  const prefilled = useRef(false);
+
+  // Carry-through: signed-in members' saved details flow into this tab.
+  useEffect(() => {
+    if (prefilled.current || !user?.profile) return;
+    prefilled.current = true;
+    setDate((d) => d || user.profile!.birthDate);
+    if (user.profile.birthTime) setTime((t) => t || user.profile!.birthTime!);
+    (async () => {
+      const r = await fetch(`/api/geocode?q=${encodeURIComponent(user.profile!.placeLabel)}`)
+        .then((x) => x.json()).catch(() => ({ results: [] }));
+      const first = (r.results ?? [])[0];
+      if (first) { setPlace(first); setPlaceQuery(first.label); }
+    })();
+  }, [user]);
 
   const onPlace = (q: string) => {
     setPlaceQuery(q);

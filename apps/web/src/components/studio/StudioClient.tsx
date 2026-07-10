@@ -11,6 +11,7 @@ import { RasiGrid } from "@/components/chart/RasiGrid";
 import { InterpretationsPanel } from "@/components/chart/Interpretations";
 import { TraditionalPanel } from "@/components/chart/TraditionalPanel";
 import { PremiumGate } from "@/components/PremiumGate";
+import { useUser } from "@/components/UserProvider";
 import { PLANET_GLYPHS, SIGN_NAMES } from "@/components/chart/glyphs";
 
 type System = "western" | "vedic";
@@ -63,6 +64,7 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
   const [houseVedic, setHouseVedic] = useState<HouseSystem>("whole-sign");
   const [ayanamsa, setAyanamsa] = useState<Ayanamsa>("lahiri");
 
+  const { user } = useUser();
   const [result, setResult] = useState<ChartResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -126,6 +128,23 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
         const data = await res.json();
         if (!res.ok) throw new Error(data.error ?? "Chart computation failed.");
         setResult(data as ChartResponse);
+        // Carry-through rule: signed-in casts save your birth details so
+        // every tab (Vedic, Human Design, booking) prefills from them.
+        if (user && form.place) {
+          void fetch("/api/profile", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              name: form.name || user.name || "My chart",
+              birthDate: form.date,
+              birthTime: form.timeKnown ? form.time : null,
+              placeLabel: form.place.label,
+              latitude: form.place.latitude,
+              longitude: form.place.longitude,
+              timezone: form.place.timezone,
+            }),
+          });
+        }
       } catch (e) {
         setError(e instanceof Error ? e.message : "Something went wrong.");
       } finally {
@@ -210,12 +229,20 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
   const prefilledRef = useRef(false);
   useEffect(() => {
     if (prefilledRef.current) return;
-    prefilledRef.current = true;
     const q = new URLSearchParams(window.location.search);
-    const date = q.get("date");
-    const place = q.get("place");
+    let date = q.get("date");
+    let place = q.get("place");
+    let time = q.get("time");
+    let name = q.get("name");
+    // Carry-through: fall back to the signed-in member's saved details.
+    if ((!date || !place) && user?.profile) {
+      date = user.profile.birthDate;
+      place = user.profile.placeLabel;
+      time = user.profile.birthTime;
+      name = user.profile.name;
+    }
     if (!date || !place) return;
-    const time = q.get("time");
+    prefilledRef.current = true;
     (async () => {
       try {
         const res = await fetch(`/api/geocode?q=${encodeURIComponent(place)}`);
@@ -223,7 +250,7 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
         const first = (data.results ?? [])[0];
         if (!first) return;
         const nextForm = {
-          name: q.get("name") ?? "",
+          name: name ?? "",
           date,
           time: time ?? "",
           timeKnown: Boolean(time),
@@ -258,7 +285,8 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
         setLoading(false);
       }
     })();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const chart = result?.chart ?? null;
   const vedic = chart?.input.system === "vedic";

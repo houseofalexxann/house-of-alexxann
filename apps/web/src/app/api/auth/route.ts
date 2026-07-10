@@ -21,13 +21,29 @@ const Login = z.object({
   password: z.string().min(1).max(200),
 });
 
-/** GET: current session. POST: signup/login. DELETE: logout. */
+/** GET: current session (+ latest birth profile so every tab can prefill). */
 export async function GET() {
   const user = await sessionUser();
+  if (!user) return NextResponse.json({ user: null });
+  const profile = await prisma.birthProfile.findFirst({
+    where: { userId: user.id },
+    orderBy: { createdAt: "desc" },
+  });
   return NextResponse.json({
-    user: user
-      ? { name: user.name, email: user.email, isMember: user.isMember, role: user.role }
-      : null,
+    user: {
+      name: user.name,
+      email: user.email,
+      isMember: user.isMember,
+      role: user.role,
+      profile: profile
+        ? {
+            name: profile.name,
+            birthDate: profile.birthDate,
+            birthTime: profile.birthTime,
+            placeLabel: profile.placeLabel,
+          }
+        : null,
+    },
   });
 }
 
