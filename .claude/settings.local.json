@@ -38,7 +38,8 @@
       "Bash(curl -s -X POST http://localhost:3000/api/bookings -H \"Content-Type: application/json\" -d '{\"serviceSlug\":\"natal-reading\",\"startUtc\":\"2026-07-11T15:00:00Z\",\"format\":\"phone\",\"clientName\":\"Rival\",\"clientEmail\":\"r@example.com\",\"clientPhone\":\"+1 555 0100\",\"clientTz\":\"America/Chicago\",\"priceTier\":\"community\",\"paymentMethod\":\"checkout\"}')",
       "Bash(PATH=/Users/alexandriaramirez/.local/node/bin:__TRACKED_VAR__ ./node_modules/.bin/tsc --noEmit -p apps/web/tsconfig.json)",
       "Bash(open -a \"Google Chrome\")",
-      "Bash(grep -n -iE \"notes|clientName|birthPlace|clientEmail|innerHTML|<|\\\\`|\\\\$\\\\{\")"
+      "Bash(grep -n -iE \"notes|clientName|birthPlace|clientEmail|innerHTML|<|\\\\`|\\\\$\\\\{\")",
+      "Bash(git commit -q -m 'feat\\(web\\): authentic astrological glyphs \\(text-presentation, no emoji\\), per-sign colors, lighter zen background *)"
     ]
   }
 }

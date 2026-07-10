@@ -91,10 +91,12 @@ export function ChartWheel({ chart, className }: Props) {
               x={mid.x}
               y={mid.y}
               fill={SIGN_COLORS[s]}
-              fontSize="19"
+              fontSize="20"
               textAnchor="middle"
               dominantBaseline="central"
-              opacity="0.95"
+              opacity="0.98"
+              fontFamily="'Apple Symbols', 'Segoe UI Symbol', 'Noto Sans Symbols2', serif"
+              style={{ fontVariantEmoji: "text" }}
             >
               {SIGN_GLYPHS[s]}
             </text>
@@ -208,6 +210,8 @@ export function ChartWheel({ chart, className }: Props) {
               fontSize="21"
               textAnchor="middle"
               dominantBaseline="central"
+              fontFamily="'Apple Symbols', 'Segoe UI Symbol', 'Noto Sans Symbols2', serif"
+              style={{ fontVariantEmoji: "text" }}
             >
               {PLANET_GLYPHS[p.body]}
             </text>

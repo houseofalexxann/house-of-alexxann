@@ -6,7 +6,7 @@
  * sign's cell.
  */
 import type { Body } from "@hoa/engine";
-import { PLANET_GLYPHS, SIGN_GLYPHS } from "./glyphs";
+import { PLANET_GLYPHS, SIGN_COLORS, SIGN_GLYPHS } from "./glyphs";
 
 /** Grid (row, col) for each sign index 0=Aries…11=Pisces in the classic layout. */
 const CELL: [number, number][] = [
@@ -72,7 +72,10 @@ export function RasiGrid({
                 key={`${r}${c}`}
                 className="relative flex min-h-16 flex-wrap content-start gap-x-1.5 gap-y-0.5 border border-pearl-300/50 bg-pearl-200/40 p-1.5 pt-5"
               >
-                <span className="absolute left-1.5 top-1 text-[10px] text-ink-400">
+                <span
+                  className="astro-glyph absolute left-1.5 top-1 text-[11px]"
+                  style={{ color: SIGN_COLORS[cell.sign] }}
+                >
                   {SIGN_GLYPHS[cell.sign]}
                 </span>
                 {list.map((e) => (
@@ -80,8 +83,8 @@ export function RasiGrid({
                     key={e.body}
                     className={
                       e.body === "ascendant"
-                        ? "text-xs font-semibold text-rose-500"
-                        : "text-sm text-ink-900"
+                        ? "astro-glyph text-xs font-semibold text-rose-500"
+                        : "astro-glyph text-sm text-ink-900"
                     }
                     title={e.body}
                   >

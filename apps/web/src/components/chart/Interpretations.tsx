@@ -45,7 +45,7 @@ function KeyCard({
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >
-        <span aria-hidden className="mt-0.5 text-2xl text-rose-500">{glyph}</span>
+        <span aria-hidden className="astro-glyph mt-0.5 text-2xl text-rose-500">{glyph}</span>
         <span className="flex-1">
           <span className="block font-heading text-lg leading-snug text-ink-900">
             {heading}
@@ -109,7 +109,7 @@ function Legend() {
             <ul className="space-y-2 text-sm">
               {Object.entries(PLANET_SIGNIFICATIONS).map(([body, words]) => (
                 <li key={body}>
-                  <span className="mr-1.5">{PLANET_GLYPHS[body as keyof typeof PLANET_GLYPHS]}</span>
+                  <span className="astro-glyph mr-1.5">{PLANET_GLYPHS[body as keyof typeof PLANET_GLYPHS]}</span>
                   <span className="text-rose-500">
                     {BODY_NAMES[body as keyof typeof BODY_NAMES]}:
                   </span>{" "}

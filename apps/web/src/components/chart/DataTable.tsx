@@ -51,7 +51,7 @@ export function PlanetTable({ chart }: { chart: ChartResult }) {
           {chart.planets.map((p) => (
             <tr key={p.body} className="border-b border-pearl-300/60 last:border-0">
               <td className="py-2 pr-3">
-                <span className="mr-2 text-base">{PLANET_GLYPHS[p.body]}</span>
+                <span className="astro-glyph mr-2 text-base">{PLANET_GLYPHS[p.body]}</span>
                 {BODY_NAMES[p.body]}
               </td>
               <td className="py-2 pr-3 tabular-nums">
@@ -134,7 +134,7 @@ export function AspectTable({ chart }: { chart: ChartResult }) {
             <tr key={i} className="border-b border-pearl-300/60 last:border-0">
               <td className="py-2 pr-3">
                 {BODY_NAMES[a.a]}{" "}
-                <span className="mx-1 text-rose-600">{ASPECT_SYMBOLS[a.type]}</span>{" "}
+                <span className="astro-glyph mx-1 text-rose-600">{ASPECT_SYMBOLS[a.type]}</span>{" "}
                 {BODY_NAMES[a.b]}
                 <span className="ml-2 text-xs text-ink-400">{a.type}</span>
               </td>
