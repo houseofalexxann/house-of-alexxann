@@ -455,6 +455,33 @@ export default function CodexPage() {
             corrections are welcome.
           </p>
         </div>
+        <div className="mt-6 rounded-xl border border-pearl-300 bg-white/60 p-5">
+          <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
+            Further study — go to the sources
+          </h3>
+          <ul className="mt-3 space-y-2 text-sm text-ink-700">
+            <li>
+              <a href="https://theastrologypodcast.com/" className="text-rose-600 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">
+                The Astrology Podcast
+              </a>{" "}
+              — Chris Brennan&#39;s weekly deep-dives on the history, philosophy
+              and techniques of astrology, with monthly forecast episodes and
+              full transcripts. The House&#39;s Hellenistic study leans on this
+              work constantly.
+            </li>
+            <li>
+              <a href="https://www.patreon.com/astrologypodcast" className="text-rose-600 underline-offset-2 hover:underline" target="_blank" rel="noopener noreferrer">
+                Support it on Patreon
+              </a>{" "}
+              — independent astrology education survives because listeners fund
+              it. Pay the teachers.
+            </li>
+            <li>
+              <span className="text-ink-900">Adi Parashakti on X</span> — the
+              Vedic perspective this House studies with gratitude.
+            </li>
+          </ul>
+        </div>
       </section>
 
       <div className="mt-10 text-center">

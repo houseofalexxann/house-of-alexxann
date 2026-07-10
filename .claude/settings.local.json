@@ -60,7 +60,8 @@
       "Bash(git commit -q -m 'feat\\(web\\): 7-day sky forecast on Transits tab — computed astro weather \\(moon sign/phase, ingresses, stations, exact aspects\\); today free, week for Icons *)",
       "Bash(kill -9 34401)",
       "Bash(grep -n \"closing CTA\\\\|btn-gold\\\\|</div>\\\\s*$\\\\|^}\" \"/Users/alexandriaramirez/House of Alexxann/apps/web/src/app/about/page.tsx\")",
-      "WebFetch(domain:astrobymax.com)"
+      "WebFetch(domain:astrobymax.com)",
+      "WebFetch(domain:theastrologypodcast.com)"
     ]
   }
 }
