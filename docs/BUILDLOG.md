@@ -43,6 +43,14 @@ Alexandria added three requirements during the build (recorded as PRD deltas):
 - **Stripe runs in mock mode until keys exist** — real Checkout (incl. BNPL/Cash App/PayPal availability per Stripe account settings) needs `STRIPE_SECRET_KEY`/`STRIPE_WEBHOOK_SECRET`; webhook handler is implemented and signature-verified.
 - Turbopack gotcha #3: it serves stale CSS from `.next/dev` cache across restarts after big `globals.css` rewrites — fixed by clearing `.next`.
 
+## 2026-07-10 — Admin, PWA, acceptance
+
+- Admin back office: env-credential login with HMAC-signed session cookie (single practitioner; OAuth/user accounts are Phase 2 per PRD §5 — deviation from §8's "email + OAuth" is intentional scope discipline: Phase 1 has no public accounts to authenticate). Bookings dashboard (mark direct payments received → confirmation email fires), weekly availability + exceptions + scheduler settings + payment-handle editors, client-charts page that opens the Studio prefilled (`/studio?name=&date=&time=&place=`) and auto-casts.
+- PWA: `manifest.ts`, hand-rolled `public/sw.js` (cache-first statics, network-first pages, offline fallback page; `/api/*` never cached to preserve determinism), icons drawn programmatically (pink four-pointed star on pearl). Verified: SW registers at scope `/`, manifest + icons serve 200, mobile 375px layout has no horizontal overflow.
+- Production `next build` passes; static/SSG/dynamic route split is sane.
+- Perf: chart API measured at **~14 ms** in-browser (criterion: < 2 s).
+- Known pre-standard-time caveat: births before ~1890 use the IANA zone's reference-city LMT (e.g. Europe/Berlin LMT) rather than the exact birth-city LMT — can differ by a few minutes of clock time for 19th-century charts. Engine accuracy itself is unaffected (the test suite feeds exact UTC).
+
 ## Decision log
 
 | # | Decision | Why |
