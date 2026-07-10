@@ -99,6 +99,48 @@ export default function AboutPage() {
         </ul>
       </section>
 
+      {/* What this House stands for */}
+      <section className="card mt-16 border-rose-300/60 p-8 sm:p-10">
+        <h2 className="text-center text-3xl text-ink-900">
+          What this House stands for
+        </h2>
+        <p aria-hidden className="mt-4 text-center text-3xl tracking-wide">
+          🏳️‍⚧️ 🏳️‍🌈 ✊🏿 ♿ 🌎
+        </p>
+        <div className="mx-auto mt-5 max-w-2xl space-y-3 leading-relaxed text-ink-700">
+          <p>
+            This is a <strong className="text-ink-900">queer- and
+            trans-built House</strong>, and it flies its flags on purpose:
+            trans liberation, queer pride, Black liberation, disability
+            justice, and dignity for every migrant —{" "}
+            <strong className="text-ink-900">abolish ICE</strong>; no human
+            being is illegal. The stars have never checked papers, gender
+            markers, or borders, and neither do we. If your liberation is
+            treated as debatable elsewhere, know that here it is the ground we
+            build on, not a topic. You are not tolerated in this House — you
+            are expected, and the door was hung with you in mind.
+          </p>
+          <p className="text-sm text-ink-500">
+            Every body, every gender, every love, every ability, every
+            immigration status, every faith and none — welcome, whole, and
+            safe with your data and your story.
+          </p>
+        </div>
+        <div className="mx-auto mt-6 max-w-2xl rounded-xl border border-pearl-300 bg-white/60 p-4">
+          <p className="text-xs leading-relaxed text-ink-500">
+            <strong className="text-ink-700">A gentle disclaimer:</strong>{" "}
+            astrology, Human Design, and tarot are offered here as spiritual
+            reflection, self-inquiry, and art — not as medical, psychological,
+            legal, or financial advice, and never as a substitute for care
+            from qualified professionals. Charts describe weather, not
+            verdicts; you always remain the author of your choices. Readings
+            are for adults (18+). If you are in crisis, please reach for
+            immediate human support — and come back to the stars after; they
+            will keep.
+          </p>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="card mt-20 p-10 text-center">
         <h2 className="text-3xl text-ink-900">Come meet your sky.</h2>

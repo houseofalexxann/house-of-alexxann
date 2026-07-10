@@ -88,6 +88,23 @@ export const SERVICES: ServiceDef[] = [
     priceCents: 13500,
     formats: ["video", "phone"],
   },
+  {
+    slug: "electional-astrology",
+    type: "transit",
+    title: "Electional Astrology",
+    tagline: "Choosing the moment on purpose.",
+    description:
+      "The old art of picking a time: launches, signings, weddings, first days, surgeries scheduled with choice. Bring the question and the window you're working with; you'll receive the best available moments, charted and explained — delivered as a written summary plus a short call to walk it through.",
+    bullets: [
+      "One election (one question / one event) per session",
+      "Best dates & times within your real-world window",
+      "The chart for each recommended moment, explained",
+      "Delivered as a written PDF summary + a 30-minute call",
+    ],
+    durationMinutes: 30,
+    priceCents: 7500,
+    formats: ["video", "phone"],
+  },
 ];
 
 export const FORMAT_LABELS: Record<SessionFormat, string> = {

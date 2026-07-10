@@ -74,6 +74,50 @@ const GLOSSARY: [string, string][] = [
   ["Zodiacal releasing", "Vettius Valens' grand timing technique: beginning from the Lot of Spirit (for deeds and career) or Fortune (for body and circumstance), life unfolds in sign-ruled chapters lasting that sign's 'minor years,' each subdividing fractally into months and days. Peak chapters arrive when the releasing reaches signs angular to Fortune; the 'loosing of the bond' marks a dramatic change of storyline. Recovered from near-oblivion by the modern Hellenistic revival, it is among the most striking timing tools ever devised — your L1 chapters are already computed in the deeper chart."],
 ];
 
+const VEDIC_TERMS = new Set([
+  "Ayanamsa",
+  "Antardasha (bhukti)",
+  "Graha",
+  "Mahadasha",
+  "Nakshatra",
+  "Navamsa (D9)",
+  "Pada",
+  "Rasi (D1)",
+  "Sidereal zodiac",
+  "Vimshottari dasha",
+]);
+
+/** [name, presiding deity, Vimshottari lord] in classical order. */
+const NAKSHATRA_LEGEND: [string, string, string][] = [
+  ["Ashwini", "The Ashvins — twin physicians of the gods", "Ketu"],
+  ["Bharani", "Yama — dharma and the threshold", "Venus"],
+  ["Krittika", "Agni — sacred fire", "Sun"],
+  ["Rohini", "Prajapati (Brahma) — creation", "Moon"],
+  ["Mrigashira", "Soma — the nectar Moon", "Mars"],
+  ["Ardra", "Rudra — the storm", "Rahu"],
+  ["Punarvasu", "Aditi — the boundless mother", "Jupiter"],
+  ["Pushya", "Brihaspati — priest of the gods", "Saturn"],
+  ["Ashlesha", "The Nagas — serpent wisdom", "Mercury"],
+  ["Magha", "The Pitrs — the ancestors", "Ketu"],
+  ["Purva Phalguni", "Bhaga — pleasure and portion", "Venus"],
+  ["Uttara Phalguni", "Aryaman — patronage and vows", "Sun"],
+  ["Hasta", "Savitr — the golden hand of the Sun", "Moon"],
+  ["Chitra", "Tvashtar (Vishvakarma) — divine architect", "Mars"],
+  ["Swati", "Vayu — the wind", "Rahu"],
+  ["Vishakha", "Indra-Agni — purpose with power", "Jupiter"],
+  ["Anuradha", "Mitra — friendship and alliance", "Saturn"],
+  ["Jyeshtha", "Indra — the elder's crown", "Mercury"],
+  ["Mula", "Nirriti — the root and its undoing", "Ketu"],
+  ["Purva Ashadha", "Apas — the invincible waters", "Venus"],
+  ["Uttara Ashadha", "The Vishvedevas — universal principles", "Sun"],
+  ["Shravana", "Vishnu — the listener's three steps", "Moon"],
+  ["Dhanishta", "The Vasus — abundance in motion", "Mars"],
+  ["Shatabhisha", "Varuna — the hundred healers", "Rahu"],
+  ["Purva Bhadrapada", "Aja Ekapada — the one-footed fire", "Jupiter"],
+  ["Uttara Bhadrapada", "Ahirbudhnya — serpent of the deep", "Saturn"],
+  ["Revati", "Pushan — shepherd of safe passage", "Mercury"],
+];
+
 export default function CodexPage() {
   const bounds = egyptianTermsTable();
   return (
@@ -324,20 +368,63 @@ export default function CodexPage() {
         </div>
       </section>
 
-      {/* ——— Glossary ——— */}
+      {/* ——— Glossary: Western/Hellenistic and Vedic, side by side but never blurred ——— */}
       <section id="glossary" className="card mt-8 p-6 sm:p-8">
-        <h2 className="font-heading text-2xl text-ink-900">Glossary</h2>
-        <p className="mt-1 text-sm text-ink-500">
-          What is what — in plain language.
-        </p>
+        <h2 className="font-heading text-2xl text-ink-900">Glossary — Western &amp; Hellenistic</h2>
+        <p className="mt-1 text-sm text-ink-500">The tropical lineage, in plain language.</p>
         <dl className="mt-6 space-y-4">
-          {GLOSSARY.map(([term, def]) => (
+          {GLOSSARY.filter(([term]) => !VEDIC_TERMS.has(term)).map(([term, def]) => (
             <div key={term} className="border-b border-pearl-300/60 pb-4 last:border-0">
               <dt className="font-heading text-lg text-rose-600">{term}</dt>
               <dd className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-700">{def}</dd>
             </div>
           ))}
         </dl>
+      </section>
+
+      <section id="glossary-vedic" className="card mt-8 border-lilac-400/50 p-6 sm:p-8">
+        <h2 className="font-heading text-2xl text-ink-900">Glossary — Vedic · Jyotish</h2>
+        <p className="mt-1 text-sm text-ink-500">The sidereal lineage, honored on its own terms.</p>
+        <dl className="mt-6 space-y-4">
+          {GLOSSARY.filter(([term]) => VEDIC_TERMS.has(term)).map(([term, def]) => (
+            <div key={term} className="border-b border-pearl-300/60 pb-4 last:border-0">
+              <dt className="font-heading text-lg text-lilac-600">{term}</dt>
+              <dd className="mt-1 max-w-3xl text-sm leading-relaxed text-ink-700">{def}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {/* ——— The 27 nakshatras & their deities ——— */}
+      <section id="nakshatras" className="card mt-8 border-lilac-400/50 p-6 sm:p-8">
+        <h2 className="font-heading text-2xl text-ink-900">The 27 nakshatras &amp; their deities</h2>
+        <p className="mt-1 max-w-2xl text-sm leading-relaxed text-ink-500">
+          The Moon&#39;s mansions, each 13°20&#39; of the sidereal sky, each with a
+          presiding deity and a Vimshottari lord. Your chart names the nakshatra
+          and pada of every planet, the Ascendant and the Midheaven.
+        </p>
+        <div className="mt-6 overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-pearl-400/60 text-left text-xs uppercase tracking-widest text-ink-400">
+                <th className="py-2 pr-3 font-medium">#</th>
+                <th className="py-2 pr-3 font-medium">Nakshatra</th>
+                <th className="py-2 pr-3 font-medium">Deity</th>
+                <th className="py-2 font-medium">Lord</th>
+              </tr>
+            </thead>
+            <tbody>
+              {NAKSHATRA_LEGEND.map(([name, deity, lord], i) => (
+                <tr key={name} className="border-b border-pearl-300/50 last:border-0">
+                  <td className="py-1.5 pr-3 tabular-nums text-ink-400">{i + 1}</td>
+                  <td className="py-1.5 pr-3 text-ink-900">{name}</td>
+                  <td className="py-1.5 pr-3 text-ink-700">{deity}</td>
+                  <td className="py-1.5 text-ink-700">{lord}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </section>
 
       {/* Sources & lineage — credit where the knowledge lives */}

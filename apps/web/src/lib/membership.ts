@@ -23,9 +23,11 @@ export function isMember(): boolean {
 export const TIER_NAMES = {
   free: "The Dolls",
   member: "Icon",
-  sustainer: "Legend",
   admin: "House Mother",
 } as const;
+
+/** Icons get all access + this discount on every reading. */
+export const MEMBER_DISCOUNT = 0.1;
 
 export const PREMIUM_FEATURES = [
   "The deeper chart — essential dignities, sect analysis, decans & bounds",
