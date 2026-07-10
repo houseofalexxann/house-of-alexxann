@@ -1,5 +1,6 @@
 import { fileURLToPath } from "node:url";
 import { defineConfig, env } from "prisma/config";
+import { normalizeDbUrl } from "./src/lib/db-url.mjs";
 
 // Prisma 7: connection URLs live here (CLI/migrations), not in the schema.
 // Node 22 loads .env natively; Prisma CLI no longer does it implicitly.
@@ -13,7 +14,7 @@ try {
 // Migrations must use Neon's DIRECT host — the pooled ("-pooler") string
 // breaks `migrate deploy`. Runtime keeps the pooled URL (good for
 // serverless); here we derive the direct URL automatically.
-const migrateUrl = (process.env.DATABASE_URL ?? "").replace("-pooler", "");
+const migrateUrl = normalizeDbUrl(process.env.DATABASE_URL).replace("-pooler", "");
 
 export default defineConfig({
   schema: "prisma/schema.prisma",

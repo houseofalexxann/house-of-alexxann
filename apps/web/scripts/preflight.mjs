@@ -4,6 +4,7 @@
  */
 // Local runs read .env; on Vercel the variables come from project settings.
 import { fileURLToPath } from "node:url";
+import { normalizeDbUrl } from "../src/lib/db-url.mjs";
 try {
   process.loadEnvFile(fileURLToPath(new URL("../.env", import.meta.url)));
 } catch {}
@@ -26,9 +27,10 @@ for (const [name, hint] of required) {
   }
 }
 
-const db = process.env.DATABASE_URL ?? "";
+const db = normalizeDbUrl(process.env.DATABASE_URL);
 if (db && !db.startsWith("postgres")) {
   console.error(`\n✗ DATABASE_URL doesn't look like a Postgres connection string (should start with postgresql://).`);
+  console.error(`  → In Vercel, open DATABASE_URL and make sure the value begins with postgresql:// — no quotes, no "psql", no leading spaces. Copy Neon's plain connection string.`);
   ok = false;
 }
 if (db.includes("-pooler")) {
