@@ -9,6 +9,17 @@ Running log of decisions and deviations during the Phase 1 build (PRD v1.1, froz
 - **PostgreSQL without Docker**: using `embedded-postgres` (real PostgreSQL binaries downloaded per-platform, run as an unprivileged local process, data in `.pgdata/`). The Prisma schema stays standard `postgresql`, so production can point at any managed Postgres with only a `DATABASE_URL` change.
 - **Swiss Ephemeris**: attempting the `sweph` native Node binding (authentic Swiss Ephemeris, AGPL — license decision remains a pre-launch to-do per PRD §15.2). Fallback if it won't build: WASM build of the same library.
 
+## 2026-07-09 — Engine built and verified (the gate)
+
+- `@hoa/engine` implements Western (tropical) + Vedic (sidereal) natal calculation: planets with retrograde flags, Asc/MC, 7 switchable house systems, major aspects with configurable orbs, nakshatras + padas, Vimshottari mahadasha/antardasha, D1 + D9, time-unknown mode, ayanamsa configurable (Lahiri default).
+- Bundled Swiss Ephemeris data files (sepl/semo/seas 18, coverage 1800–2400 AD) inside the package.
+- **Accuracy gate passed: 103/103 tests.**
+  - 6 reference charts (Einstein, Diana, Cobain, Jobs, Obama, Monroe) verified against published values fetched from astrotheme.com (AstroDatabank birth data, Swiss-Ephemeris lineage) — every planet, Asc and MC within 2 arcminutes; astro.com itself blocks automated fetches, so Astrotheme served as the published-value source, cross-checked below.
+  - Independent cross-implementation check: sweph vs `astronomy-engine` (MIT, VSOP87 lineage) agree within 0.02° (typically <5 arcsec) on Sun–Pluto for all six charts — correctness evidence independent of any copied table.
+  - Vedic verified against vedicastroindex.com (Obama): sidereal Moon 10°02' Taurus, Rohini pada 1, Jupiter 7.54° Capricorn, and the full published mahadasha timeline (Moon→7/1971, Mars→7/1978, Rahu→7/1996, Jupiter→7/2012, Saturn→7/2031) — engine matches to the month.
+- **Convention note:** Astrotheme "bumps" a planet within ~½° of the next Placidus cusp into the next house (2 of 36 published placements). Engine keeps strict geometric placement (astro.com data-table convention); tests accept exactly that documented case.
+- Vimshottari year length: 365.25 days (the common software convention); noted as configurable later if a client tradition needs 360-day years.
+
 ## Decision log
 
 | # | Decision | Why |
