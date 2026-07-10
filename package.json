@@ -1,0 +1,16 @@
+{
+  "name": "house-of-alexxann",
+  "private": true,
+  "version": "0.1.0",
+  "description": "House of Alexxann — astrology platform (Phase 1 MVP)",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "engine:test": "npm --workspace @hoa/engine run test",
+    "dev": "npm --workspace web run dev",
+    "build": "npm --workspace @hoa/engine run build && npm --workspace web run build",
+    "db:start": "node scripts/dev-db.mjs"
+  }
+}

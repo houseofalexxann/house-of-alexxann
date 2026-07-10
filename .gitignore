@@ -1,0 +1,22 @@
+# dependencies
+node_modules/
+
+# builds
+.next/
+dist/
+out/
+*.tsbuildinfo
+
+# local database & runtime artifacts
+.pgdata/
+var/
+
+# env
+.env
+.env.local
+.env*.local
+
+# misc
+.DS_Store
+npm-debug.log*
+coverage/

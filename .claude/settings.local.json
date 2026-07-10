@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(git --version)",
+      "Bash(sw_vers)",
+      "Bash(which brew; ls /opt/homebrew/bin 2>/dev/null | head; ls ~/.nvm 2>/dev/null; which volta fnm mise asdf bun deno python3 2>/dev/null)",
+      "Bash(curl -fsSL https://nodejs.org/dist/latest-v22.x/)",
+      "Bash(mkdir -p ~/.local)",
+      "Bash(curl -fsSL -o node.tar.gz https://nodejs.org/dist/latest-v22.x/node-v22.23.1-darwin-arm64.tar.gz)",
+      "Bash(tar -xzf node.tar.gz)",
+      "Bash(rm node.tar.gz)",
+      "Bash(mv node-v22.23.1-darwin-arm64 node)",
+      "Bash(git init *)",
+      "Bash(git config *)",
+      "Bash(mkdir -p docs packages apps)",
+      "Bash(cp \"/Users/alexandriaramirez/Library/Application Support/Claude/local-agent-mode-sessions/b69b6728-3ee7-4cfa-af6e-bf3130b2bf23/60e5fd92-95ca-4c4c-9522-d0ac15fa5093/local_4d87a776-8830-4146-a06f-30d6b49add19/outputs/Astrology-Platform-PRD.md\" docs/PRD.md)",
+      "Bash(git add *)",
+      "Bash(git commit -q -m 'chore: scaffold monorepo — workspaces, PRD, build log *)"
+    ]
+  }
+}
