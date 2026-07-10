@@ -13,6 +13,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {[
           ["/admin", "Bookings"],
           ["/admin/availability", "Availability & settings"],
+          ["/admin/clients", "Clients"],
           ["/admin/charts", "Client charts"],
           ["/admin/blog", "Blog"],
           ["/admin/members", "Members"],
