@@ -135,6 +135,57 @@ export interface NavamsaPosition {
   sign: number;
 }
 
+export type Dignity =
+  | "domicile"
+  | "exaltation"
+  | "detriment"
+  | "fall"
+  | "peregrine";
+
+export interface PlanetDignity {
+  body: Body;
+  sign: number;
+  dignity: Dignity;
+  /** Traditional ruler of the sign this planet occupies. */
+  rulerOfSign: Body;
+}
+
+export interface MoonPhase {
+  /** Sun–Moon elongation, 0–360. */
+  elongation: number;
+  /** e.g. "Waning Crescent (Balsamic)". */
+  phase: string;
+  waxing: boolean;
+  /** Illuminated fraction, 0–1. */
+  illumination: number;
+}
+
+export interface SectInfo {
+  sect: "day" | "night";
+  /** The luminary of the sect (Sun by day, Moon by night). */
+  lightLeader: "sun" | "moon";
+  beneficOfSect: Body;
+  maleficContraryToSect: Body;
+  /** Per traditional planet: comfortable in this chart's sect? */
+  inSect: Partial<Record<Body, boolean>>;
+}
+
+export interface AngleAspect {
+  planet: Body;
+  angle: "ascendant" | "midheaven";
+  type: AspectType;
+  orb: number;
+}
+
+export interface TraditionalAnalysis {
+  /** Null when the birth time is unknown. */
+  sect: SectInfo | null;
+  dignities: PlanetDignity[];
+  moonPhase: MoonPhase;
+  /** Empty when the birth time is unknown. */
+  angleAspects: AngleAspect[];
+}
+
 export interface ChartResult {
   input: Required<Pick<ChartInput, "utc" | "latitude" | "longitude" | "system">> & {
     houseSystem: HouseSystem;
@@ -156,6 +207,8 @@ export interface ChartResult {
   vimshottari: VimshottariDasha | null;
   /** Vedic only: D9 (navamsa) sign placements. */
   navamsa: NavamsaPosition[] | null;
+  /** Traditional/Hellenistic depth: sect, dignities, moon phase, angle aspects. */
+  traditional: TraditionalAnalysis;
   /** Engine + ephemeris version for reproducibility. */
   engineVersion: string;
 }

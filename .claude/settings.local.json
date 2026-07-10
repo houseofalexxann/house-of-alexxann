@@ -39,7 +39,8 @@
       "Bash(PATH=/Users/alexandriaramirez/.local/node/bin:__TRACKED_VAR__ ./node_modules/.bin/tsc --noEmit -p apps/web/tsconfig.json)",
       "Bash(open -a \"Google Chrome\")",
       "Bash(grep -n -iE \"notes|clientName|birthPlace|clientEmail|innerHTML|<|\\\\`|\\\\$\\\\{\")",
-      "Bash(git commit -q -m 'feat\\(web\\): authentic astrological glyphs \\(text-presentation, no emoji\\), per-sign colors, lighter zen background *)"
+      "Bash(git commit -q -m 'feat\\(web\\): authentic astrological glyphs \\(text-presentation, no emoji\\), per-sign colors, lighter zen background *)",
+      "Bash(git commit -q -m 'feat\\(engine,web\\): traditional depth — sect, dignities, moon phase, angle aspects, solar return \\(+11 tests, 114 total\\); surfaced as '\\\\''the deeper chart'\\\\'' in Studio *)"
     ]
   }
 }

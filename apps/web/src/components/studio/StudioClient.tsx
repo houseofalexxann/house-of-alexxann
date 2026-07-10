@@ -9,6 +9,7 @@ import { AspectTable, HouseCuspTable, PlanetTable } from "@/components/chart/Dat
 import { DashaTimeline } from "@/components/chart/DashaTimeline";
 import { RasiGrid } from "@/components/chart/RasiGrid";
 import { InterpretationsPanel } from "@/components/chart/Interpretations";
+import { TraditionalPanel } from "@/components/chart/TraditionalPanel";
 import { PLANET_GLYPHS, SIGN_NAMES } from "@/components/chart/glyphs";
 
 type System = "western" | "vedic";
@@ -501,6 +502,16 @@ export function StudioClient() {
               </section>
             </div>
           </div>
+
+          {/* Traditional depth: sect, dignities, moon phase, angle aspects */}
+          <section className="card mt-8 p-6 sm:p-8">
+            <h2 className="font-heading text-2xl text-ink-900">The deeper chart</h2>
+            <p className="mb-6 mt-1 text-sm text-ink-500">
+              The traditional layer — sect, essential dignity, your natal moon
+              phase, and the planets touching your angles.
+            </p>
+            <TraditionalPanel chart={chart} />
+          </section>
 
           {/* Vedic extras: D1 + D9 + dasha */}
           {vedic && chart.navamsa && (

@@ -62,6 +62,19 @@ Ran a multi-agent adversarial review (3 lenses × find→verify) over booking/pa
 
 Engine gate re-run after all fixes: **103/103 green.** App typecheck clean.
 
+## 2026-07-10 — Owner direction round 2 (Venus-in-Libra feel + traditional depth)
+
+Alexandria sent a large vision expansion. Decisions captured via Q&A: access model = **free charts, paid depth**; build all four new surfaces (Transits, Accounts+dashboard+calendar, Human Design, Tarot). Sequenced in [[tasks 12–16]].
+
+Shipped this round:
+- **Authentic glyphs**: replaced emoji-rendered symbols with real typographic astrological glyphs (U+FE0E + `.astro-glyph`/Apple Symbols text-presentation) across wheel, tables, grids, panels. Verified in-browser: sign & planet glyphs now render as engraved line-art, not color-emoji tiles. (She flagged the emoji glyphs twice.)
+- **Per-sign colors**: 12 distinct colors from each sign's ruler/element, applied to sign glyphs.
+- **Lighter modern-zen background**: removed the purple/lilac cast; airy pearl with the faintest dawn washes.
+- **Engine depth (traditional/Hellenistic)** — new `traditional.ts`: sect (day/night) + light-leader + in/out-of-sect (incl. Mercury oriental/occidental), essential dignities (domicile/exaltation/detriment/fall per Ptolemy/Abu Ma'shar), natal moon phase (centered octants + illumination), aspects to Asc/MC, and `computeSolarReturn()` (bisection to the Sun's natal longitude). **+11 tests, 114/114 green.** Solar return verified: Sun returns to natal degree within ~1′ on the correct date.
+- **Surfaced in Studio**: a "deeper chart" panel — sect, drawn moon-phase disc, dignity badges (gold = strong, rose = challenged), angle aspects.
+
+Still queued (large, multi-part): public accounts + membership paywall + dashboard + booking calendar; Transits tab; Human Design; Tarot; deep content + nakshatra deities + remedies + solar-return readings + human/liberatory voice rewrite.
+
 ## Decision log
 
 | # | Decision | Why |

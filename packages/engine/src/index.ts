@@ -23,6 +23,13 @@ import {
 import { findAspects } from "./aspects";
 import { navamsaPositions, nakshatraOf } from "./vedic";
 import { vimshottariDasha } from "./dasha";
+import {
+  aspectsToAngles,
+  dignities,
+  dignityOf,
+  moonPhase,
+  sectOf,
+} from "./traditional";
 import { formatDegreeInSign, signOf } from "./format";
 import { VEDIC_BODIES, WESTERN_BODIES } from "./constants";
 
@@ -107,6 +114,7 @@ export function computeChart(input: ChartInput): ChartResult {
   });
 
   const moon = planets.find((p) => p.body === "moon")!;
+  const sun = planets.find((p) => p.body === "sun")!;
 
   return {
     input: {
@@ -129,6 +137,86 @@ export function computeChart(input: ChartInput): ChartResult {
     navamsa: sidereal
       ? navamsaPositions(planets, angles ? angles.ascendant : null)
       : null,
+    traditional: {
+      sect: sectOf(planets),
+      dignities: dignities(planets),
+      moonPhase: moonPhase(sun.longitude, moon.longitude),
+      angleAspects: aspectsToAngles(planets, angles, input.orbs),
+    },
     engineVersion: `${ENGINE_VERSION} (swisseph ${swephVersion()})`,
   };
 }
+
+/**
+ * Solar return: the chart for the moment the Sun returns to its natal
+ * longitude in a given year, cast for a chosen location. Uses the same
+ * zodiac/settings as the natal request. Finds the return instant by
+ * bisection on the Sun's longitude difference (deterministic, ~arc-second).
+ */
+export function computeSolarReturn(
+  natal: ChartInput,
+  year: number,
+  location?: { latitude: number; longitude: number }
+): ChartResult {
+  const sidereal = natal.system === "vedic";
+  const ayanamsa = natal.ayanamsa ?? "lahiri";
+  const nodeType = natal.nodeType ?? "true";
+  const natalSunLon = bodyPosition(
+    utcToJulianDayUT(natal.utc),
+    "sun",
+    { sidereal, ayanamsa, nodeType }
+  ).longitude;
+
+  // Signed angular difference of the Sun from its natal longitude at time t.
+  const diffAt = (iso: string): number => {
+    const lon = bodyPosition(utcToJulianDayUT(iso), "sun", {
+      sidereal,
+      ayanamsa,
+      nodeType,
+    }).longitude;
+    let d = (lon - natalSunLon) % 360;
+    if (d > 180) d -= 360;
+    if (d < -180) d += 360;
+    return d;
+  };
+
+  // The Sun returns near the natal birthday each year; bracket a ~6-day window.
+  const birthday = new Date(natal.utc);
+  const guess = new Date(Date.UTC(year, birthday.getUTCMonth(), birthday.getUTCDate(), 0, 0, 0));
+  let lo = new Date(guess.getTime() - 6 * 86400000);
+  let hi = new Date(guess.getTime() + 6 * 86400000);
+
+  const iso = (d: Date) => d.toISOString().replace(/\.\d{3}Z$/, "Z");
+  let dLo = diffAt(iso(lo));
+  let dHi = diffAt(iso(hi));
+  // Expand the bracket if the sign didn't change (rare edge near 0/360 wrap).
+  let expand = 0;
+  while (Math.sign(dLo) === Math.sign(dHi) && expand < 4) {
+    hi = new Date(hi.getTime() + 6 * 86400000);
+    dHi = diffAt(iso(hi));
+    expand++;
+  }
+  for (let i = 0; i < 60; i++) {
+    const midMs = (lo.getTime() + hi.getTime()) / 2;
+    const mid = new Date(midMs);
+    const dMid = diffAt(iso(mid));
+    if (Math.sign(dMid) === Math.sign(dLo)) {
+      lo = mid;
+      dLo = dMid;
+    } else {
+      hi = mid;
+      dHi = dMid;
+    }
+    if (hi.getTime() - lo.getTime() < 1000) break; // sub-second precision
+  }
+  const returnUtc = iso(new Date((lo.getTime() + hi.getTime()) / 2));
+
+  return computeChart({
+    ...natal,
+    utc: returnUtc,
+    latitude: location?.latitude ?? natal.latitude,
+    longitude: location?.longitude ?? natal.longitude,
+  });
+}
+
+export { dignityOf, moonPhase } from "./traditional";
