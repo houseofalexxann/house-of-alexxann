@@ -77,7 +77,8 @@
       "mcp__claude-in-chrome__computer",
       "mcp__61197af5-04a9-4032-86b2-df679059b2c7__list_teams",
       "mcp__61197af5-04a9-4032-86b2-df679059b2c7__list_deployments",
-      "mcp__61197af5-04a9-4032-86b2-df679059b2c7__get_deployment_build_logs"
+      "mcp__61197af5-04a9-4032-86b2-df679059b2c7__get_deployment_build_logs",
+      "Bash(break)"
     ]
   }
 }
