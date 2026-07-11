@@ -7,6 +7,7 @@ import { prisma } from "@/lib/db";
 import { getSettings } from "@/lib/settings";
 import { FORMAT_LABELS, formatPrice, type SessionFormat } from "@/lib/services";
 import { MarkPaidButton, CancelButton } from "@/components/admin/BookingActions";
+import { SeedButton } from "@/components/admin/SeedButton";
 import { SkyWeek } from "@/components/transits/SkyWeek";
 
 export const metadata: Metadata = { title: "The House ledger" };
@@ -91,7 +92,7 @@ export default async function AdminBookingsPage() {
 
   const dayStart = now.setZone(settings.practitionerTz).startOf("day");
   const dayEnd = dayStart.plus({ days: 1 });
-  const [awaiting, upcoming, recent, paidThisMonth, revenueAll, bookingsAll, usersTotal, membersTotal, postsTotal, recentUsers, today] = await Promise.all([
+  const [awaiting, upcoming, recent, paidThisMonth, revenueAll, bookingsAll, usersTotal, membersTotal, postsTotal, recentUsers, today, servicesTotal] = await Promise.all([
     prisma.booking.findMany({
       where: {
         status: "pending",
@@ -141,6 +142,7 @@ export default async function AdminBookingsPage() {
       orderBy: { startUtc: "asc" },
       include: { service: true },
     }),
+    prisma.service.count(),
   ]);
 
   const stats: Array<[string, string]> = [
@@ -172,6 +174,7 @@ export default async function AdminBookingsPage() {
 
       {/* Quick actions */}
       <div className="mt-6 flex flex-wrap gap-2">
+        <SeedButton seeded={servicesTotal > 0} />
         <Link href="/admin/blog" className="btn-gold text-xs">＋ Write today&#39;s sky post</Link>
         <Link href="/admin/availability" className="btn-ghost text-xs">Set availability</Link>
         <Link href="/admin/members" className="btn-ghost text-xs">Members</Link>
