@@ -10,6 +10,7 @@
  */
 import Stripe from "stripe";
 import type { Booking, Service } from "@prisma/client";
+import { MEMBERSHIP_PRICE_CENTS } from "./membership";
 
 export function stripeEnabled(): boolean {
   return Boolean(process.env.STRIPE_SECRET_KEY);
@@ -63,4 +64,41 @@ export async function createCheckoutSession(
   });
   if (!session.url) throw new Error("Stripe session has no URL");
   return { url: session.url, sessionId: session.id };
+}
+
+/**
+ * Venusian Doll membership: $5/month subscription checkout. No explicit
+ * payment_method_types — Stripe surfaces whatever recurring-capable methods
+ * are enabled on the account.
+ */
+export async function createMembershipCheckout(
+  userId: string,
+  email: string,
+  baseUrl: string
+): Promise<{ url: string }> {
+  const session = await stripe().checkout.sessions.create({
+    mode: "subscription",
+    customer_email: email,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "usd",
+          unit_amount: MEMBERSHIP_PRICE_CENTS,
+          recurring: { interval: "month" },
+          product_data: {
+            name: "Venusian Doll membership",
+            description:
+              "Every room of the House, behind the veil — plus 10% off every reading with Alexandria.",
+          },
+        },
+      },
+    ],
+    metadata: { membershipUserId: userId },
+    subscription_data: { metadata: { membershipUserId: userId } },
+    success_url: `${baseUrl}/join?welcome=1`,
+    cancel_url: `${baseUrl}/join?canceled=1`,
+  });
+  if (!session.url) throw new Error("Stripe session has no URL");
+  return { url: session.url };
 }

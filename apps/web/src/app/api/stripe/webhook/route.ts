@@ -2,10 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { stripe, stripeEnabled } from "@/lib/stripe";
 import { finalizePaidBooking } from "@/lib/bookings";
+import { prisma } from "@/lib/db";
 
 /**
- * Stripe webhook: checkout.session.completed → mark the booking paid and
- * send the confirmation email. Signature-verified with STRIPE_WEBHOOK_SECRET.
+ * Stripe webhook, signature-verified with STRIPE_WEBHOOK_SECRET.
+ * - checkout.session.completed (payment) → mark the booking paid + email.
+ * - checkout.session.completed (subscription) → lift the member's veil.
+ * - customer.subscription.deleted → membership lapses, veil settles back.
  */
 export async function POST(request: NextRequest) {
   if (!stripeEnabled() || !process.env.STRIPE_WEBHOOK_SECRET) {
@@ -36,6 +39,22 @@ export async function POST(request: NextRequest) {
     const bookingId = session.metadata?.bookingId;
     if (bookingId && session.payment_status === "paid") {
       await finalizePaidBooking(bookingId);
+    }
+    const memberId = session.metadata?.membershipUserId;
+    if (memberId && session.mode === "subscription" && session.payment_status === "paid") {
+      await prisma.user
+        .update({ where: { id: memberId }, data: { isMember: true } })
+        .catch(() => {}); // user row deleted since checkout — nothing to lift
+    }
+  }
+
+  if (event.type === "customer.subscription.deleted") {
+    const sub = event.data.object as Stripe.Subscription;
+    const memberId = sub.metadata?.membershipUserId;
+    if (memberId) {
+      await prisma.user
+        .update({ where: { id: memberId }, data: { isMember: false } })
+        .catch(() => {});
     }
   }
 

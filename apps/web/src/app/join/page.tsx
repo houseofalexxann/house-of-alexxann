@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { sessionUser } from "@/lib/user-auth";
 import { getSettings } from "@/lib/settings";
+import { stripeEnabled } from "@/lib/stripe";
+import { JoinCheckoutButton } from "@/components/membership/JoinCheckoutButton";
 import {
   MEMBERSHIP_PRICE_LABEL,
   PREMIUM_FEATURES,
@@ -14,9 +16,18 @@ export const metadata: Metadata = {
     "The Venusian Doll membership — $5 a month lifts the veil on every room of the House.",
 };
 
-export default async function JoinPage() {
-  const [user, settings] = await Promise.all([sessionUser(), getSettings()]);
+export default async function JoinPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ welcome?: string; canceled?: string }>;
+}) {
+  const [user, settings, params] = await Promise.all([
+    sessionUser(),
+    getSettings(),
+    searchParams,
+  ]);
   const isMember = !!user && (user.isMember || user.role === "admin");
+  const cardCheckout = stripeEnabled();
 
   const handles: Array<[string, string]> = [
     ["Venmo", settings.venmoHandle],
@@ -39,6 +50,19 @@ export default async function JoinPage() {
           with Alexandria.
         </p>
       </header>
+
+      {params.welcome && !isMember && (
+        <div className="card mt-8 border-rose-300/60 p-5 text-center text-sm text-ink-700">
+          ✦ Thank you — your payment is settling. The veil lifts within moments;
+          refresh this page and it will greet you properly.
+        </div>
+      )}
+      {params.canceled && (
+        <div className="card mt-8 p-5 text-center text-sm text-ink-500">
+          No pressure at all — the House isn&#39;t going anywhere. The free rooms
+          stay open, and this page will be here when you&#39;re ready.
+        </div>
+      )}
 
       <section className="card mt-10 p-8">
         <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
@@ -96,8 +120,21 @@ export default async function JoinPage() {
             <li className="flex gap-3">
               <span className="font-heading text-lg text-rose-500">2</span>
               <span>
-                Send <strong>{MEMBERSHIP_PRICE_LABEL}</strong> with your account
-                email in the note, any way you love:
+                {cardCheckout && user && (
+                  <span className="mb-3 block">
+                    <JoinCheckoutButton />
+                    <span className="mt-1.5 block text-xs text-ink-400">
+                      Card checkout — renews itself monthly, cancel anytime, veil
+                      lifts on its own within moments.
+                    </span>
+                  </span>
+                )}
+                {cardCheckout ? (
+                  <>Or send <strong>{MEMBERSHIP_PRICE_LABEL}</strong> directly</>
+                ) : (
+                  <>Send <strong>{MEMBERSHIP_PRICE_LABEL}</strong></>
+                )}{" "}
+                with your account email in the note, any way you love:
                 {handles.length > 0 ? (
                   <span className="mt-2 flex flex-wrap gap-2">
                     {handles.map(([label, value]) => (
@@ -123,9 +160,11 @@ export default async function JoinPage() {
             <li className="flex gap-3">
               <span className="font-heading text-lg text-rose-500">3</span>
               <span>
-                Alexandria lifts your veil — usually within the day. Your
-                account turns <strong>{TIER_NAMES.member}</strong> and every
-                room opens.
+                {cardCheckout
+                  ? "Card checkout lifts your veil automatically; for direct payments, Alexandria lifts it "
+                  : "Alexandria lifts your veil — "}
+                usually within the day. Your account turns{" "}
+                <strong>{TIER_NAMES.member}</strong> and every room opens.
               </span>
             </li>
           </ol>
