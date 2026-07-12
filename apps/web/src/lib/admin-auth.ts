@@ -46,12 +46,14 @@ export function verifySessionToken(token: string | undefined): boolean {
 }
 
 export function checkCredentials(email: string, password: string): boolean {
-  const okEmail = process.env.ADMIN_EMAIL;
-  const okPassword = process.env.ADMIN_PASSWORD;
+  // Trim both sides: pasted env values routinely pick up an invisible
+  // trailing space/newline, and typed passwords pick up accidental edges.
+  const okEmail = process.env.ADMIN_EMAIL?.trim();
+  const okPassword = process.env.ADMIN_PASSWORD?.trim();
   if (!okEmail || !okPassword) return false;
   return (
     email.trim().toLowerCase() === okEmail.toLowerCase() &&
-    password === okPassword
+    password.trim() === okPassword
   );
 }
 
