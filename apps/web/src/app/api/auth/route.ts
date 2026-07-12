@@ -18,6 +18,7 @@ import { sendMail } from "@/lib/email";
 import { baseUrl } from "@/lib/bookings";
 import { isActiveMember } from "@/lib/membership";
 import { rateLimit } from "@/lib/rate-limit";
+import { isAdmin } from "@/lib/admin-auth";
 
 const Signup = z.object({
   mode: z.literal("signup"),
@@ -42,8 +43,24 @@ const Reset = z.object({
 
 /** GET: current session (+ latest birth profile so every tab can prefill). */
 export async function GET() {
-  const user = await sessionUser();
+  const [user, adminSession] = await Promise.all([sessionUser(), isAdmin()]);
+
+  // The House Mother's admin key opens every room, even without a member
+  // account: a valid /admin session reads as full access site-wide.
+  if (!user && adminSession) {
+    return NextResponse.json({
+      user: {
+        name: "House Mother",
+        email: process.env.ADMIN_EMAIL?.trim() ?? "",
+        isMember: true,
+        memberUntil: null,
+        role: "admin",
+        profile: null,
+      },
+    });
+  }
   if (!user) return NextResponse.json({ user: null });
+
   const profile = await prisma.birthProfile.findFirst({
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
@@ -52,9 +69,9 @@ export async function GET() {
     user: {
       name: user.name,
       email: user.email,
-      isMember: isActiveMember(user),
+      isMember: isActiveMember(user) || adminSession,
       memberUntil: !user.isMember && user.memberUntil ? user.memberUntil : null,
-      role: user.role,
+      role: adminSession ? "admin" : user.role,
       profile: profile
         ? {
             name: profile.name,

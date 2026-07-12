@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { sessionUser } from "@/lib/user-auth";
+import { isAdmin } from "@/lib/admin-auth";
 import { getSettings } from "@/lib/settings";
 import { stripeEnabled } from "@/lib/stripe";
 import { JoinCheckoutButton } from "@/components/membership/JoinCheckoutButton";
@@ -23,12 +24,13 @@ export default async function JoinPage({
 }: {
   searchParams: Promise<{ welcome?: string; canceled?: string }>;
 }) {
-  const [user, settings, params] = await Promise.all([
+  const [user, settings, params, adminSession] = await Promise.all([
     sessionUser(),
     getSettings(),
     searchParams,
+    isAdmin(),
   ]);
-  const isMember = isActiveMember(user);
+  const isMember = isActiveMember(user) || adminSession;
   const cardCheckout = stripeEnabled();
 
   const handles: Array<[string, string]> = [
