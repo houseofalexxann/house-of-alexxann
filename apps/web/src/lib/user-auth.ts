@@ -12,7 +12,7 @@ import { prisma } from "./db";
 const COOKIE = "hoa_user";
 const SESSION_DAYS = 30;
 
-function secret(): string {
+export function secret(): string {
   const configured = process.env.SESSION_SECRET;
   if (configured && configured.length >= 16) return configured;
   if (process.env.NODE_ENV === "production") {

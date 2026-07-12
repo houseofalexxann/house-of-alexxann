@@ -68,7 +68,11 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         {mode === "signup" ? (
           <>Already of the House? <Link href="/login" className="text-rose-600 hover:underline">Sign in</Link></>
         ) : (
-          <>New here? <Link href="/signup" className="text-rose-600 hover:underline">Create an account</Link></>
+          <>
+            New here? <Link href="/signup" className="text-rose-600 hover:underline">Create an account</Link>
+            {" · "}
+            <Link href="/forgot" className="text-rose-600 hover:underline">Forgot password?</Link>
+          </>
         )}
       </p>
     </form>

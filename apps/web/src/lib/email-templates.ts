@@ -186,3 +186,24 @@ export function reminderEmail(
     ].join("\n"),
   };
 }
+
+export function passwordResetEmail(name: string | null, to: string, link: string): Mail {
+  const inner = `
+  <p>${name ? `Dear ${name},` : "Hello,"}</p>
+  <p>Someone — hopefully you — asked for a new password for this account. The link below is good for <strong style="color:#b14c77;">45 minutes</strong>:</p>
+  <p style="margin:22px 0;text-align:center;"><a href="${link}" style="background:#d4638f;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:999px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;">Choose a new password</a></p>
+  <p style="color:#8d7797;font-size:13px;">If you didn't ask for this, simply ignore it — your password stays exactly as it is, and your place in the House is safe.</p>`;
+  return {
+    to,
+    subject: "A new key to the House",
+    html: shell("Reset your password", inner),
+    text: [
+      name ? `Dear ${name},` : "Hello,",
+      ``,
+      `Reset your House of Alexxann password with this link (valid 45 minutes):`,
+      link,
+      ``,
+      `If you didn't ask for this, ignore this email — nothing changes.`,
+    ].join("\n"),
+  };
+}
