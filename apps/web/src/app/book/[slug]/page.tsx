@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { SERVICES, serviceBySlug } from "@/lib/services";
 import { getSettings } from "@/lib/settings";
 import { directPayOptions } from "@/lib/email-templates";
+import { stripeEnabled } from "@/lib/stripe";
 import { BookingClient } from "@/components/book/BookingClient";
 
 export async function generateStaticParams() {
@@ -30,6 +31,9 @@ export default async function BookPage({
 
   const settings = await getSettings();
   const directPayAvailable = directPayOptions(settings).length > 0;
+  // Card checkout exists in production only once Stripe keys are configured;
+  // locally the mock simulator stands in so the flow stays testable.
+  const checkoutAvailable = stripeEnabled() || process.env.NODE_ENV !== "production";
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-24 pt-14 sm:px-6">
@@ -42,7 +46,11 @@ export default async function BookPage({
           {service.durationMinutes} minutes with Alexandria · {service.tagline}
         </p>
       </header>
-      <BookingClient service={service} directPayAvailable={directPayAvailable} />
+      <BookingClient
+        service={service}
+        directPayAvailable={directPayAvailable}
+        checkoutAvailable={checkoutAvailable}
+      />
     </div>
   );
 }

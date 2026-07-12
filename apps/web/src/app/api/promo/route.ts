@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { sessionUser } from "@/lib/user-auth";
 import { isActiveMember, MEMBERSHIP_PRICE_CENTS } from "@/lib/membership";
 import { discountedCents, findValidPromo, redeemPromo } from "@/lib/promos";
+import { rateLimit } from "@/lib/rate-limit";
 
 const Body = z.object({ code: z.string().min(1).max(60) });
 
@@ -15,6 +16,9 @@ const Body = z.object({ code: z.string().min(1).max(60) });
  *   (counted when the payment actually happens).
  */
 export async function POST(request: NextRequest) {
+  const limited = rateLimit(request, "promo", 10, 600);
+  if (limited) return limited;
+
   const parsed = Body.safeParse(await request.json().catch(() => null));
   if (!parsed.success) {
     return NextResponse.json({ error: "Enter a code first." }, { status: 400 });

@@ -18,7 +18,7 @@ export default async function MockPayPage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
-  if (stripeEnabled()) notFound();
+  if (stripeEnabled() || process.env.NODE_ENV === "production") notFound();
   const booking = await prisma.booking.findUnique({
     where: { token },
     include: { service: true },

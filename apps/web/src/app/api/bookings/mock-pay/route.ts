@@ -4,11 +4,12 @@ import { finalizePaidBooking } from "@/lib/bookings";
 import { stripeEnabled } from "@/lib/stripe";
 
 /**
- * Dev-only payment simulator endpoint. Disabled the moment real Stripe keys
- * are configured, so it can never bypass live payments.
+ * Dev-only payment simulator endpoint. Never available in production — with
+ * or without Stripe keys — and disabled locally once real keys exist, so it
+ * can never bypass live payments.
  */
 export async function POST(request: NextRequest) {
-  if (stripeEnabled()) {
+  if (stripeEnabled() || process.env.NODE_ENV === "production") {
     return NextResponse.json({ error: "Mock payment disabled." }, { status: 403 });
   }
   const { token } = (await request.json().catch(() => ({}))) as { token?: string };

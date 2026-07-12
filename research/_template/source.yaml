@@ -1,0 +1,28 @@
+# Copy this folder to research/sources/<source-slug>/ and fill in.
+# Format is CSL-adjacent so the library stays portable (Zotero/Pandoc-friendly).
+
+id: source-slug # kebab-case, matches the folder name
+type: book # book | translation | article | course | podcast
+title: ""
+authors:
+  - family: ""
+    given: ""
+    role: author # author | translator | editor
+issued: # year of THIS edition
+publisher: ""
+isbn: ""
+language: en
+rights: in-copyright # in-copyright | public-domain | own-work
+
+# For translations of classical works:
+original:
+  author: ""
+  title: ""
+  era: "" # e.g. "9th century CE"
+
+# How locators work for this source — pick one and stay consistent:
+# pages (modern books) or book/chapter/section (classical texts).
+locator-style: pages
+
+# Reading status, for your own tracking:
+status: cataloged # cataloged | reading | noted | verified

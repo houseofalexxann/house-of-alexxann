@@ -21,9 +21,11 @@ interface Props {
   service: ServiceDef;
   /** Direct-pay options actually configured (empty → option hidden). */
   directPayAvailable: boolean;
+  /** Card checkout available (Stripe keys, or the dev simulator locally). */
+  checkoutAvailable: boolean;
 }
 
-export function BookingClient({ service, directPayAvailable }: Props) {
+export function BookingClient({ service, directPayAvailable, checkoutAvailable }: Props) {
   const tiers = useMemo(() => priceTiers(service), [service]);
   const clientTz = useMemo(
     () => Intl.DateTimeFormat().resolvedOptions().timeZone ?? "America/New_York",
@@ -39,7 +41,9 @@ export function BookingClient({ service, directPayAvailable }: Props) {
 
   const [format, setFormat] = useState<SessionFormat>(service.formats[0]);
   const [tier, setTier] = useState<PriceTier>(tiers[1]);
-  const [payMethod, setPayMethod] = useState<"checkout" | "direct">("checkout");
+  const [payMethod, setPayMethod] = useState<"checkout" | "direct">(
+    checkoutAvailable ? "checkout" : "direct"
+  );
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -345,21 +349,23 @@ export function BookingClient({ service, directPayAvailable }: Props) {
           <span className="mr-2 text-rose-500">5 ·</span> How would you like to pay?
         </h2>
         <div className="mt-4 grid gap-3 sm:grid-cols-2">
-          <button
-            type="button"
-            onClick={() => setPayMethod("checkout")}
-            className={`rounded-xl border p-4 text-left transition-colors ${
-              payMethod === "checkout"
-                ? "border-rose-500 bg-rose-300/30"
-                : "border-pearl-400 bg-white/70 hover:border-rose-400"
-            }`}
-          >
-            <span className="block font-semibold text-ink-900">Card & pay-over-time</span>
-            <span className="mt-1 block text-xs leading-relaxed text-ink-500">
-              Secure checkout: card, Pay in 4 (Klarna / Afterpay), monthly
-              installments (Affirm), Cash App Pay, PayPal.
-            </span>
-          </button>
+          {checkoutAvailable && (
+            <button
+              type="button"
+              onClick={() => setPayMethod("checkout")}
+              className={`rounded-xl border p-4 text-left transition-colors ${
+                payMethod === "checkout"
+                  ? "border-rose-500 bg-rose-300/30"
+                  : "border-pearl-400 bg-white/70 hover:border-rose-400"
+              }`}
+            >
+              <span className="block font-semibold text-ink-900">Card & pay-over-time</span>
+              <span className="mt-1 block text-xs leading-relaxed text-ink-500">
+                Secure checkout: card, Pay in 4 (Klarna / Afterpay), monthly
+                installments (Affirm), Cash App Pay, PayPal.
+              </span>
+            </button>
+          )}
           {directPayAvailable && (
             <button
               type="button"

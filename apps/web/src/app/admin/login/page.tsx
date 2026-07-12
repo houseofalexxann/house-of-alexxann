@@ -14,9 +14,12 @@ export default function AdminLoginPage() {
         </div>
         <LoginClient />
         <p className="mt-4 text-center text-xs text-ink-400">
-          The House Mother key can&apos;t be emailed — it lives in Vercel. Forgot
-          it? Overwrite ADMIN_PASSWORD under Settings → Environment Variables,
-          then redeploy.
+          This door opens with your House Mother account password — the same
+          one you use to sign in on the main site, resettable anytime via{" "}
+          <a href="/forgot" className="text-rose-600 hover:underline">
+            Forgot password
+          </a>
+          . (The ADMIN_PASSWORD in Vercel still works as a spare key.)
         </p>
       </div>
     </div>

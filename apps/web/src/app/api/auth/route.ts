@@ -17,6 +17,7 @@ import { passwordResetEmail } from "@/lib/email-templates";
 import { sendMail } from "@/lib/email";
 import { baseUrl } from "@/lib/bookings";
 import { isActiveMember } from "@/lib/membership";
+import { rateLimit } from "@/lib/rate-limit";
 
 const Signup = z.object({
   mode: z.literal("signup"),
@@ -74,6 +75,12 @@ export async function POST(request: NextRequest) {
   }
   const data = parsed.data;
   const email = "email" in data ? data.email.trim().toLowerCase() : "";
+
+  const limited =
+    data.mode === "forgot"
+      ? rateLimit(request, "auth-forgot", 5, 900)
+      : rateLimit(request, "auth", 20, 600);
+  if (limited) return limited;
 
   if (data.mode === "forgot") {
     if (process.env.NODE_ENV === "production" && !process.env.RESEND_API_KEY) {

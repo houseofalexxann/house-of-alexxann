@@ -196,3 +196,192 @@ model Setting {
   key   String @id
   value String
 }
+
+// ————————————————————————————————————————————————————————————————————————
+// KNOWLEDGE LAYER (architecture review §9, approved 2026-07-12).
+// One spine: every piece of knowledge knows where it came from and how sure
+// it is. Concepts are the hub; claims carry epistemic status; citations
+// point at editions with locators.
+// ————————————————————————————————————————————————————————————————————————
+
+enum EpistemicStatus {
+  doctrine       // what a historical source states
+  scholarship    // what modern scholars conclude
+  synthesis      // Alexandria's own view
+  simplification // teaching shorthand
+  experimental   // ideas being tested
+}
+
+enum SourceKind {
+  primary
+  translation
+  scholarship
+  course
+  podcast
+  article
+}
+
+enum RightsStatus {
+  in_copyright
+  public_domain
+  own_work
+}
+
+enum Tradition {
+  hellenistic
+  medieval
+  renaissance
+  vedic
+  modern
+  human_design
+  tarot
+}
+
+enum CrossRefType {
+  derives_from
+  contrasts
+  refines
+  translates_to
+  see_also
+}
+
+model Author {
+  id        String     @id @default(cuid())
+  slug      String     @unique
+  name      String
+  lifespan  String? // "787–886 CE", "b. 1974"
+  tradition Tradition?
+  bio       String?
+  sources   SourceAuthor[]
+}
+
+model Source {
+  id        String       @id @default(cuid())
+  slug      String       @unique
+  title     String
+  kind      SourceKind
+  year      Int?
+  publisher String?
+  language  String       @default("en")
+  rights    RightsStatus
+  notes     String?
+  authors   SourceAuthor[]
+  editions  Edition[]
+  citations Citation[]
+}
+
+model SourceAuthor {
+  sourceId String
+  authorId String
+  role     String @default("author") // author | translator | editor
+  source   Source @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  author   Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  @@id([sourceId, authorId, role])
+}
+
+model Edition {
+  id         String    @id @default(cuid())
+  sourceId   String
+  source     Source    @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  translator String?
+  year       Int?
+  publisher  String?
+  isbn       String?
+  notes      String?
+  excerpts   Excerpt[]
+  citations  Citation[]
+}
+
+model Excerpt {
+  id         String     @id @default(cuid())
+  editionId  String
+  edition    Edition    @relation(fields: [editionId], references: [id], onDelete: Cascade)
+  /// Granular locator: page for modern books; book/chapter/section for
+  /// classical texts so the citation survives across editions.
+  locator    String
+  /// Short quoted text only (fair use) — never full-text reproduction.
+  text       String
+  language   String     @default("en")
+  verifiedAt DateTime? // second-pass QA against the physical source
+  citations  Citation[]
+}
+
+model Concept {
+  id        String     @id @default(cuid())
+  slug      String     @unique
+  title     String
+  tradition Tradition?
+  summary   String?
+  terms     Term[]
+  claims    ClaimConcept[]
+  refsFrom  CrossRef[] @relation("CrossRefFrom")
+  refsTo    CrossRef[] @relation("CrossRefTo")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Term {
+  id              String  @id @default(cuid())
+  conceptId       String
+  concept         Concept @relation(fields: [conceptId], references: [id], onDelete: Cascade)
+  language        String  @default("en")
+  name            String
+  /// Glossary tier: one warm plain-language sentence or two.
+  plainDefinition String
+  /// Encyclopedia tier: the full treatment (markdown).
+  deepDefinition  String?
+
+  @@unique([conceptId, language, name])
+  @@index([language, name])
+}
+
+model Claim {
+  id         String          @id @default(cuid())
+  /// Markdown body — one claim, one idea.
+  body       String
+  status     EpistemicStatus
+  concepts   ClaimConcept[]
+  citations  Citation[]
+  /// QA pass: verified against sources & tone-checked.
+  reviewedAt DateTime?
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+}
+
+model ClaimConcept {
+  claimId   String
+  conceptId String
+  claim     Claim   @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  concept   Concept @relation(fields: [conceptId], references: [id], onDelete: Cascade)
+
+  @@id([claimId, conceptId])
+}
+
+model Citation {
+  id        String   @id @default(cuid())
+  claimId   String
+  claim     Claim    @relation(fields: [claimId], references: [id], onDelete: Cascade)
+  // Point at the most specific thing available: an excerpt when one exists,
+  // else an edition (with locator), else the source in general.
+  excerptId String?
+  excerpt   Excerpt? @relation(fields: [excerptId], references: [id])
+  editionId String?
+  edition   Edition? @relation(fields: [editionId], references: [id])
+  sourceId  String?
+  source    Source?  @relation(fields: [sourceId], references: [id])
+  locator   String?
+  note      String?
+}
+
+model CrossRef {
+  id     String       @id @default(cuid())
+  fromId String
+  from   Concept      @relation("CrossRefFrom", fields: [fromId], references: [id], onDelete: Cascade)
+  toId   String
+  to     Concept      @relation("CrossRefTo", fields: [toId], references: [id], onDelete: Cascade)
+  type   CrossRefType
+  note   String?
+
+  @@unique([fromId, toId, type])
+}

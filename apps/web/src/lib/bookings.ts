@@ -53,6 +53,18 @@ export async function createBooking(
     throw new Error("That session format isn't offered for this reading.");
   }
 
+  // In production, card checkout only exists once Stripe is configured —
+  // the dev simulator must never stand in for real payment there.
+  if (
+    input.paymentMethod === "checkout" &&
+    !stripeEnabled() &&
+    process.env.NODE_ENV === "production"
+  ) {
+    throw new Error(
+      "Card checkout isn't open quite yet — choose the direct-pay option (Venmo / Cash App / Zelle / PayPal)."
+    );
+  }
+
   const tier = priceTiers(serviceDef).find((t) => t.key === input.priceTier);
   if (!tier) throw new Error("Unknown price tier.");
 
