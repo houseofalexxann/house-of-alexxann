@@ -74,7 +74,9 @@ export async function createCheckoutSession(
 export async function createMembershipCheckout(
   userId: string,
   email: string,
-  baseUrl: string
+  baseUrl: string,
+  priceCents: number = MEMBERSHIP_PRICE_CENTS,
+  promoId?: string
 ): Promise<{ url: string }> {
   const session = await stripe().checkout.sessions.create({
     mode: "subscription",
@@ -84,7 +86,7 @@ export async function createMembershipCheckout(
         quantity: 1,
         price_data: {
           currency: "usd",
-          unit_amount: MEMBERSHIP_PRICE_CENTS,
+          unit_amount: priceCents,
           recurring: { interval: "month" },
           product_data: {
             name: "Venusian Doll membership",
@@ -94,7 +96,7 @@ export async function createMembershipCheckout(
         },
       },
     ],
-    metadata: { membershipUserId: userId },
+    metadata: { membershipUserId: userId, ...(promoId ? { promoId } : {}) },
     subscription_data: { metadata: { membershipUserId: userId } },
     success_url: `${baseUrl}/join?welcome=1`,
     cancel_url: `${baseUrl}/join?canceled=1`,

@@ -12,6 +12,7 @@ const BookingRequest = z.object({
   clientTz: z.string().min(1).max(64),
   priceTier: z.enum(["community", "standard", "sustainer"]),
   paymentMethod: z.enum(["checkout", "direct"]).default("checkout"),
+  promoCode: z.string().max(60).optional(),
   birthDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   birthTime: z.string().regex(/^\d{2}:\d{2}$/).optional(),
   birthPlace: z.string().max(200).optional(),

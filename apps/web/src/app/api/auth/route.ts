@@ -16,6 +16,7 @@ import {
 import { passwordResetEmail } from "@/lib/email-templates";
 import { sendMail } from "@/lib/email";
 import { baseUrl } from "@/lib/bookings";
+import { isActiveMember } from "@/lib/membership";
 
 const Signup = z.object({
   mode: z.literal("signup"),
@@ -50,7 +51,8 @@ export async function GET() {
     user: {
       name: user.name,
       email: user.email,
-      isMember: user.isMember,
+      isMember: isActiveMember(user),
+      memberUntil: !user.isMember && user.memberUntil ? user.memberUntil : null,
       role: user.role,
       profile: profile
         ? {

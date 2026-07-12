@@ -48,8 +48,32 @@ model User {
   passwordHash String?
   /** Premium membership flag — admin-toggled until Stripe subscriptions land. */
   isMember     Boolean  @default(false)
+  /** Time-boxed access (free trials, comps): member while now < memberUntil. */
+  memberUntil     DateTime?
+  /** One free trial per account, ever. */
+  trialRedeemedAt DateTime?
   createdAt    DateTime @default(now())
   profiles     BirthProfile[]
+}
+
+/**
+ * Promo codes (admin-created): percent/amount off readings or membership,
+ * or a free-trial grant of N days. Codes are stored uppercase.
+ */
+model PromoCode {
+  id             String    @id @default(cuid())
+  code           String    @unique
+  /** "readings" | "membership" | "trial" */
+  kind           String
+  percentOff     Int?
+  amountOffCents Int?
+  trialDays      Int?
+  maxRedemptions Int?
+  redemptions    Int       @default(0)
+  expiresAt      DateTime?
+  active         Boolean   @default(true)
+  note           String?
+  createdAt      DateTime  @default(now())
 }
 
 model Post {
@@ -125,6 +149,8 @@ model Booking {
   // Sliding scale: which tier was chosen and the actual amount.
   priceCents    Int
   priceTier     String        @default("standard")
+  /** Promo code applied at booking (normalized uppercase), for the ledger. */
+  promoCode     String?
   paymentMode   String? // "stripe" | "mock"
   stripeSessionId String?     @unique
   // Format-specific delivery detail (video link / phone / address).

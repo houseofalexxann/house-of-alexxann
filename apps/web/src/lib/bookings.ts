@@ -11,7 +11,8 @@ import { priceTiers, serviceBySlug, type PriceTierKey, type SessionFormat } from
 import { createCheckoutSession, stripeEnabled } from "./stripe";
 import { confirmationEmail, directPayEmail, reminderEmail } from "./email-templates";
 import { sessionUser } from "./user-auth";
-import { MEMBER_DISCOUNT } from "./membership";
+import { isActiveMember, MEMBER_DISCOUNT } from "./membership";
+import { discountedCents, findValidPromo, normalizeCode, redeemPromo } from "./promos";
 import { sendMail } from "./email";
 
 export function baseUrl(): string {
@@ -34,6 +35,7 @@ export interface CreateBookingInput {
    * Alexandria confirms receipt in the admin.
    */
   paymentMethod: "checkout" | "direct";
+  promoCode?: string;
   birthDate?: string;
   birthTime?: string;
   birthPlace?: string;
@@ -60,10 +62,18 @@ export async function createBooking(
 
   // Venusian Dolls (members) get their discount on every reading, applied server-side.
   const member = await sessionUser().catch(() => null);
-  const discounted =
-    member?.isMember || member?.role === "admin"
-      ? Math.round((tier.priceCents * (1 - MEMBER_DISCOUNT)) / 100) * 100
-      : tier.priceCents;
+  let discounted = isActiveMember(member)
+    ? Math.round((tier.priceCents * (1 - MEMBER_DISCOUNT)) / 100) * 100
+    : tier.priceCents;
+
+  // Promo codes stack after the member discount; validated server-side.
+  let promo = null;
+  if (input.promoCode?.trim()) {
+    const found = await findValidPromo(input.promoCode, "readings");
+    if ("error" in found) throw new Error(found.error);
+    promo = found.promo;
+    discounted = discountedCents(discounted, promo);
+  }
 
   const start = DateTime.fromISO(input.startUtc, { zone: "utc" });
   const end = start.plus({ minutes: service.durationMinutes });
@@ -82,6 +92,7 @@ export async function createBooking(
         clientTz: input.clientTz,
         priceCents: discounted,
         priceTier: tier.key,
+        promoCode: promo ? normalizeCode(input.promoCode!) : null,
         paymentMode:
           input.paymentMethod === "direct"
             ? "direct"
@@ -106,6 +117,10 @@ export async function createBooking(
     }
     throw err;
   }
+
+  // Count the promo use once the slot is truly held. (Abandoned checkouts
+  // keep the count — acceptable slack for a solo practice.)
+  if (promo) await redeemPromo(promo);
 
   if (input.paymentMethod === "direct") {
     // Send payment instructions; the slot is held while Alexandria awaits

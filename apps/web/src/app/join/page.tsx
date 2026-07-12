@@ -4,7 +4,9 @@ import { sessionUser } from "@/lib/user-auth";
 import { getSettings } from "@/lib/settings";
 import { stripeEnabled } from "@/lib/stripe";
 import { JoinCheckoutButton } from "@/components/membership/JoinCheckoutButton";
+import { PromoBox } from "@/components/membership/PromoBox";
 import {
+  isActiveMember,
   MEMBERSHIP_PRICE_LABEL,
   PREMIUM_FEATURES,
   TIER_NAMES,
@@ -26,7 +28,7 @@ export default async function JoinPage({
     getSettings(),
     searchParams,
   ]);
-  const isMember = !!user && (user.isMember || user.role === "admin");
+  const isMember = isActiveMember(user);
   const cardCheckout = stripeEnabled();
 
   const handles: Array<[string, string]> = [
@@ -173,6 +175,18 @@ export default async function JoinPage({
               Create my free account first
             </Link>
           )}
+        </section>
+      )}
+
+      {!isMember && (
+        <section className="card mt-6 p-6">
+          <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
+            Have a code? ✦
+          </h2>
+          <p className="mb-3 mt-1 text-sm text-ink-500">
+            Trial codes lift the veil instantly; promo codes change your price.
+          </p>
+          <PromoBox signedIn={!!user} checkoutEnabled={cardCheckout} />
         </section>
       )}
 

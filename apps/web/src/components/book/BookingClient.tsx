@@ -48,6 +48,7 @@ export function BookingClient({ service, directPayAvailable }: Props) {
   const [birthTime, setBirthTime] = useState("");
   const [birthPlace, setBirthPlace] = useState("");
   const [notes, setNotes] = useState("");
+  const [promoCode, setPromoCode] = useState("");
 
   const { user } = useUser();
   const prefilled = useRef(false);
@@ -124,6 +125,7 @@ export function BookingClient({ service, directPayAvailable }: Props) {
           clientTz,
           priceTier: tier.key,
           paymentMethod: payMethod,
+          promoCode: promoCode.trim() || undefined,
           birthDate: birthDate || undefined,
           birthTime: birthTime || undefined,
           birthPlace: birthPlace || undefined,
@@ -378,6 +380,19 @@ export function BookingClient({ service, directPayAvailable }: Props) {
             </button>
           )}
         </div>
+        <label className="mt-5 block text-sm sm:max-w-xs">
+          <span className="mb-1 block text-ink-700">Promo code (optional)</span>
+          <input
+            value={promoCode}
+            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+            placeholder="HOUSEWARMING"
+            className={`${inputCls} uppercase tracking-wider`}
+          />
+          <span className="mt-1 block text-xs text-ink-400">
+            Applied to your total when you book — the confirmation shows the
+            final price.
+          </span>
+        </label>
       </section>
 
       <div className="flex flex-col items-center gap-3">

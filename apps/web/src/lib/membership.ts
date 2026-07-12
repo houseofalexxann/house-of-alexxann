@@ -34,6 +34,22 @@ export const MEMBERSHIP_PRICE_LABEL = "$5";
 /** Venusian Dolls get all access + this discount on every reading. */
 export const MEMBER_DISCOUNT = 0.1;
 
+/**
+ * The one place membership is decided: paid flag, admin, or an unexpired
+ * time-boxed grant (free trial / comp). Structural type so client bundles
+ * don't drag Prisma in.
+ */
+export function isActiveMember(
+  user:
+    | { isMember: boolean; role: string; memberUntil?: Date | null }
+    | null
+    | undefined
+): boolean {
+  if (!user) return false;
+  if (user.isMember || user.role === "admin") return true;
+  return !!user.memberUntil && user.memberUntil > new Date();
+}
+
 export const PREMIUM_FEATURES = [
   "The deeper chart — essential dignities, sect analysis, decans & bounds",
   "Lots of Fortune & Spirit + zodiacal releasing timelines",

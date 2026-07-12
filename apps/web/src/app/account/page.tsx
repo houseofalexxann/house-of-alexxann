@@ -3,7 +3,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/user-auth";
 import { prisma } from "@/lib/db";
 import { LogoutButton } from "@/components/auth/LogoutButton";
-import { TIER_NAMES } from "@/lib/membership";
+import { isActiveMember, TIER_NAMES } from "@/lib/membership";
 
 export const metadata: Metadata = { title: "Your House" };
 
@@ -38,12 +38,28 @@ export default async function AccountPage() {
           <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
             Membership
           </h2>
-          {user.isMember ? (
+          {isActiveMember(user) ? (
             <>
-              <p className="mt-2 font-heading text-2xl text-rose-500">{TIER_NAMES.member} ✦</p>
+              <p className="mt-2 font-heading text-2xl text-rose-500">
+                {TIER_NAMES.member} ✦
+                {!user.isMember && user.memberUntil && (
+                  <span className="ml-2 align-middle text-sm text-ink-400">
+                    trial through{" "}
+                    {user.memberUntil.toLocaleDateString("en-US", { month: "long", day: "numeric" })}
+                  </span>
+                )}
+              </p>
               <p className="mt-1 text-sm text-ink-500">
                 Every room is open to you — deeper chart, transits, and the
                 rooms still being furnished.
+                {!user.isMember && user.memberUntil && (
+                  <>
+                    {" "}
+                    <Link href="/join" className="text-rose-600 hover:underline">
+                      Stay behind the veil for $5 a month →
+                    </Link>
+                  </>
+                )}
               </p>
             </>
           ) : (

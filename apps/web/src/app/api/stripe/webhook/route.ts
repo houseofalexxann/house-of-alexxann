@@ -45,6 +45,12 @@ export async function POST(request: NextRequest) {
       await prisma.user
         .update({ where: { id: memberId }, data: { isMember: true } })
         .catch(() => {}); // user row deleted since checkout — nothing to lift
+      const promoId = session.metadata?.promoId;
+      if (promoId) {
+        await prisma.promoCode
+          .update({ where: { id: promoId }, data: { redemptions: { increment: 1 } } })
+          .catch(() => {});
+      }
     }
   }
 

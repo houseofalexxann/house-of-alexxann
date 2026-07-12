@@ -178,6 +178,7 @@ export default async function AdminBookingsPage() {
         <Link href="/admin/blog" className="btn-gold text-xs">＋ Write today&#39;s sky post</Link>
         <Link href="/admin/availability" className="btn-ghost text-xs">Set availability</Link>
         <Link href="/admin/members" className="btn-ghost text-xs">Members</Link>
+        <Link href="/admin/promos" className="btn-ghost text-xs">Promo codes</Link>
         <Link href="/admin/clients" className="btn-ghost text-xs">Client book</Link>
         <Link href="/admin/charts" className="btn-ghost text-xs">Client charts</Link>
         <Link href="/" className="btn-ghost text-xs">View site →</Link>
