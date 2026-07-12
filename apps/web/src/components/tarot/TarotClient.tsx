@@ -134,10 +134,10 @@ export function TarotClient() {
         </div>
       )}
 
-      {/* Three-card spread — Icons */}
+      {/* Three-card spread — Venusian Dolls */}
       {mode === "three" && drawn && (
         <div className="mt-10">
-          <PremiumGate title="Spreads are an Icons' room">
+          <PremiumGate title="Spreads are a Venusian Dolls’ room">
             <div className="grid gap-6 md:grid-cols-3">
               {drawn.map((d, i) => (
                 <div key={i}>
@@ -154,10 +154,10 @@ export function TarotClient() {
         </div>
       )}
 
-      {/* Message / divinity card — Icons */}
+      {/* Message / divinity card — Venusian Dolls */}
       {mode === "message" && messageCard && (
         <div className="mt-10">
-          <PremiumGate title="The House's message cards are for Icons">
+          <PremiumGate title="The House’s message cards are for Venusian Dolls">
             <div className="mx-auto max-w-md">
               <FlipCard flipped={flipped[0]} onFlip={() => flip(0)}>
                 <div className="w-full rounded-2xl border border-lilac-400/60 bg-white/85 p-6 text-center shadow-lg">

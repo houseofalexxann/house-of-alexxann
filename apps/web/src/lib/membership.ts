@@ -15,18 +15,23 @@ export function isMember(): boolean {
 }
 
 /**
- * Tier vernacular (Alexandria, 2026-07-10): doll/ballroom lineage — this is
- * a House, and houses have family. Everyone arrives a Doll; membership makes
- * you an Icon; the sustaining tier is Legend. The House Mother is Alexandria
- * herself (admin). Rename here and the whole site follows.
+ * Tier vernacular (Alexandria, 2026-07-10; renamed 2026-07-12): doll/ballroom
+ * lineage — this is a House, and houses have family. Everyone arrives a Doll;
+ * membership makes you a Venusian Doll and lifts the veil on every room. The
+ * House Mother is Alexandria herself (admin). Rename here and the whole site
+ * follows.
  */
 export const TIER_NAMES = {
   free: "The Dolls",
-  member: "Icon",
+  member: "Venusian Doll",
   admin: "House Mother",
 } as const;
 
-/** Icons get all access + this discount on every reading. */
+/** Venusian Doll membership: $5 a month to see behind the veil. */
+export const MEMBERSHIP_PRICE_CENTS = 500;
+export const MEMBERSHIP_PRICE_LABEL = "$5";
+
+/** Venusian Dolls get all access + this discount on every reading. */
 export const MEMBER_DISCOUNT = 0.1;
 
 export const PREMIUM_FEATURES = [

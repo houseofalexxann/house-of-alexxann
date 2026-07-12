@@ -58,7 +58,7 @@ export async function createBooking(
     throw new Error("That time was just taken — please pick another slot.");
   }
 
-  // Icons (members) get their discount on every reading, applied server-side.
+  // Venusian Dolls (members) get their discount on every reading, applied server-side.
   const member = await sessionUser().catch(() => null);
   const discounted =
     member?.isMember || member?.role === "admin"

@@ -50,13 +50,20 @@ export default async function AccountPage() {
             <>
               <p className="mt-2 font-heading text-2xl text-ink-900">{TIER_NAMES.free}</p>
               <p className="mt-1 text-sm text-ink-500">
-                Charts are yours forever-free. Membership (the deeper chart,
-                transits, Human Design, tarot, the blog&#39;s inner posts)
-                opens soon — readings include everything today.
+                Charts are yours forever-free. The{" "}
+                <strong className="text-ink-700">{TIER_NAMES.member}</strong>{" "}
+                membership — $5 a month — lifts the veil on everything: the
+                deeper chart, transits, Human Design, tarot, and the blog&#39;s
+                inner posts.
               </p>
-              <Link href="/services" className="btn-gold mt-4 inline-flex text-sm">
-                Book a reading
-              </Link>
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link href="/join" className="btn-gold inline-flex text-sm">
+                  Become a {TIER_NAMES.member} — $5
+                </Link>
+                <Link href="/services" className="btn-ghost inline-flex text-sm">
+                  Book a reading
+                </Link>
+              </div>
             </>
           )}
         </section>

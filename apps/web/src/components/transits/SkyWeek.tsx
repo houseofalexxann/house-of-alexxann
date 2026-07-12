@@ -53,8 +53,8 @@ export function SkyWeek() {
       <ul className="mt-4">
         <DayRow d={days[0]} />
       </ul>
-      {/* The rest of the week belongs to Icons. */}
-      <PremiumGate title="The rest of the week is for Icons" preview={false}>
+      {/* The rest of the week waits behind the veil. */}
+      <PremiumGate title="The rest of the week is for Venusian Dolls" preview={false}>
         <ul>
           {days.slice(1).map((d) => (
             <DayRow key={d.date} d={d} />

@@ -18,7 +18,7 @@ export default function TarotPage() {
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-ink-500">
           Twenty-two doors of the major arcana, read in this House&#39;s voice —
           plus the House&#39;s own message cards, small blessings for heavy
-          pockets. Daily draw is free; spreads and messages open for Icons.
+          pockets. Daily draw is free; spreads and messages open behind the veil.
         </p>
       </header>
       <TarotClient />

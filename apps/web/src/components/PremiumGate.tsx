@@ -43,18 +43,17 @@ export function PremiumGate({
           <div aria-hidden className="text-2xl text-rose-500">✦</div>
           <h3 className="mt-2 font-heading text-xl text-ink-900">{title}</h3>
           <p className="mt-2 text-sm leading-relaxed text-ink-500">
-            This lives in the members&#39; House.{" "}
-            {user
-              ? "Membership unlocks it the moment it opens — and every reading with Alexandria includes all of it today."
-              : "Create a free account to be first through the door — and every reading with Alexandria includes all of it today."}
+            This lives behind the veil. The{" "}
+            <strong className="text-ink-700">Venusian Doll</strong> membership —
+            $5 a month — lifts it on every room of the House
+            {user ? "." : ", and your account is free to create."}{" "}
+            Every reading with Alexandria includes all of it today.
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
-            {!user && (
-              <Link href="/signup" className="btn-gold text-sm">
-                Create an account
-              </Link>
-            )}
-            <Link href="/services" className={user ? "btn-gold text-sm" : "btn-ghost text-sm"}>
+            <Link href="/join" className="btn-gold text-sm">
+              Become a Venusian Doll — $5
+            </Link>
+            <Link href="/services" className="btn-ghost text-sm">
               Book a reading
             </Link>
             {preview && (

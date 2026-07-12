@@ -71,9 +71,9 @@ export default function HomePage() {
           {[
             ["/western", "\u2648\ufe0e", "Western astrology", "Your tropical natal chart — wheel, houses, aspects, the deeper dignities. Free, always."],
             ["/vedic", "\u263d\ufe0e", "Vedic · Jyotish", "The sidereal sky: nakshatras with padas & lords, Rasi & Navamsa, your dasha timeline."],
-            ["/human-design", "\u25ec", "Human Design", "Type, strategy, authority & profile free — the full bodygraph for Icons."],
+            ["/human-design", "\u25ec", "Human Design", "Type, strategy, authority & profile free — the full bodygraph for Venusian Dolls."],
             ["/tarot", "\u2736", "Tarot", "Seventy-eight doors, tied to the decans of your chart. The room is being furnished."],
-            ["/transits", "\u2609\ufe0e", "The sky now", "Today's astro weather free — the 7-day forecast for Icons."],
+            ["/transits", "\u2609\ufe0e", "The sky now", "Today's astro weather free — the 7-day forecast for Venusian Dolls."],
             ["/blog", "\u270e", "The daily sky", "Astro weather, history and lore — posted from the House."],
             ["/codex", "\u274b", "Learn", "Every glyph, every term, decans, bounds, zodiacal releasing — the open notebook."],
             ["/services", "\u2726", "Readings", "Sit with Alexandria — natal, Vedic, transits, solar return. Sliding scale, every way to pay."],
