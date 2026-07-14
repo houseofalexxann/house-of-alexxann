@@ -206,7 +206,10 @@ model Setting {
 
 enum EpistemicStatus {
   doctrine       // what a historical source states
-  scholarship    // what modern scholars conclude
+  scholarship    // what modern scholars conclude about sources/history
+  evidence       // empirically supported findings (science, replicated research)
+  theory         // structured frameworks/arguments not empirically settled
+  observation    // patterns observed in practice ("I have observed…")
   synthesis      // Alexandria's own view
   simplification // teaching shorthand
   experimental   // ideas being tested
@@ -235,6 +238,13 @@ enum Tradition {
   modern
   human_design
   tarot
+  // Disciplines beyond astrology proper — the corpus is interdisciplinary.
+  astronomy
+  philosophy
+  psychology
+  mythology
+  design
+  methodology
 }
 
 enum CrossRefType {
