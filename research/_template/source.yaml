@@ -29,6 +29,12 @@ locator-style: pages
 # tarot | astronomy | philosophy | psychology | mythology | design | methodology
 tradition:
 
+# What we study this source FOR (CORPUS.md):
+# doctrine = its claims enter the knowledge graph
+# craft   = its communication/teaching/product mechanics inform design & voice
+# both    = both, with the doctrine firewall from CRAFT-STUDY.md
+study-focus: doctrine # doctrine | craft | both
+
 # Influence scope (CORPUS.md step 12) — which surfaces this source may
 # inform. Nothing flows to a surface it wasn't approved for.
 influence:

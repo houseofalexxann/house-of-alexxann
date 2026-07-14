@@ -110,6 +110,29 @@ Original Ra Uru Hu materials ○ · subsequent analyses ○. *(Modern synthesis,
 Joseph Campbell ○ · Mircea Eliade ○ · mythology ○ · comparative religion ○ ·
 semiotics ○ · archetypal studies ○.
 
+### Contemporary astrology & public education *(craft shelf — see below)*
+Studied for **how astrology is communicated, taught, designed, and
+experienced** in contemporary culture — informing educational design, UX,
+writing style, accessibility, inclusive language, community building,
+business models, product strategy, and ethical practice. Their
+interpretations remain clearly distinguished from historical primary
+sources unless they explicitly cite those sources.
+
+| Contributor | Study scope | Status |
+|---|---|---|
+| Chani Nicholas ○ | Books, app, newsletters, podcasts, interviews, courses, talks, website, design philosophy — accessible education, trauma-informed & identity-affirming language, subscription/onboarding experience, editorial voice, ethical framing, content architecture | Craft-study rubric: `workflows/CRAFT-STUDY.md` |
+| *(roster open — contributors append here)* | | |
+
+**Craft-shelf rules:** never imitate the voice or reproduce the material.
+Analyze the mechanics — why the writing resonates, how lessons are
+structured, how complexity is made accessible, how uncertainty is
+discussed, how social context is incorporated, how trust and brand
+consistency are built. The deliverable of every craft study is
+**strengths · limitations · openings for the House's own distinct voice** —
+never a template to copy. Mark these sources `study-focus: craft` in
+`source.yaml`; their `influence:` scope points at design/voice/product
+surfaces, not at astrological doctrine.
+
 ### Design
 Liberatory Design ○ · Human-Centered Design ○ · Inclusive Design ○ ·
 accessibility ○.
