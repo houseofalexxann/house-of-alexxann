@@ -100,7 +100,7 @@ export async function POST(request: NextRequest) {
   if (limited) return limited;
 
   if (data.mode === "forgot") {
-    if (process.env.NODE_ENV === "production" && !process.env.RESEND_API_KEY) {
+    if (process.env.NODE_ENV === "production" && !process.env.RESEND_API_KEY?.trim()) {
       return NextResponse.json(
         {
           error:

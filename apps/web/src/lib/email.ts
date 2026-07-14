@@ -14,8 +14,10 @@ export interface Mail {
 }
 
 export async function sendMail(mail: Mail): Promise<{ delivered: "resend" | "outbox" }> {
-  const key = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM ?? "House of Alexxann <bookings@houseofalexxann.com>";
+  // Trim: pasted keys routinely pick up invisible whitespace.
+  const key = process.env.RESEND_API_KEY?.trim();
+  const from =
+    process.env.EMAIL_FROM?.trim() || "House of Alexxann <bookings@houseofalexxann.com>";
 
   if (key) {
     const res = await fetch("https://api.resend.com/emails", {
