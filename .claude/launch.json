@@ -6,6 +6,20 @@
       "runtimeExecutable": "/Users/alexandriaramirez/House of Alexxann/scripts/dev-web.sh",
       "runtimeArgs": [],
       "port": 3000
+    },
+    {
+      "name": "alexandria-method",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--prefix",
+        "/Users/alexandriaramirez/alexandria-method",
+        "--",
+        "--port",
+        "3111"
+      ],
+      "port": 3111
     }
   ]
 }
