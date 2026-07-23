@@ -1,59 +1,14 @@
 import Link from "next/link";
 import { SERVICES, formatPrice } from "@/lib/services";
+import { SkyFilm } from "@/components/home/SkyFilm";
 
 export default function HomePage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6">
-      {/* Hero */}
-      <section className="relative flex flex-col items-center pb-20 pt-24 text-center sm:pt-32">
-        <p className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-rose-600">
-          Western · Vedic · Modern &amp; Mystical
-        </p>
-        <h1 className="max-w-3xl text-5xl leading-tight text-ink-900 sm:text-6xl">
-          The sky you were born under
-          <span className="block italic text-rose-500">still remembers you.</span>
-        </h1>
-        <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-700">
-          Cast your natal chart free — Western or Vedic, computed with
-          professional-grade precision — then sit with Alexandria for a reading
-          that makes it yours.
-        </p>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Link href="/studio" className="btn-gold">
-            ✦ Cast your chart — free
-          </Link>
-          <Link href="/services" className="btn-ghost">
-            Book a reading
-          </Link>
-        </div>
+    <div>
+      {/* The opening film — scroll the sky */}
+      <SkyFilm />
 
-        {/* Decorative zodiac ring */}
-        <svg
-          aria-hidden
-          viewBox="0 0 200 200"
-          className="pointer-events-none absolute -z-10 h-[560px] w-[560px] opacity-[0.16]"
-          style={{ top: "50%", left: "50%", transform: "translate(-50%, -50%)" }}
-        >
-          <circle cx="100" cy="100" r="98" fill="none" stroke="#d4638f" strokeWidth="0.5" />
-          <circle cx="100" cy="100" r="78" fill="none" stroke="#d4638f" strokeWidth="0.3" />
-          <circle cx="100" cy="100" r="58" fill="none" stroke="#9f8ad0" strokeWidth="0.3" />
-          {Array.from({ length: 12 }, (_, i) => {
-            const a = (i * 30 * Math.PI) / 180;
-            return (
-              <line
-                key={i}
-                x1={100 + 78 * Math.cos(a)}
-                y1={100 + 78 * Math.sin(a)}
-                x2={100 + 98 * Math.cos(a)}
-                y2={100 + 98 * Math.sin(a)}
-                stroke="#d4638f"
-                strokeWidth="0.4"
-              />
-            );
-          })}
-        </svg>
-      </section>
-
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
       <hr className="gold-rule" />
 
       {/* One-stop shop: every room of the House */}
@@ -157,6 +112,7 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      </div>
     </div>
   );
 }

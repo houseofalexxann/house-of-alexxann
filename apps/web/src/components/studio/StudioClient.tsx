@@ -7,7 +7,8 @@ import type { PlaceResult, ResolvedInstant } from "@/lib/geocode";
 import { ChartWheel } from "@/components/chart/ChartWheel";
 import { AspectTable, HouseCuspTable, PlanetTable } from "@/components/chart/DataTable";
 import { DashaTimeline } from "@/components/chart/DashaTimeline";
-import { RasiGrid } from "@/components/chart/RasiGrid";
+import { RasiGrid, type GridEntry } from "@/components/chart/RasiGrid";
+import { NorthIndianChart } from "@/components/chart/NorthIndianChart";
 import { InterpretationsPanel } from "@/components/chart/Interpretations";
 import { TraditionalPanel } from "@/components/chart/TraditionalPanel";
 import { PremiumGate } from "@/components/PremiumGate";
@@ -63,6 +64,9 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
   const [houseWestern, setHouseWestern] = useState<HouseSystem>("placidus");
   const [houseVedic, setHouseVedic] = useState<HouseSystem>("whole-sign");
   const [ayanamsa, setAyanamsa] = useState<Ayanamsa>("lahiri");
+  // Vedic chart presentation: the traditional North Indian diamond leads;
+  // South Indian grid and the Western-style wheel are offered alongside.
+  const [vedicStyle, setVedicStyle] = useState<"north" | "south" | "wheel">("north");
 
   const { user } = useUser();
   const [result, setResult] = useState<ChartResponse | null>(null);
@@ -523,8 +527,48 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
           {/* Wheel + data */}
           <div className="mt-10 grid items-start gap-10 lg:grid-cols-[1.2fr_1fr]">
             <div>
+              {vedic && (
+                <div className="mb-3 flex flex-wrap justify-center gap-2">
+                  {(
+                    [
+                      ["north", "North Indian ◇"],
+                      ["south", "South Indian ⊞"],
+                      ["wheel", "Wheel ◎"],
+                    ] as const
+                  ).map(([key, label]) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setVedicStyle(key)}
+                      className={`rounded-full border px-3 py-1 text-xs transition-colors ${
+                        vedicStyle === key
+                          ? "border-rose-500 bg-rose-300/30 text-rose-600"
+                          : "border-pearl-400 bg-white/70 text-ink-500 hover:border-rose-400"
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div ref={wheelRef} className="card p-4 sm:p-6">
-                <ChartWheel chart={chart} />
+                {vedic && vedicStyle !== "wheel" ? (
+                  (() => {
+                    const rasiEntries: GridEntry[] = [
+                      ...(chart.angles
+                        ? [{ body: "ascendant" as const, sign: chart.angles.ascendantSign }]
+                        : []),
+                      ...chart.planets.map((p) => ({ body: p.body, sign: p.sign })),
+                    ];
+                    return vedicStyle === "north" ? (
+                      <NorthIndianChart title="Rasi — D1" entries={rasiEntries} />
+                    ) : (
+                      <RasiGrid title="Rasi" entries={rasiEntries} />
+                    );
+                  })()
+                ) : (
+                  <ChartWheel chart={chart} />
+                )}
               </div>
               <div className="mt-4 flex flex-wrap justify-center gap-3">
                 <button type="button" onClick={downloadImage} className="btn-ghost text-sm">
@@ -572,28 +616,34 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
             </PremiumGate>
           </section>
 
-          {/* Vedic extras: D1 + D9 + dasha */}
+          {/* Vedic extras: D9 (D1 leads above in the chosen style) + dasha */}
           {vedic && chart.navamsa && (
             <div className="mt-12 grid gap-8 md:grid-cols-2">
-              <section className="card p-6">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
-                  Rasi — D1
-                </h3>
-                <RasiGrid
-                  title="Rasi"
-                  entries={[
-                    ...(chart.angles
-                      ? [{ body: "ascendant" as const, sign: chart.angles.ascendantSign }]
-                      : []),
-                    ...chart.planets.map((p) => ({ body: p.body, sign: p.sign })),
-                  ]}
-                />
-              </section>
+              {vedicStyle === "wheel" && (
+                <section className="card p-6">
+                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
+                    Rasi — D1
+                  </h3>
+                  <NorthIndianChart
+                    title="Rasi"
+                    entries={[
+                      ...(chart.angles
+                        ? [{ body: "ascendant" as const, sign: chart.angles.ascendantSign }]
+                        : []),
+                      ...chart.planets.map((p) => ({ body: p.body, sign: p.sign })),
+                    ]}
+                  />
+                </section>
+              )}
               <section className="card p-6">
                 <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
                   Navamsa — D9
                 </h3>
-                <RasiGrid title="Navamsa" entries={chart.navamsa} />
+                {vedicStyle === "south" ? (
+                  <RasiGrid title="Navamsa" entries={chart.navamsa} />
+                ) : (
+                  <NorthIndianChart title="Navamsa" entries={chart.navamsa} />
+                )}
               </section>
             </div>
           )}
