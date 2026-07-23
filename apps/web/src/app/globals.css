@@ -66,11 +66,12 @@ h1, h2, h3, h4 {
   z-index: -1;
   overflow: hidden;
   background:
-    radial-gradient(ellipse 78% 52% at 80% -10%, rgba(245, 169, 184, 0.16), transparent 62%),
-    radial-gradient(ellipse 70% 48% at 6% 14%, rgba(91, 206, 250, 0.12), transparent 58%),
+    radial-gradient(ellipse 78% 52% at 80% -10%, rgba(245, 169, 184, 0.22), transparent 62%),
+    radial-gradient(ellipse 70% 48% at 6% 14%, rgba(91, 206, 250, 0.18), transparent 58%),
     radial-gradient(ellipse 60% 45% at 50% 45%, rgba(255, 255, 255, 0.55), transparent 70%),
-    radial-gradient(ellipse 80% 55% at 20% 108%, rgba(91, 206, 250, 0.10), transparent 64%),
-    radial-gradient(ellipse 82% 55% at 88% 104%, rgba(245, 169, 184, 0.14), transparent 66%),
+    radial-gradient(ellipse 140% 90% at 50% 50%, transparent 55%, rgba(120, 100, 165, 0.10) 100%),
+    radial-gradient(ellipse 80% 55% at 20% 108%, rgba(91, 206, 250, 0.16), transparent 64%),
+    radial-gradient(ellipse 82% 55% at 88% 104%, rgba(245, 169, 184, 0.20), transparent 66%),
     var(--color-pearl-50);
 }
 .starfield::before,
