@@ -133,7 +133,14 @@ export function SkyFilm() {
       window.scrollY > 0 &&
       window.scrollY < wrap.offsetHeight - window.innerHeight
     ) {
+      // The browser re-applies its restored position asynchronously — take
+      // over restoration and snap again on the next frames to win the race.
+      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
       window.scrollTo(0, 0);
+      requestAnimationFrame(() => {
+        window.scrollTo(0, 0);
+        requestAnimationFrame(() => window.scrollTo(0, 0));
+      });
     }
 
     const stars = makeStars(window.innerWidth < 640 ? 90 : 170);
