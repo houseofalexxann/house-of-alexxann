@@ -123,25 +123,35 @@ export function SkyFilm() {
     if (!ctx) return;
 
     // Reloads and back-navigations restore scroll into the middle of the
-    // film (worst case: the near-white dawn) — a film starts from its first
-    // frame, so snap restored positions inside the film back to the top.
+    // film (worst case: the near-white dawn, which reads as a blank page).
+    // A film starts from its first frame: take over restoration, and watch a
+    // short window after mount — the browser applies its restore at an
+    // unpredictable moment — snapping any non-user jump into the film back
+    // to the top. A real user scroll cancels the watch instantly.
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
     const navEntry = performance.getEntriesByType?.("navigation")[0] as
       | PerformanceNavigationTiming
       | undefined;
-    if (
-      (navEntry?.type === "reload" || navEntry?.type === "back_forward") &&
-      window.scrollY > 0 &&
-      window.scrollY < wrap.offsetHeight - window.innerHeight
-    ) {
-      // The browser re-applies its restored position asynchronously — take
-      // over restoration and snap again on the next frames to win the race.
-      if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-      window.scrollTo(0, 0);
-      requestAnimationFrame(() => {
+    const isRestore = navEntry?.type === "reload" || navEntry?.type === "back_forward";
+    let userMoved = false;
+    const mark = () => {
+      userMoved = true;
+    };
+    window.addEventListener("wheel", mark, { once: true, passive: true });
+    window.addEventListener("touchstart", mark, { once: true, passive: true });
+    window.addEventListener("keydown", mark, { once: true });
+    const snapIfRestored = () => {
+      if (
+        isRestore &&
+        !userMoved &&
+        window.scrollY > 0 &&
+        window.scrollY < wrap.offsetHeight - window.innerHeight
+      ) {
         window.scrollTo(0, 0);
-        requestAnimationFrame(() => window.scrollTo(0, 0));
-      });
-    }
+      }
+    };
+    snapIfRestored();
+    const snapTimers = [150, 400, 800].map((ms) => setTimeout(snapIfRestored, ms));
 
     const stars = makeStars(window.innerWidth < 640 ? 90 : 170);
     let raf = 0;
@@ -231,6 +241,10 @@ export function SkyFilm() {
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
+      window.removeEventListener("wheel", mark);
+      window.removeEventListener("touchstart", mark);
+      window.removeEventListener("keydown", mark);
+      snapTimers.forEach(clearTimeout);
     };
   }, [reduced]);
 
