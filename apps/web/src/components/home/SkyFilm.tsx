@@ -122,6 +122,20 @@ export function SkyFilm() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    // Reloads and back-navigations restore scroll into the middle of the
+    // film (worst case: the near-white dawn) — a film starts from its first
+    // frame, so snap restored positions inside the film back to the top.
+    const navEntry = performance.getEntriesByType?.("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined;
+    if (
+      (navEntry?.type === "reload" || navEntry?.type === "back_forward") &&
+      window.scrollY > 0 &&
+      window.scrollY < wrap.offsetHeight - window.innerHeight
+    ) {
+      window.scrollTo(0, 0);
+    }
+
     const stars = makeStars(window.innerWidth < 640 ? 90 : 170);
     let raf = 0;
     let running = true;
