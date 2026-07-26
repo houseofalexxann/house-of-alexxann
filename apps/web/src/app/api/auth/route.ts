@@ -17,6 +17,7 @@ import { passwordResetEmail } from "@/lib/email-templates";
 import { sendMail } from "@/lib/email";
 import { baseUrl } from "@/lib/bookings";
 import { isActiveMember } from "@/lib/membership";
+import { getSettings } from "@/lib/settings";
 import { rateLimit } from "@/lib/rate-limit";
 import { isAdmin } from "@/lib/admin-auth";
 
@@ -43,7 +44,12 @@ const Reset = z.object({
 
 /** GET: current session (+ latest birth profile so every tab can prefill). */
 export async function GET() {
-  const [user, adminSession] = await Promise.all([sessionUser(), isAdmin()]);
+  const [user, adminSession, settings] = await Promise.all([
+    sessionUser(),
+    isAdmin(),
+    getSettings(),
+  ]);
+  const membershipPriceCents = settings.membershipPriceCents;
 
   // The House Mother's admin key opens every room, even without a member
   // account: a valid /admin session reads as full access site-wide.
@@ -57,9 +63,10 @@ export async function GET() {
         role: "admin",
         profile: null,
       },
+      membershipPriceCents,
     });
   }
-  if (!user) return NextResponse.json({ user: null });
+  if (!user) return NextResponse.json({ user: null, membershipPriceCents });
 
   const profile = await prisma.birthProfile.findFirst({
     where: { userId: user.id },
@@ -81,6 +88,7 @@ export async function GET() {
           }
         : null,
     },
+    membershipPriceCents,
   });
 }
 

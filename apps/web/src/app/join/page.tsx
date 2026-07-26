@@ -8,7 +8,7 @@ import { JoinCheckoutButton } from "@/components/membership/JoinCheckoutButton";
 import { PromoBox } from "@/components/membership/PromoBox";
 import {
   isActiveMember,
-  MEMBERSHIP_PRICE_LABEL,
+  formatMembershipPrice,
   PREMIUM_FEATURES,
   TIER_NAMES,
 } from "@/lib/membership";
@@ -16,7 +16,7 @@ import {
 export const metadata: Metadata = {
   title: "Become a Venusian Doll",
   description:
-    "The Venusian Doll membership — $5 a month lifts the veil on every room of the House.",
+    "The Venusian Doll membership lifts the veil on every room of the House.",
 };
 
 export default async function JoinPage({
@@ -31,6 +31,7 @@ export default async function JoinPage({
     isAdmin(),
   ]);
   const isMember = isActiveMember(user) || adminSession;
+  const priceLabel = formatMembershipPrice(settings.membershipPriceCents);
   const cardCheckout = stripeEnabled();
 
   const handles: Array<[string, string]> = [
@@ -49,7 +50,7 @@ export default async function JoinPage({
         </p>
         <h1 className="mt-2 text-4xl text-ink-900">Step behind the veil</h1>
         <p className="mx-auto mt-3 max-w-md text-ink-500">
-          <strong className="text-ink-900">{MEMBERSHIP_PRICE_LABEL} a month</strong>{" "}
+          <strong className="text-ink-900">{priceLabel} a month</strong>{" "}
           opens every room of the House — and a 10% embrace on every reading
           with Alexandria.
         </p>
@@ -134,9 +135,9 @@ export default async function JoinPage({
                   </span>
                 )}
                 {cardCheckout ? (
-                  <>Or send <strong>{MEMBERSHIP_PRICE_LABEL}</strong> directly</>
+                  <>Or send <strong>{priceLabel}</strong> directly</>
                 ) : (
-                  <>Send <strong>{MEMBERSHIP_PRICE_LABEL}</strong></>
+                  <>Send <strong>{priceLabel}</strong></>
                 )}{" "}
                 with your account email in the note, any way you love:
                 {handles.length > 0 ? (
@@ -193,7 +194,7 @@ export default async function JoinPage({
       )}
 
       <p className="mt-6 text-center text-xs text-ink-400">
-        Sliding scale, always: if {MEMBERSHIP_PRICE_LABEL} is a stretch this
+        Sliding scale, always: if {priceLabel} is a stretch this
         season, write to the House — nobody is turned away from the sky.
       </p>
     </div>

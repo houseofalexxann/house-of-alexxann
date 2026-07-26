@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { sessionUser } from "@/lib/user-auth";
 import { createMembershipCheckout, stripeEnabled } from "@/lib/stripe";
 import { baseUrl } from "@/lib/bookings";
-import { MEMBERSHIP_PRICE_CENTS } from "@/lib/membership";
+import { getSettings } from "@/lib/settings";
 import { discountedCents, findValidPromo } from "@/lib/promos";
 
 /** Starts a $5/month Venusian Doll subscription checkout for the signed-in user. */
@@ -25,7 +25,8 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json().catch(() => ({}));
-  let price = MEMBERSHIP_PRICE_CENTS;
+  const settings = await getSettings();
+  let price = settings.membershipPriceCents;
   let promoId: string | undefined;
   if (typeof body?.code === "string" && body.code.trim()) {
     const found = await findValidPromo(body.code, "membership");

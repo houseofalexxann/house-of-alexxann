@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useUser } from "./UserProvider";
+import { formatMembershipPrice } from "@/lib/membership";
 
 /**
  * Wraps premium content. Non-members see a soft-locked preview: the content
@@ -21,7 +22,8 @@ export function PremiumGate({
   preview?: boolean;
 }) {
   const [peek, setPeek] = useState(false);
-  const { user } = useUser();
+  const { user, membershipPriceCents } = useUser();
+  const price = formatMembershipPrice(membershipPriceCents);
   if (member || user?.isMember || user?.role === "admin") return <>{children}</>;
 
   return (
@@ -45,13 +47,13 @@ export function PremiumGate({
           <p className="mt-2 text-sm leading-relaxed text-ink-500">
             This lives behind the veil. The{" "}
             <strong className="text-ink-700">Venusian Doll</strong> membership —
-            $5 a month — lifts it on every room of the House
+            {price} a month — lifts it on every room of the House
             {user ? "." : ", and your account is free to create."}{" "}
             Every reading with Alexandria includes all of it today.
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             <Link href="/join" className="btn-gold text-sm">
-              Become a Venusian Doll — $5
+              Become a Venusian Doll — {price}
             </Link>
             <Link href="/services" className="btn-ghost text-sm">
               Book a reading

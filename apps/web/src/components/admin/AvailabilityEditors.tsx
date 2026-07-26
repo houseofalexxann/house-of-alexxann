@@ -407,6 +407,36 @@ export function SettingsEditor({ settings }: { settings: SchedulerSettings }) {
         </div>
 
         <div>
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-rose-500">
+            Venusian Doll membership
+          </h3>
+          <div className="mt-3 max-w-xs">
+            <label className="block text-sm">
+              <span className="mb-1 block text-ink-700">Price per month (US dollars)</span>
+              <div className="flex items-center gap-2">
+                <span className="text-lg text-ink-500">$</span>
+                <input
+                  type="number"
+                  min={0}
+                  step="0.01"
+                  required
+                  value={(form.membershipPriceCents / 100).toFixed(2)}
+                  onChange={(e) =>
+                    set("membershipPriceCents", Math.round(Number(e.target.value) * 100))
+                  }
+                  className={inputCls}
+                />
+              </div>
+            </label>
+          </div>
+          <p className="mt-2 text-xs text-ink-400">
+            Changes everywhere at once: the Join page, the paywall invitations, the
+            direct-pay instructions, and card checkout. Existing subscriptions keep
+            the price they signed up at until they cancel.
+          </p>
+        </div>
+
+        <div>
           <h3 className="text-sm font-semibold uppercase tracking-wider text-rose-500">Payment handles</h3>
           <div className="mt-3 grid gap-4 sm:grid-cols-2">
             {textField("Venmo handle", "venmoHandle", "@alexxann")}

@@ -2,14 +2,15 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireUser } from "@/lib/user-auth";
 import { prisma } from "@/lib/db";
+import { getSettings } from "@/lib/settings";
 import { LogoutButton } from "@/components/auth/LogoutButton";
-import { isActiveMember, TIER_NAMES } from "@/lib/membership";
+import { isActiveMember, TIER_NAMES, formatMembershipPrice } from "@/lib/membership";
 
 export const metadata: Metadata = { title: "Your House" };
 
 export default async function AccountPage() {
   const user = await requireUser();
-  const [profiles, bookings] = await Promise.all([
+  const [profiles, bookings, settings] = await Promise.all([
     prisma.birthProfile.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" } }),
     prisma.booking.findMany({
       where: { clientEmail: user.email, startUtc: { gte: new Date() } },
@@ -17,7 +18,9 @@ export default async function AccountPage() {
       orderBy: { startUtc: "asc" },
       take: 5,
     }),
+    getSettings(),
   ]);
+  const priceLabel = formatMembershipPrice(settings.membershipPriceCents);
 
   return (
     <div className="mx-auto max-w-3xl px-4 pb-24 pt-14 sm:px-6">
@@ -56,7 +59,7 @@ export default async function AccountPage() {
                   <>
                     {" "}
                     <Link href="/join" className="text-rose-600 hover:underline">
-                      Stay behind the veil for $5 a month →
+                      Stay behind the veil for {priceLabel} a month →
                     </Link>
                   </>
                 )}
@@ -71,13 +74,13 @@ export default async function AccountPage() {
               <p className="mt-1 text-sm text-ink-500">
                 Charts are yours forever-free. The{" "}
                 <strong className="text-ink-700">{TIER_NAMES.member}</strong>{" "}
-                membership — $5 a month — lifts the veil on everything: the
+                membership, {priceLabel} a month, lifts the veil on everything: the
                 deeper chart, transits, Human Design, tarot, and the blog&#39;s
                 inner posts.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link href="/join" className="btn-gold inline-flex text-sm">
-                  Become a {TIER_NAMES.member} — $5
+                  Become a {TIER_NAMES.member} — {priceLabel}
                 </Link>
                 <Link href="/services" className="btn-ghost inline-flex text-sm">
                   Book a reading

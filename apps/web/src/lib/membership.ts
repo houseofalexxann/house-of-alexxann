@@ -27,9 +27,18 @@ export const TIER_NAMES = {
   admin: "House Mother",
 } as const;
 
-/** Venusian Doll membership: $5 a month to see behind the veil. */
+/**
+ * Venusian Doll membership price. This is only the fallback: the live price
+ * lives in settings (`membershipPriceCents`) so the House Mother can change
+ * it from the admin without a deploy. Server code should read settings;
+ * this constant covers the moment before any setting exists.
+ */
 export const MEMBERSHIP_PRICE_CENTS = 500;
-export const MEMBERSHIP_PRICE_LABEL = "$5";
+
+/** "$5" for whole dollars, "$7.50" when there are cents. */
+export function formatMembershipPrice(cents: number): string {
+  return cents % 100 === 0 ? `$${cents / 100}` : `$${(cents / 100).toFixed(2)}`;
+}
 
 /** Venusian Dolls get all access + this discount on every reading. */
 export const MEMBER_DISCOUNT = 0.1;

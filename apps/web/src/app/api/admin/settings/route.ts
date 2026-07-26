@@ -15,7 +15,13 @@ const STRING_KEYS = [
   "paypalMeLink",
 ] as const;
 
-const NUMBER_KEYS = ["bufferMinutes", "leadTimeHours", "horizonDays", "slotStepMinutes"] as const;
+const NUMBER_KEYS = [
+  "bufferMinutes",
+  "leadTimeHours",
+  "horizonDays",
+  "slotStepMinutes",
+  "membershipPriceCents",
+] as const;
 
 export async function POST(request: NextRequest) {
   const denied = await requireAdminApi();
@@ -54,6 +60,21 @@ export async function POST(request: NextRequest) {
   }
   if (patch.slotStepMinutes !== undefined && patch.slotStepMinutes < 1) {
     return NextResponse.json({ error: "slotStepMinutes must be at least 1." }, { status: 400 });
+  }
+  if (patch.membershipPriceCents !== undefined) {
+    if (!Number.isInteger(patch.membershipPriceCents)) {
+      return NextResponse.json(
+        { error: "The membership price must be a whole number of cents." },
+        { status: 400 }
+      );
+    }
+    // A guard against a slipped decimal point turning $5 into $500.
+    if (patch.membershipPriceCents > 100_000) {
+      return NextResponse.json(
+        { error: "That membership price looks like a typo — the maximum is $1,000 a month." },
+        { status: 400 }
+      );
+    }
   }
 
   await saveSettings(patch);

@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { sessionUser } from "@/lib/user-auth";
-import { isActiveMember, MEMBERSHIP_PRICE_CENTS } from "@/lib/membership";
+import { isActiveMember } from "@/lib/membership";
+import { getSettings } from "@/lib/settings";
 import { discountedCents, findValidPromo, redeemPromo } from "@/lib/promos";
 import { rateLimit } from "@/lib/rate-limit";
 
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ok: true,
       kind: "membership",
-      priceCents: discountedCents(MEMBERSHIP_PRICE_CENTS, asMembership.promo),
+      priceCents: discountedCents((await getSettings()).membershipPriceCents, asMembership.promo),
     });
   }
 

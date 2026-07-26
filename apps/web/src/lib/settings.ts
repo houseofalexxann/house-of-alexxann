@@ -16,6 +16,8 @@ export interface SchedulerSettings {
   videoLink: string;
   phoneNumber: string;
   inPersonAddress: string;
+  /** Venusian Doll membership price, in cents, set by the House Mother. */
+  membershipPriceCents: number;
   /** Direct-pay handles (Venmo / Cash App / Zelle / PayPal.me). */
   venmoHandle: string;
   cashAppTag: string;
@@ -32,6 +34,7 @@ export const DEFAULT_SETTINGS: SchedulerSettings = {
   videoLink: "A private video link arrives with your confirmation email.",
   phoneNumber: "Alexandria will call the number you provide.",
   inPersonAddress: "Location details arrive with your confirmation email.",
+  membershipPriceCents: 500,
   venmoHandle: "",
   cashAppTag: "",
   zelleContact: "",
@@ -50,6 +53,9 @@ export async function getSettings(): Promise<SchedulerSettings> {
     videoLink: map.videoLink ?? DEFAULT_SETTINGS.videoLink,
     phoneNumber: map.phoneNumber ?? DEFAULT_SETTINGS.phoneNumber,
     inPersonAddress: map.inPersonAddress ?? DEFAULT_SETTINGS.inPersonAddress,
+    membershipPriceCents: Number(
+      map.membershipPriceCents ?? DEFAULT_SETTINGS.membershipPriceCents
+    ),
     venmoHandle: map.venmoHandle ?? DEFAULT_SETTINGS.venmoHandle,
     cashAppTag: map.cashAppTag ?? DEFAULT_SETTINGS.cashAppTag,
     zelleContact: map.zelleContact ?? DEFAULT_SETTINGS.zelleContact,
