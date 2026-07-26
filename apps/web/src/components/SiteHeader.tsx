@@ -16,6 +16,9 @@ const NAV = [
   { href: "/codex", key: "nav.learn" },
 ];
 
+/** Personal rooms, shown only once there is a person to show them to. */
+const MEMBER_NAV = [{ href: "/calendar", key: "nav.calendar" }];
+
 export function SiteHeader() {
   const { t } = useLocale();
   const { user } = useUser();
@@ -30,12 +33,12 @@ export function SiteHeader() {
             House of Alexxann
           </span>
         </Link>
-        <nav className="ml-auto flex flex-wrap items-center gap-0.5 text-sm" aria-label="Main">
-          {NAV.map((item) => (
+        <nav className="ml-auto flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm" aria-label="Main">
+          {[...NAV, ...(user ? MEMBER_NAV : [])].map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="rounded-full px-2.5 py-1.5 text-ink-700 transition-colors hover:bg-pearl-200 hover:text-ink-900"
+              className="whitespace-nowrap rounded-full px-3 py-1.5 text-ink-700 transition-colors hover:bg-pearl-200 hover:text-ink-900"
             >
               {t(item.key)}
             </Link>

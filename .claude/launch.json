@@ -5,7 +5,8 @@
       "name": "web",
       "runtimeExecutable": "/Users/alexandriaramirez/House of Alexxann/scripts/dev-web.sh",
       "runtimeArgs": [],
-      "port": 3000
+      "port": 3000,
+      "autoPort": true
     },
     {
       "name": "alexandria-method",
@@ -14,12 +15,10 @@
         "run",
         "dev",
         "--prefix",
-        "/Users/alexandriaramirez/alexandria-method",
-        "--",
-        "--port",
-        "3111"
+        "/Users/alexandriaramirez/alexandria-method"
       ],
-      "port": 3111
+      "port": 3111,
+      "autoPort": true
     }
   ]
 }

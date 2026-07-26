@@ -255,3 +255,17 @@ export {
   ZR_YEARS,
 } from "./hellenistic";
 export * from "./humandesign";
+export {
+  annualProfection,
+  profectionSeries,
+  scanTransits,
+  wholeSignHouse,
+  MODERN_PLANETS,
+  SIGN_RULER,
+  TRADITIONAL_PLANETS,
+  type NatalPoint,
+  type NatalSnapshot,
+  type ProfectionYear,
+  type TransitEvent,
+  type TransitScanOptions,
+} from "./transits";

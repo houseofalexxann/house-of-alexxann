@@ -50,8 +50,8 @@ export default async function AccountPage() {
                 )}
               </p>
               <p className="mt-1 text-sm text-ink-500">
-                Every room is open to you — deeper chart, transits, and the
-                rooms still being furnished.
+                Every room is open to you: the deeper chart, transits, and your
+                own timing calendar.
                 {!user.isMember && user.memberUntil && (
                   <>
                     {" "}
@@ -61,6 +61,9 @@ export default async function AccountPage() {
                   </>
                 )}
               </p>
+              <Link href="/calendar" className="btn-gold mt-4 inline-flex text-sm">
+                ✦ My calendar
+              </Link>
             </>
           ) : (
             <>
