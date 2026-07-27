@@ -25,7 +25,7 @@ export default async function DonatePage() {
         </p>
 
         {options.length > 0 ? (
-          <div className="mx-auto mt-8 max-w-md rounded-xl border border-pearl-300 bg-white/70 p-5 text-left">
+          <div className="mx-auto mt-8 max-w-md rounded-xl border border-pearl-300 bg-pearl-200/70 p-5 text-left">
             <p className="text-sm font-semibold text-ink-900">
               Send anything, any time:
             </p>

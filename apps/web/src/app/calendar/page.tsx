@@ -147,7 +147,7 @@ export default async function CalendarPage() {
             </>
           )}
         </p>
-        <p className="mt-4 rounded-lg border border-pearl-300 bg-white/60 p-3 text-xs leading-relaxed text-ink-500">
+        <p className="mt-4 rounded-lg border border-pearl-300 bg-pearl-200/60 p-3 text-xs leading-relaxed text-ink-500">
           <strong className="text-ink-700">Where this comes from:</strong> annual
           profection is a Hellenistic time-lord technique preserved in Vettius Valens
           and Paulus Alexandrinus, recovered by Project Hindsight and taught in detail
@@ -206,7 +206,7 @@ export default async function CalendarPage() {
         </div>
       </section>
 
-      <p className="mt-12 rounded-xl border border-pearl-300 bg-white/60 p-4 text-xs leading-relaxed text-ink-500">
+      <p className="mt-12 rounded-xl border border-pearl-300 bg-pearl-200/60 p-4 text-xs leading-relaxed text-ink-500">
         Every position here is computed with the Swiss Ephemeris from your exact birth
         data. The interpretations are traditional significations applied to those
         positions, offered as reflection and never as prediction or as medical, legal,

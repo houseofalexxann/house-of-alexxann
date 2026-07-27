@@ -316,7 +316,7 @@ export default async function AdminBookingsPage() {
         <h2 className="text-xl text-ink-900">Newest accounts</h2>
         <ul className="mt-3 space-y-1.5 text-sm">
           {recentUsers.map((u) => (
-            <li key={u.id} className="flex justify-between gap-3 rounded-lg border border-pearl-300 bg-white/60 px-4 py-2">
+            <li key={u.id} className="flex justify-between gap-3 rounded-lg border border-pearl-300 bg-pearl-200/60 px-4 py-2">
               <span className="text-ink-900">
                 {u.name ?? "—"} <span className="text-ink-400">· {u.email}</span>
                 {u.isMember && <span className="ml-1 text-rose-600">✦</span>}

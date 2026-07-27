@@ -414,7 +414,7 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
             {locked ? (
               <a
                 href={system === "western" ? "/vedic" : "/western"}
-                className="rounded-full border border-pearl-400 bg-white/70 px-4 py-2 text-sm text-ink-700 transition-colors hover:border-rose-400"
+                className="rounded-full border border-pearl-400 bg-pearl-200/70 px-4 py-2 text-sm text-ink-700 transition-colors hover:border-rose-400"
               >
                 {system === "western"
                   ? "Looking for the sidereal sky? Visit the Vedic room →"
@@ -543,7 +543,7 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
                       className={`rounded-full border px-3 py-1 text-xs transition-colors ${
                         vedicStyle === key
                           ? "border-rose-500 bg-rose-300/30 text-rose-600"
-                          : "border-pearl-400 bg-white/70 text-ink-500 hover:border-rose-400"
+                          : "border-pearl-400 bg-pearl-200/70 text-ink-500 hover:border-rose-400"
                       }`}
                     >
                       {label}
@@ -551,7 +551,7 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
                   ))}
                 </div>
               )}
-              <div ref={wheelRef} className="card p-4 sm:p-6">
+              <div ref={wheelRef} className="plate p-4 sm:p-6">
                 {vedic && vedicStyle !== "wheel" ? (
                   (() => {
                     const rasiEntries: GridEntry[] = [
@@ -620,8 +620,8 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
           {vedic && chart.navamsa && (
             <div className="mt-12 grid gap-8 md:grid-cols-2">
               {vedicStyle === "wheel" && (
-                <section className="card p-6">
-                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
+                <section className="plate p-6">
+                  <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-500">
                     Rasi — D1
                   </h3>
                   <NorthIndianChart
@@ -635,8 +635,8 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
                   />
                 </section>
               )}
-              <section className="card p-6">
-                <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-400">
+              <section className="plate p-6">
+                <h3 className="mb-4 text-xs font-semibold uppercase tracking-[0.25em] text-ink-500">
                   Navamsa — D9
                 </h3>
                 {vedicStyle === "south" ? (

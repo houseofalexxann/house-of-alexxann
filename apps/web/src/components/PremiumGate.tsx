@@ -41,7 +41,7 @@ export function PremiumGate({
       <div
         className={`${preview ? "absolute inset-0" : ""} flex items-center justify-center p-6`}
       >
-        <div className="max-w-md rounded-2xl border border-pearl-300 bg-white/90 p-6 text-center shadow-lg backdrop-blur">
+        <div className="max-w-md rounded-2xl border border-pearl-300 bg-pearl-200/90 p-6 text-center shadow-lg backdrop-blur">
           <div aria-hidden className="text-2xl text-rose-500">✦</div>
           <h3 className="mt-2 font-heading text-xl text-ink-900">{title}</h3>
           <p className="mt-2 text-sm leading-relaxed text-ink-500">

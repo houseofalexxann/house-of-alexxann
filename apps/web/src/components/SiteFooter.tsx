@@ -22,7 +22,7 @@ export function SiteFooter() {
             <select
               value={locale}
               onChange={(e) => setLocale(e.target.value as typeof locale)}
-              className="rounded-lg border border-pearl-400 bg-white/80 px-2 py-1 text-sm text-ink-900"
+              className="rounded-lg border border-pearl-400 bg-pearl-200/80 px-2 py-1 text-sm text-ink-900"
             >
               {LOCALES.map((l) => (
                 <option key={l.code} value={l.code}>

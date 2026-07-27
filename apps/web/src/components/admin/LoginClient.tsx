@@ -30,7 +30,7 @@ export function LoginClient() {
   };
 
   const inputCls =
-    "w-full rounded-lg border border-pearl-400 bg-white/80 px-3 py-2 text-ink-900 focus:border-rose-400 focus:outline-none";
+    "w-full rounded-lg border border-pearl-400 bg-pearl-200/80 px-3 py-2 text-ink-900 focus:border-rose-400 focus:outline-none";
 
   return (
     <form onSubmit={submit} className="mt-6 space-y-4">

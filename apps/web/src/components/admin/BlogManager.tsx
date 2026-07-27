@@ -14,7 +14,7 @@ interface PostRow {
 
 const EMPTY: PostRow = { title: "", slug: "", excerpt: "", body: "", premium: false, published: true };
 const inputCls =
-  "w-full rounded-lg border border-pearl-400 bg-white/80 px-3 py-2 text-ink-900 focus:border-rose-400 focus:outline-none";
+  "w-full rounded-lg border border-pearl-400 bg-pearl-200/80 px-3 py-2 text-ink-900 focus:border-rose-400 focus:outline-none";
 
 export function BlogManager({ posts }: { posts: PostRow[] }) {
   const [editing, setEditing] = useState<PostRow | null>(null);
@@ -140,7 +140,7 @@ export function BlogManager({ posts }: { posts: PostRow[] }) {
 
       <ul className="mt-6 space-y-2">
         {posts.map((p) => (
-          <li key={p.id} className="flex items-center justify-between gap-3 rounded-lg border border-pearl-300 bg-white/60 px-4 py-2.5 text-sm">
+          <li key={p.id} className="flex items-center justify-between gap-3 rounded-lg border border-pearl-300 bg-pearl-200/60 px-4 py-2.5 text-sm">
             <span className="text-ink-900">
               {p.title}
               {p.premium && <span className="ml-2 text-rose-600">✦</span>}

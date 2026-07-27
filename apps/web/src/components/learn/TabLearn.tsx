@@ -24,7 +24,7 @@ export function TabLearn({ system }: { system: "western" | "vedic" }) {
 
         <div className="mt-5 space-y-2">
           {entries.map(([term, def]) => (
-            <details key={term} className="group rounded-lg border border-pearl-300 bg-white/50 px-4 py-2.5">
+            <details key={term} className="group rounded-lg border border-pearl-300 bg-pearl-200/50 px-4 py-2.5">
               <summary className="cursor-pointer list-none text-sm font-medium text-rose-600 marker:content-none">
                 <span className="mr-2 inline-block transition-transform group-open:rotate-45">＋</span>
                 {term}

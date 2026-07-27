@@ -145,7 +145,7 @@ export default async function JoinPage({
                     {handles.map(([label, value]) => (
                       <span
                         key={label}
-                        className="rounded-full border border-pearl-300 bg-white/70 px-3 py-1 text-xs text-ink-700"
+                        className="rounded-full border border-pearl-300 bg-pearl-200/70 px-3 py-1 text-xs text-ink-700"
                       >
                         <strong className="text-rose-600">{label}</strong> {value}
                       </span>

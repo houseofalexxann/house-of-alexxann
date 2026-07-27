@@ -280,7 +280,7 @@ export default function CodexPage() {
           {SIGN_NAMES.map((name, i) => (
             <span
               key={name}
-              className="inline-flex items-center gap-1.5 rounded-full border border-pearl-400 bg-white/60 px-3 py-1 text-sm text-ink-700"
+              className="inline-flex items-center gap-1.5 rounded-full border border-pearl-400 bg-pearl-200/60 px-3 py-1 text-sm text-ink-700"
             >
               <span className="astro-glyph" style={{ color: SIGN_COLORS[i] }}>
                 {SIGN_GLYPHS[i]}
@@ -378,7 +378,7 @@ export default function CodexPage() {
             corrections are welcome.
           </p>
         </div>
-        <div className="mt-6 rounded-xl border border-pearl-300 bg-white/60 p-5">
+        <div className="mt-6 rounded-xl border border-pearl-300 bg-pearl-200/60 p-5">
           <h3 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
             Further study — go to the sources
           </h3>

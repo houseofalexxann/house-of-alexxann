@@ -154,7 +154,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
     DateTime.fromISO(s.startUtc).setZone(clientTz).toFormat("h:mm a");
 
   const inputCls =
-    "w-full rounded-lg border border-pearl-400 bg-white/80 px-3 py-2 text-ink-900 placeholder:text-ink-400 focus:border-rose-400 focus:outline-none";
+    "w-full rounded-lg border border-pearl-400 bg-pearl-200/80 px-3 py-2 text-ink-900 placeholder:text-ink-400 focus:border-rose-400 focus:outline-none";
 
   return (
     <form onSubmit={submit} className="space-y-8">
@@ -188,7 +188,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
                   className={`shrink-0 rounded-full border px-4 py-1.5 text-sm transition-colors ${
                     d === activeDay
                       ? "border-rose-500 bg-rose-500 text-white"
-                      : "border-pearl-400 bg-white/70 text-ink-700 hover:border-rose-400"
+                      : "border-pearl-400 bg-pearl-200/70 text-ink-700 hover:border-rose-400"
                   }`}
                 >
                   {fmtDay(d)}
@@ -204,7 +204,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
                   className={`rounded-lg border px-4 py-2 text-sm tabular-nums transition-colors ${
                     selectedSlot?.startUtc === s.startUtc
                       ? "border-rose-500 bg-rose-500 text-white"
-                      : "border-pearl-400 bg-white/70 text-ink-700 hover:border-rose-400"
+                      : "border-pearl-400 bg-pearl-200/70 text-ink-700 hover:border-rose-400"
                   }`}
                 >
                   {fmtTime(s)}
@@ -229,7 +229,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
               className={`rounded-full border px-5 py-2 text-sm transition-colors ${
                 format === f
                   ? "border-rose-500 bg-rose-500 text-white"
-                  : "border-pearl-400 bg-white/70 text-ink-700 hover:border-rose-400"
+                  : "border-pearl-400 bg-pearl-200/70 text-ink-700 hover:border-rose-400"
               }`}
             >
               {FORMAT_LABELS[f]}
@@ -255,7 +255,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
               className={`rounded-xl border p-4 text-left transition-colors ${
                 tier.key === t.key
                   ? "border-rose-500 bg-rose-300/30"
-                  : "border-pearl-400 bg-white/70 hover:border-rose-400"
+                  : "border-pearl-400 bg-pearl-200/70 hover:border-rose-400"
               }`}
             >
               <span className="block text-lg font-semibold text-ink-900">
@@ -303,7 +303,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
             />
           </label>
         </div>
-        <details className="mt-5 rounded-lg border border-pearl-300 bg-white/50 p-4">
+        <details className="mt-5 rounded-lg border border-pearl-300 bg-pearl-200/50 p-4">
           <summary className="cursor-pointer text-sm font-medium text-ink-700">
             Add your birth details so your chart is ready (optional)
           </summary>
@@ -356,7 +356,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
               className={`rounded-xl border p-4 text-left transition-colors ${
                 payMethod === "checkout"
                   ? "border-rose-500 bg-rose-300/30"
-                  : "border-pearl-400 bg-white/70 hover:border-rose-400"
+                  : "border-pearl-400 bg-pearl-200/70 hover:border-rose-400"
               }`}
             >
               <span className="block font-semibold text-ink-900">Card & pay-over-time</span>
@@ -373,7 +373,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
               className={`rounded-xl border p-4 text-left transition-colors ${
                 payMethod === "direct"
                   ? "border-rose-500 bg-rose-300/30"
-                  : "border-pearl-400 bg-white/70 hover:border-rose-400"
+                  : "border-pearl-400 bg-pearl-200/70 hover:border-rose-400"
               }`}
             >
               <span className="block font-semibold text-ink-900">

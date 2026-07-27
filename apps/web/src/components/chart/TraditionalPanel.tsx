@@ -37,7 +37,7 @@ function dignityStyle(d: Dignity): string {
     return "border-[#cf9c3f]/50 bg-[#cf9c3f]/12 text-[#a97e2f]";
   if (d === "detriment" || d === "fall")
     return "border-rose-400/50 bg-rose-300/15 text-rose-600";
-  return "border-pearl-400 bg-white/60 text-ink-500";
+  return "border-pearl-400 bg-pearl-200/60 text-ink-500";
 }
 
 export function TraditionalPanel({ chart }: { chart: ChartResult }) {
@@ -49,7 +49,7 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
       {/* Sect + moon phase */}
       <div className="grid gap-6 sm:grid-cols-2">
         {t.sect && (
-          <div className="rounded-xl border border-pearl-300 bg-white/50 p-5">
+          <div className="rounded-xl border border-pearl-300 bg-pearl-200/50 p-5">
             <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
               Sect
             </h4>
@@ -67,7 +67,7 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
             </p>
           </div>
         )}
-        <div className="rounded-xl border border-pearl-300 bg-white/50 p-5">
+        <div className="rounded-xl border border-pearl-300 bg-pearl-200/50 p-5">
           <h4 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
             Natal moon phase
           </h4>
@@ -199,7 +199,7 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
                     className={`flex items-center justify-between rounded-lg border px-4 py-2 text-sm ${
                       current
                         ? "border-rose-400/60 bg-rose-300/20 text-ink-900"
-                        : "border-pearl-300/70 bg-white/40 text-ink-700"
+                        : "border-pearl-300/70 bg-pearl-200/40 text-ink-700"
                     }`}
                   >
                     <span>

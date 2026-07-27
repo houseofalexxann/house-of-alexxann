@@ -30,7 +30,7 @@ const US_TIMEZONES = [
 ];
 
 const inputCls =
-  "w-full rounded-lg border border-pearl-400 bg-white/80 px-3 py-2 text-ink-900 focus:border-rose-400 focus:outline-none";
+  "w-full rounded-lg border border-pearl-400 bg-pearl-200/80 px-3 py-2 text-ink-900 focus:border-rose-400 focus:outline-none";
 
 /** "HH:mm" → minutes from midnight (NaN when malformed). */
 function toMinutes(hhmm: string): number {
@@ -133,7 +133,7 @@ export function WeeklyRulesEditor({ rules }: { rules: RuleDto[] }) {
                       className={`rounded-full border px-3 py-0.5 text-xs transition-colors ${
                         rule.active
                           ? "border-rose-400 bg-rose-300/30 text-rose-600"
-                          : "border-pearl-400 bg-white/60 text-ink-400"
+                          : "border-pearl-400 bg-pearl-200/60 text-ink-400"
                       }`}
                     >
                       {rule.active ? "On" : "Off"}

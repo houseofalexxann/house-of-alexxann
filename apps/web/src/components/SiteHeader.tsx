@@ -57,7 +57,7 @@ export function SiteHeader() {
         </Link>
 
         {here && here.href !== "/" && (
-          <span className="hidden items-center gap-1.5 rounded-full border border-pearl-300 bg-white/60 px-3 py-1 text-xs text-ink-500 lg:inline-flex">
+          <span className="hidden items-center gap-1.5 rounded-full border border-pearl-300 bg-pearl-200/60 px-3 py-1 text-xs text-ink-500 lg:inline-flex">
             <span aria-hidden className="astro-glyph text-rose-500">{here.glyph}</span>
             <span className="italic">{here.name}</span>
           </span>
@@ -79,7 +79,7 @@ export function SiteHeader() {
             onClick={() => setAtlasOpen(true)}
             aria-haspopup="dialog"
             aria-expanded={atlasOpen}
-            className="whitespace-nowrap rounded-full border border-pearl-400 bg-white/70 px-3 py-1.5 text-ink-700 transition-colors hover:border-rose-400 hover:text-ink-900"
+            className="whitespace-nowrap rounded-full border border-pearl-400 bg-pearl-200/70 px-3 py-1.5 text-ink-700 transition-colors hover:border-rose-400 hover:text-ink-900"
           >
             <span aria-hidden className="text-rose-500">✧</span> Explore
           </button>
@@ -88,7 +88,7 @@ export function SiteHeader() {
           {user ? (
             <Link
               href={user.role === "admin" ? "/admin" : "/account"}
-              className="ml-1 rounded-full border border-pearl-400 bg-white/70 px-3 py-1.5 text-ink-900 transition-colors hover:border-rose-400"
+              className="ml-1 rounded-full border border-pearl-400 bg-pearl-200/70 px-3 py-1.5 text-ink-900 transition-colors hover:border-rose-400"
             >
               {user.role === "admin" ? "✦ Admin" : `✦ ${user.name?.split(" ")[0] ?? "You"}`}
             </Link>

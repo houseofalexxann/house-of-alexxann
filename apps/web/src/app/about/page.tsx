@@ -126,7 +126,7 @@ export default function AboutPage() {
             safe with your data and your story.
           </p>
         </div>
-        <div className="mx-auto mt-6 max-w-2xl rounded-xl border border-pearl-300 bg-white/60 p-4">
+        <div className="mx-auto mt-6 max-w-2xl rounded-xl border border-pearl-300 bg-pearl-200/60 p-4">
           <p className="text-xs leading-relaxed text-ink-500">
             <strong className="text-ink-700">A gentle disclaimer:</strong>{" "}
             astrology, Human Design, and tarot are offered here as spiritual

@@ -45,7 +45,7 @@ export function MockPayClient({ token }: { token: string }) {
             className={`rounded-lg border px-4 py-2.5 text-left text-sm transition-colors ${
               method === m.key
                 ? "border-rose-500 bg-rose-300/30 text-ink-900"
-                : "border-pearl-400 bg-white/70 text-ink-700 hover:border-rose-400"
+                : "border-pearl-400 bg-pearl-200/70 text-ink-700 hover:border-rose-400"
             }`}
           >
             {m.label}

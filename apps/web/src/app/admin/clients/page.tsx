@@ -228,7 +228,7 @@ export default async function AdminClientsPage() {
                 ["Nodes", ["rahu", "ketu"]],
               ];
               return (
-                <details className="mt-3 rounded-lg border border-pearl-300 bg-white/50 p-3">
+                <details className="mt-3 rounded-lg border border-pearl-300 bg-pearl-200/50 p-3">
                   <summary className="cursor-pointer text-sm font-medium text-rose-600">
                     All placements, by category ▾
                   </summary>

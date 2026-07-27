@@ -56,7 +56,7 @@ function CenterShape({ c, defined }: { c: (typeof CENTERS)[number]; defined: boo
 }
 
 const inputCls =
-  "w-full rounded-lg border border-pearl-400 bg-white/80 px-3 py-2 text-ink-900 placeholder:text-ink-400 focus:border-rose-400 focus:outline-none";
+  "w-full rounded-lg border border-pearl-400 bg-pearl-200/80 px-3 py-2 text-ink-900 placeholder:text-ink-400 focus:border-rose-400 focus:outline-none";
 
 export function HumanDesignClient() {
   const [date, setDate] = useState("");
@@ -143,7 +143,7 @@ export function HumanDesignClient() {
               className={inputCls}
             />
             {open && placeResults.length > 0 && (
-              <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-pearl-400 bg-white shadow-xl">
+              <ul className="absolute z-20 mt-1 w-full overflow-hidden rounded-lg border border-pearl-400 bg-pearl-200 shadow-xl">
                 {placeResults.map((p) => (
                   <li key={p.id}>
                     <button
@@ -259,7 +259,7 @@ export function HumanDesignClient() {
                 return (
                   <div
                     key={key}
-                    className={`rounded-xl border p-4 ${isDefined ? "border-rose-400/60 bg-rose-300/15" : "border-pearl-300 bg-white/50"}`}
+                    className={`rounded-xl border p-4 ${isDefined ? "border-rose-400/60 bg-rose-300/15" : "border-pearl-300 bg-pearl-200/50"}`}
                   >
                     <p className="text-sm font-semibold text-ink-900">
                       {c.label}{" "}
@@ -283,7 +283,7 @@ export function HumanDesignClient() {
             <p className="mt-1 text-sm text-ink-500">Keys, terms and legend — tap any to open.</p>
             <div className="mt-4 space-y-2">
               {HD_GLOSSARY.map(([term, def]) => (
-                <details key={term} className="group rounded-lg border border-pearl-300 bg-white/50 px-4 py-2.5">
+                <details key={term} className="group rounded-lg border border-pearl-300 bg-pearl-200/50 px-4 py-2.5">
                   <summary className="cursor-pointer list-none text-sm font-medium text-rose-600 marker:content-none">
                     <span className="mr-2 inline-block transition-transform group-open:rotate-45">＋</span>
                     {term}

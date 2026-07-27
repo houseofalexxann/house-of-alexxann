@@ -23,7 +23,7 @@ export function MemberToggle({ id, isMember }: { id: string; isMember: boolean }
       className={`rounded-full border px-3 py-1 text-xs font-semibold transition-colors disabled:opacity-50 ${
         on
           ? "border-rose-500 bg-rose-500 text-white"
-          : "border-pearl-400 bg-white/70 text-ink-500 hover:border-rose-400"
+          : "border-pearl-400 bg-pearl-200/70 text-ink-500 hover:border-rose-400"
       }`}
     >
       {on ? "✦ member" : "free"}

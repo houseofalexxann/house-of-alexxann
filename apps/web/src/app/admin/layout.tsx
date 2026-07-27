@@ -8,7 +8,7 @@ import { LogoutClient } from "@/components/admin/LogoutClient";
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="mx-auto max-w-5xl px-4 pb-24 pt-10 sm:px-6">
-      <nav className="mb-8 flex flex-wrap items-center gap-1 rounded-full border border-pearl-300 bg-white/70 px-2 py-1.5 text-sm">
+      <nav className="mb-8 flex flex-wrap items-center gap-1 rounded-full border border-pearl-300 bg-pearl-200/70 px-2 py-1.5 text-sm">
         <span className="px-3 font-heading text-base text-rose-600">✦ Back office</span>
         {[
           ["/admin", "Bookings"],

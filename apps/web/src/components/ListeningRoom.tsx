@@ -21,7 +21,7 @@ export function ListeningRoom() {
   return (
     <div className="fixed bottom-4 right-4 z-40">
       {open && (
-        <div className="mb-3 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-pearl-300 bg-white/90 shadow-xl backdrop-blur-md">
+        <div className="mb-3 w-80 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-pearl-300 bg-pearl-200/90 shadow-xl backdrop-blur-md">
           <div className="flex items-center justify-between px-4 pt-3">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
               The listening room
@@ -44,7 +44,7 @@ export function ListeningRoom() {
                 className={`rounded-full border px-2.5 py-0.5 text-xs transition-colors ${
                   mood.key === m.key
                     ? "border-rose-500 bg-rose-500 text-white"
-                    : "border-pearl-400 bg-white/70 text-ink-500 hover:border-rose-400"
+                    : "border-pearl-400 bg-pearl-200/70 text-ink-500 hover:border-rose-400"
                 }`}
               >
                 {m.label}
@@ -71,7 +71,7 @@ export function ListeningRoom() {
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? "Hide the listening room" : "Open the listening room — music for your reading"}
         aria-expanded={open}
-        className="ml-auto flex h-12 w-12 items-center justify-center rounded-full border border-pearl-300 bg-white/90 text-xl text-rose-500 shadow-lg backdrop-blur transition-transform hover:scale-105"
+        className="ml-auto flex h-12 w-12 items-center justify-center rounded-full border border-pearl-300 bg-pearl-200/90 text-xl text-rose-500 shadow-lg backdrop-blur transition-transform hover:scale-105"
       >
         {open ? "♪" : "♫"}
       </button>

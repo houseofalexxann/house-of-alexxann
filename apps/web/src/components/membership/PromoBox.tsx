@@ -87,7 +87,7 @@ export function PromoBox({
           value={code}
           onChange={(e) => setCode(e.target.value.toUpperCase())}
           placeholder="PROMO CODE"
-          className="w-44 rounded-lg border border-pearl-400 bg-white/80 px-3 py-2 text-sm uppercase tracking-wider text-ink-900 placeholder:text-ink-400 focus:border-rose-400 focus:outline-none"
+          className="w-44 rounded-lg border border-pearl-400 bg-pearl-200/80 px-3 py-2 text-sm uppercase tracking-wider text-ink-900 placeholder:text-ink-400 focus:border-rose-400 focus:outline-none"
         />
         <button
           type="button"
