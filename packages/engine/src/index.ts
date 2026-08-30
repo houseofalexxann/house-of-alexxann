@@ -258,6 +258,7 @@ export * from "./humandesign";
 export {
   annualProfection,
   profectionSeries,
+  scanSkyEvents,
   scanTransits,
   wholeSignHouse,
   MODERN_PLANETS,

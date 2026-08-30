@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { PremiumGate } from "@/components/PremiumGate";
+import { MoonPhaseIcon } from "./MoonPhaseIcon";
 
 interface Day {
   date: string;
@@ -11,18 +12,11 @@ interface Day {
   events: string[];
 }
 
-const MOON_GLYPHS: Record<string, string> = {
-  "New Moon": "🌑", "Waxing Crescent": "🌒", "First Quarter": "🌓",
-  "Waxing Gibbous": "🌔", "Full Moon": "🌕",
-  "Waning Gibbous (Disseminating)": "🌖", "Last Quarter": "🌗",
-  "Waning Crescent (Balsamic)": "🌘",
-};
-
 function DayRow({ d }: { d: Day }) {
   return (
     <li className="flex items-start gap-4 border-b border-pearl-300/60 py-3 last:border-0">
       <span className="w-24 shrink-0 font-semibold text-ink-900">{d.weekday}</span>
-      <span aria-hidden className="shrink-0 text-lg">{MOON_GLYPHS[d.phase] ?? "☽"}</span>
+      <span className="mt-0.5 shrink-0"><MoonPhaseIcon phase={d.phase} /></span>
       <span className="text-sm leading-relaxed text-ink-700">
         Moon in <span className="text-rose-600">{d.moon}</span>
         {d.events.length > 0 && <> — {d.events.join(" · ")}</>}
@@ -33,12 +27,20 @@ function DayRow({ d }: { d: Day }) {
 
 export function SkyWeek() {
   const [days, setDays] = useState<Day[] | null>(null);
+  const [background, setBackground] = useState<string[]>([]);
   const [error, setError] = useState(false);
 
   useEffect(() => {
     fetch("/api/sky-week")
-      .then((r) => r.json())
-      .then((d) => setDays(d.days))
+      .then((r) => {
+        if (!r.ok) throw new Error(String(r.status));
+        return r.json();
+      })
+      .then((d) => {
+        if (!Array.isArray(d.days)) throw new Error("bad payload");
+        setDays(d.days);
+        setBackground(Array.isArray(d.background) ? d.background : []);
+      })
       .catch(() => setError(true));
   }, []);
 
@@ -61,9 +63,14 @@ export function SkyWeek() {
           ))}
         </ul>
       </PremiumGate>
+      {background.length > 0 && (
+        <p className="mt-4 rounded-lg border border-pearl-300/60 bg-pearl-200/40 px-3 py-2 text-center text-xs leading-relaxed text-ink-500">
+          All week: {background.join(" · ")}
+        </p>
+      )}
       <p className="mt-4 text-center text-xs text-ink-400">
-        The world&#39;s sky — personal transits to <em>your</em> chart arrive
-        with saved birth profiles.
+        The world&#39;s sky — for these moments landed in <em>your</em> chart,
+        see your personal calendar.
       </p>
     </div>
   );

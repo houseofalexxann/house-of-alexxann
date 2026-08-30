@@ -24,7 +24,7 @@
  * clearly labeled.
  */
 import type { AspectType, Ayanamsa, Body, NodeType } from "./types";
-import { bodyPosition, norm360, utcToJulianDayUT } from "./ephemeris";
+import { bodyPosition, eclipsesBetween, norm360, utcToJulianDayUT } from "./ephemeris";
 import { SIGN_NAMES } from "./constants";
 
 /** Traditional (Hellenistic) domicile ruler of each sign, 0 = Aries. */
@@ -71,7 +71,7 @@ export interface ProfectionYear {
 }
 
 export interface TransitEvent {
-  kind: "aspect" | "station" | "lunation" | "ingress";
+  kind: "aspect" | "station" | "lunation" | "ingress" | "eclipse" | "cazimi";
   /** Exact moment, UTC ISO (to the minute). */
   utc: string;
   transiting: Body;
@@ -82,8 +82,14 @@ export interface TransitEvent {
   natalHouse?: number;
   /** Set for kind === "station": the state it turns into. */
   station?: "retrograde" | "direct";
-  /** Set for kind === "lunation". */
+  /** Set for kind === "lunation" and kind === "eclipse" (a solar eclipse is
+   *  a new moon; a lunar eclipse is a full moon). */
   phase?: "new moon" | "full moon";
+  /** Set for kind === "eclipse": the Swiss Ephemeris eclipse classification. */
+  eclipseType?: "total" | "annular" | "partial" | "penumbral" | "hybrid";
+  /** Set for kind === "cazimi" on Mercury/Venus: which conjunction this is.
+   *  Inferior (retrograde, between Earth and Sun) or superior (far side). */
+  conjunction?: "inferior" | "superior";
   /** Set for kind === "ingress": the sign entered. */
   sign?: number;
   signName?: string;
@@ -108,6 +114,11 @@ export interface TransitScanOptions {
   includeStations?: boolean;
   includeLunations?: boolean;
   includeIngresses?: boolean;
+  includeEclipses?: boolean;
+  includeCazimi?: boolean;
+  /** Bodies checked for cazimi. Defaults to the classical five among
+   *  `bodies`; set explicitly to decouple from the aspect-scan list. */
+  cazimiBodies?: Body[];
   /** Ephemeris settings; defaults to tropical + true node. */
   sidereal?: boolean;
   ayanamsa?: Ayanamsa;
@@ -293,6 +304,29 @@ export function scanTransits(
   const events: TransitEvent[] = [];
   const targets = natal.points.filter((p) => natalPoints.includes(p.point));
 
+  // ——— eclipses: found by the Swiss Ephemeris itself, never estimated ———
+  // Computed before lunations so that an ordinary new/full moon row is not
+  // also emitted for a moment that is actually an eclipse.
+  const eclipseMs: number[] = [];
+  if (options.includeEclipses ?? true) {
+    for (const ec of eclipsesBetween(fromUtc, toUtc)) {
+      const ms = new Date(ec.utc).getTime();
+      eclipseMs.push(ms);
+      const moonLon = lonAt(ms, "moon", opts);
+      events.push({
+        kind: "eclipse",
+        utc: ec.utc,
+        transiting: ec.kind === "solar" ? "sun" : "moon",
+        phase: ec.kind === "solar" ? "new moon" : "full moon",
+        eclipseType: ec.type,
+        sign: Math.floor(norm360(moonLon) / 30),
+        signName: SIGN_NAMES[Math.floor(norm360(moonLon) / 30)],
+        natalHouse: wholeSignHouse(moonLon, natal.ascendantSign),
+        modern: false,
+      });
+    }
+  }
+
   for (const body of bodies) {
     const modern = (MODERN_PLANETS as readonly string[]).includes(body);
     const stepMs = stepDaysFor(body) * DAY_MS;
@@ -407,6 +441,12 @@ export function scanTransits(
             }
           }
           const exact = (lo + hi) / 2;
+          // This lunation IS an eclipse: the eclipse row already covers it.
+          if (eclipseMs.some((t) => Math.abs(t - exact) < DAY_MS * 0.5)) {
+            prevMs = ms;
+            prevD = d;
+            continue;
+          }
           const moonLon = lonAt(exact, "moon", opts);
           events.push({
             kind: "lunation",
@@ -416,6 +456,62 @@ export function scanTransits(
             sign: Math.floor(norm360(moonLon) / 30),
             signName: SIGN_NAMES[Math.floor(norm360(moonLon) / 30)],
             natalHouse: wholeSignHouse(moonLon, natal.ascendantSign),
+            modern: false,
+          });
+          if (events.length >= maxEvents) return sortEvents(events);
+        }
+        prevMs = ms;
+        prevD = d;
+      }
+    }
+  }
+
+  // ——— cazimi: a planet in the heart of the Sun ———
+  // The moment of exact conjunction with the Sun in ecliptic longitude —
+  // the peak of cazimi in traditional doctrine (within 17 arc-minutes of
+  // the Sun; the exact meeting is the heart of that window). Mercury and
+  // Venus meet the Sun twice per cycle: retrograde (inferior) and direct
+  // (superior); Mars outward meet it about once a synodic period.
+  if (options.includeCazimi ?? true) {
+    const classical: Body[] = ["mercury", "venus", "mars", "jupiter", "saturn"];
+    const cazimiBodies = options.cazimiBodies ?? classical.filter((b) => bodies.includes(b));
+    for (const body of cazimiBodies) {
+      const stepMs = 0.5 * DAY_MS;
+      let prevMs = start;
+      let prevD = signedDelta(lonAt(prevMs, body, opts), lonAt(prevMs, "sun", opts));
+      for (let ms = start + stepMs; ms <= end; ms += stepMs) {
+        const d = signedDelta(lonAt(ms, body, opts), lonAt(ms, "sun", opts));
+        if (prevD !== 0 && Math.sign(d) !== Math.sign(prevD) && Math.abs(d - prevD) < 180) {
+          let lo = prevMs;
+          let hi = ms;
+          let loD = prevD;
+          for (let i = 0; i < 40 && hi - lo > 30_000; i++) {
+            const mid = (lo + hi) / 2;
+            const midD = signedDelta(lonAt(mid, body, opts), lonAt(mid, "sun", opts));
+            if (Math.sign(midD) === Math.sign(loD)) {
+              lo = mid;
+              loD = midD;
+            } else {
+              hi = mid;
+            }
+          }
+          const exact = (lo + hi) / 2;
+          const lon = lonAt(exact, body, opts);
+          const inferior =
+            (body === "mercury" || body === "venus") && speedAt(exact, body, opts) < 0;
+          events.push({
+            kind: "cazimi",
+            utc: isoOf(exact),
+            transiting: body,
+            conjunction:
+              body === "mercury" || body === "venus"
+                ? inferior
+                  ? "inferior"
+                  : "superior"
+                : undefined,
+            sign: Math.floor(norm360(lon) / 30),
+            signName: SIGN_NAMES[Math.floor(norm360(lon) / 30)],
+            natalHouse: wholeSignHouse(lon, natal.ascendantSign),
             modern: false,
           });
           if (events.length >= maxEvents) return sortEvents(events);
@@ -468,4 +564,22 @@ export function scanTransits(
 
 function sortEvents(events: TransitEvent[]): TransitEvent[] {
   return events.sort((a, b) => a.utc.localeCompare(b.utc));
+}
+
+/**
+ * The world's sky, no natal chart required: eclipses, lunations, stations,
+ * ingresses and cazimi between two instants. Used by the public forecast;
+ * natal houses are meaningless here and therefore absent.
+ */
+export function scanSkyEvents(
+  fromUtc: string,
+  toUtc: string,
+  options: Omit<TransitScanOptions, "natalPoints" | "aspects"> = {}
+): TransitEvent[] {
+  const dummy: NatalSnapshot = { points: [], ascendantSign: 0, utc: fromUtc };
+  return scanTransits(dummy, fromUtc, toUtc, {
+    ...options,
+    natalPoints: [],
+    aspects: [],
+  }).map(({ natalHouse: _natalHouse, ...e }) => e);
 }

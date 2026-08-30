@@ -3,6 +3,7 @@ import {
   annualProfection,
   computeChart,
   profectionSeries,
+  scanSkyEvents,
   scanTransits,
   wholeSignHouse,
   SIGN_RULER,
@@ -146,12 +147,16 @@ describe("transit scanning", () => {
       includeStations: false,
       includeIngresses: false,
     });
-    const lunations = events.filter((e) => e.kind === "lunation");
+    // Eclipses are lunations too — this window holds the Feb 17 solar and
+    // Mar 3 lunar eclipses, which correctly arrive as eclipse events rather
+    // than plain lunations.
+    const lunations = events.filter((e) => e.kind === "lunation" || e.kind === "eclipse");
     // Three months ≈ 3 new + 3 full moons.
     expect(lunations.length).toBeGreaterThanOrEqual(5);
     expect(lunations.length).toBeLessThanOrEqual(8);
     expect(lunations.some((l) => l.phase === "new moon")).toBe(true);
     expect(lunations.some((l) => l.phase === "full moon")).toBe(true);
+    expect(lunations.filter((l) => l.kind === "eclipse")).toHaveLength(2);
     for (const l of lunations) {
       expect(l.natalHouse).toBeGreaterThanOrEqual(1);
       expect(l.natalHouse).toBeLessThanOrEqual(12);
@@ -185,5 +190,85 @@ describe("transit scanning", () => {
 
   it("returns nothing for an inverted range", () => {
     expect(scanTransits(snapshot(), "2026-06-01T00:00:00Z", "2026-01-01T00:00:00Z")).toEqual([]);
+  });
+});
+
+describe("eclipses (Swiss Ephemeris eclipse search, never estimated)", () => {
+  it("finds all four documented 2026 eclipses with correct types", () => {
+    const events = scanTransits(snapshot(), "2026-01-01T00:00:00Z", "2026-12-31T23:59:00Z", {
+      bodies: [],
+      natalPoints: [],
+      includeStations: false,
+      includeIngresses: false,
+      includeLunations: false,
+      includeCazimi: false,
+    });
+    const eclipses = events.filter((e) => e.kind === "eclipse");
+    expect(eclipses).toHaveLength(4);
+
+    const byDate = (d: string) => eclipses.find((e) => e.utc.startsWith(d));
+    // Feb 17: annular solar. Mar 3: total lunar.
+    expect(byDate("2026-02-17")?.eclipseType).toBe("annular");
+    expect(byDate("2026-02-17")?.phase).toBe("new moon");
+    expect(byDate("2026-03-03")?.eclipseType).toBe("total");
+    expect(byDate("2026-03-03")?.phase).toBe("full moon");
+    // Aug 12: total solar. Aug 28: partial lunar.
+    expect(byDate("2026-08-12")?.eclipseType).toBe("total");
+    expect(byDate("2026-08-12")?.phase).toBe("new moon");
+    expect(byDate("2026-08-28")?.eclipseType).toBe("partial");
+    expect(byDate("2026-08-28")?.phase).toBe("full moon");
+  });
+
+  it("does not also emit a plain lunation for an eclipse moment", () => {
+    const events = scanTransits(snapshot(), "2026-08-01T00:00:00Z", "2026-08-31T23:59:00Z", {
+      bodies: [],
+      natalPoints: [],
+      includeStations: false,
+      includeIngresses: false,
+      includeCazimi: false,
+    });
+    const eclipses = events.filter((e) => e.kind === "eclipse");
+    const lunations = events.filter((e) => e.kind === "lunation");
+    expect(eclipses).toHaveLength(2); // Aug 12 solar + Aug 28 lunar
+    // No lunation within half a day of either eclipse.
+    for (const ec of eclipses) {
+      const t = new Date(ec.utc).getTime();
+      expect(
+        lunations.some((l) => Math.abs(new Date(l.utc).getTime() - t) < 43_200_000)
+      ).toBe(false);
+    }
+  });
+});
+
+describe("cazimi (exact conjunction with the Sun)", () => {
+  it("finds Mercury's ~6 solar conjunctions in a year, alternating inferior/superior", () => {
+    const events = scanTransits(snapshot(), "2026-01-01T00:00:00Z", "2026-12-31T23:59:00Z", {
+      bodies: ["mercury"],
+      natalPoints: [],
+      aspects: [],
+      includeStations: false,
+      includeIngresses: false,
+      includeLunations: false,
+      includeEclipses: false,
+    });
+    const cazimi = events.filter((e) => e.kind === "cazimi");
+    // Mercury's synodic period is ~116 days → 6-7 conjunctions per year.
+    expect(cazimi.length).toBeGreaterThanOrEqual(5);
+    expect(cazimi.length).toBeLessThanOrEqual(7);
+    expect(cazimi.some((c) => c.conjunction === "inferior")).toBe(true);
+    expect(cazimi.some((c) => c.conjunction === "superior")).toBe(true);
+    // Consecutive conjunctions alternate inferior/superior.
+    for (let i = 1; i < cazimi.length; i++) {
+      expect(cazimi[i].conjunction).not.toBe(cazimi[i - 1].conjunction);
+    }
+  });
+
+  it("scanSkyEvents returns mundane events with no natal houses", () => {
+    const events = scanSkyEvents("2026-08-01T00:00:00Z", "2026-08-31T23:59:00Z", {
+      bodies: ["mercury", "venus", "mars", "jupiter", "saturn"],
+    });
+    expect(events.length).toBeGreaterThan(0);
+    expect(events.every((e) => e.natalHouse === undefined)).toBe(true);
+    expect(events.some((e) => e.kind === "eclipse")).toBe(true);
   });
 });

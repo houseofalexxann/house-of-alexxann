@@ -52,6 +52,10 @@ function titleFor(e: TransitEvent): string {
       return `${e.phase === "new moon" ? "New Moon" : "Full Moon"} in ${e.signName}`;
     case "ingress":
       return `${planet} enters ${e.signName}`;
+    case "eclipse":
+      return `${e.phase === "new moon" ? "Solar" : "Lunar"} eclipse in ${e.signName} (${e.eclipseType})`;
+    case "cazimi":
+      return `${planet} cazimi — in the heart of the Sun`;
   }
 }
 
@@ -77,6 +81,17 @@ function reflectionFor(e: TransitEvent): string {
       return `${POINT_LABEL[e.transiting]} changes signs, moving into ${house ? house.name : "a new house"}${
         house ? `: ${house.topics}` : ""
       }. Themes of ${planetKey} shift their address for a while.`;
+    case "eclipse": {
+      const which = e.phase === "new moon" ? "solar" : "lunar";
+      const asLunation = e.phase === "new moon" ? "a new moon" : "a full moon";
+      return `A ${which} eclipse is ${asLunation} amplified: the lights meet close to the Moon's nodes, and traditional astrologers gave these moments special weight${
+        house ? `, here landing in ${house.name}: ${house.topics}` : ""
+      }. The old advice is not fear but attention — eclipses mark chapters more than they cause events. Notice what surfaces; let it unfold before naming it.`;
+    }
+    case "cazimi":
+      return `${POINT_LABEL[e.transiting]} sits in the heart of the Sun — cazimi, the exact meeting with the Sun's own degree. In traditional doctrine a planet cazimi is strengthened rather than burned: a brief, clear window for matters of ${planetKey}.${
+        e.conjunction ? ` (This is the ${e.conjunction} conjunction${e.conjunction === "inferior" ? ", during the retrograde" : ""}.)` : ""
+      }`;
   }
 }
 
@@ -125,6 +140,9 @@ export function buildPersonalCalendar(
   const raw = scanTransits(snapshot, fromUtc, toUtc, {
     bodies: ["sun", "mars", "jupiter", "saturn", "uranus", "neptune", "pluto"],
     natalPoints: ["sun", "moon", "mercury", "venus", "mars", "jupiter", "saturn", "ascendant", "midheaven"],
+    // Mercury/Venus aspects would flood a year view, but their cazimis are
+    // headline moments — scan those independently of the aspect list.
+    cazimiBodies: ["mercury", "venus", "mars", "jupiter", "saturn"],
     maxEvents: opts.maxEvents ?? 300,
   });
 

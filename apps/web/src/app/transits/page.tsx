@@ -1,36 +1,64 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SkyWeek } from "@/components/transits/SkyWeek";
+import { MajorEvents } from "@/components/transits/MajorEvents";
 
 export const metadata: Metadata = {
-  title: "Transits — the sky right now",
+  title: "The sky now — transits, eclipses & the week ahead",
   description:
-    "The current sky against your natal chart: a live wheel and written guidance. A members' feature of House of Alexxann.",
+    "The living sky: eclipses, new and full moons, retrograde stations and cazimis for the weeks ahead, plus a 7-day forecast — computed with the Swiss Ephemeris.",
 };
 
 export default function TransitsPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 pb-24 pt-14 sm:px-6">
-      <header className="mb-10 text-center">
+      <header className="mb-12 text-center">
         <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-lilac-600">
-          Transits
+          ◐ The Living Orbit
         </p>
         <h1 className="text-4xl text-ink-900 sm:text-5xl">The sky, right now</h1>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-ink-500">
-          Where the planets are today — and what they&#39;re saying to the
-          planets you were born with. A live wheel, plain-language guidance,
-          and the dates worth circling.
+          The moments worth circling — eclipses, lunations, stations and
+          cazimis — then the week ahead, day by day. All of it computed, none
+          of it guessed.
         </p>
       </header>
-      <SkyWeek />
-      <div className="card mt-8 p-6 text-sm leading-relaxed text-ink-700">
-        <h2 className="font-heading text-xl text-ink-900">What this tab will hold</h2>
-        <ul className="mt-3 list-disc space-y-1.5 pl-6">
-          <li>A living bi-wheel: today&#39;s sky around your natal chart</li>
-          <li>Written &#34;short-term themes&#34; for your placements — not your sun sign&#39;s</li>
-          <li>Moon ingresses, exact-aspect dates, retrograde stations</li>
-          <li>Solar return preview for your next birthday</li>
-        </ul>
-      </div>
+
+      {/* Dates worth circling */}
+      <section>
+        <h2 className="text-center font-heading text-3xl text-ink-900">
+          Dates worth circling
+        </h2>
+        <p className="mt-2 text-center text-sm text-ink-500">
+          The next two months of major sky events.
+        </p>
+        <hr className="gold-rule mx-auto my-6 w-32" />
+        <MajorEvents />
+      </section>
+
+      {/* The week, day by day */}
+      <section className="mt-16">
+        <h2 className="mb-6 text-center font-heading text-3xl text-ink-900">
+          The week, day by day
+        </h2>
+        <SkyWeek />
+      </section>
+
+      {/* Where this lands for YOU */}
+      <section className="card mt-12 border-rose-300/60 p-8 text-center">
+        <h2 className="font-heading text-2xl text-ink-900">
+          The same sky, landed in your chart
+        </h2>
+        <p className="mx-auto mt-3 max-w-lg text-sm leading-relaxed text-ink-500">
+          These are the world&#39;s events. The personal calendar reads them
+          against your own placements: which houses the eclipses light, when
+          the big transits touch your natal planets, and the profected year
+          you are actually in.
+        </p>
+        <Link href="/calendar" className="btn-gold mt-5 inline-flex text-sm">
+          Open my calendar
+        </Link>
+      </section>
     </div>
   );
 }

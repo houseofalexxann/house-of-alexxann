@@ -80,5 +80,20 @@ export async function GET() {
     prev = chart;
   }
 
-  return NextResponse.json({ days });
+  // An aspect that shows on most days of the week is background weather,
+  // not seven separate events: list it once instead of every day.
+  const counts = new Map<string, number>();
+  for (const day of days) {
+    for (const ev of day.events) counts.set(ev, (counts.get(ev) ?? 0) + 1);
+  }
+  const background = [...counts.entries()]
+    .filter(([ev, n]) => n >= 4 && !ev.startsWith("New Moon") && !ev.startsWith("Full Moon"))
+    .map(([ev]) => ev);
+  if (background.length > 0) {
+    for (const day of days) {
+      day.events = day.events.filter((ev) => !background.includes(ev));
+    }
+  }
+
+  return NextResponse.json({ days, background });
 }

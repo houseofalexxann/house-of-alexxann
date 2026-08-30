@@ -149,3 +149,74 @@ export function norm360(x: number): number {
   const r = x % 360;
   return r < 0 ? r + 360 : r;
 }
+
+/* ————— Eclipses: computed by the Swiss Ephemeris itself, never estimated ————— */
+
+export type SolarEclipseType = "total" | "annular" | "partial" | "hybrid";
+export type LunarEclipseType = "total" | "partial" | "penumbral";
+
+export interface EclipseMoment {
+  /** Julian Day (UT) of maximum eclipse. */
+  jdMax: number;
+  /** ISO UTC instant of maximum eclipse, to the minute. */
+  utc: string;
+  kind: "solar" | "lunar";
+  type: SolarEclipseType | LunarEclipseType;
+}
+
+function jdToIso(jd: number): string {
+  const r = sweph.revjul(jd, C.SE_GREG_CAL);
+  const hours = Math.floor(r.hour);
+  const minutes = Math.round((r.hour - hours) * 60);
+  const d = new Date(Date.UTC(r.year, r.month - 1, r.day, hours, minutes));
+  return d.toISOString().replace(/\.\d{3}Z$/, "Z");
+}
+
+function solarTypeOf(flag: number): SolarEclipseType {
+  if (flag & C.SE_ECL_HYBRID) return "hybrid";
+  if (flag & C.SE_ECL_TOTAL) return "total";
+  if (flag & C.SE_ECL_ANNULAR_TOTAL) return "hybrid";
+  if (flag & C.SE_ECL_ANNULAR) return "annular";
+  return "partial";
+}
+
+function lunarTypeOf(flag: number): LunarEclipseType {
+  if (flag & C.SE_ECL_TOTAL) return "total";
+  if (flag & C.SE_ECL_PARTIAL) return "partial";
+  return "penumbral";
+}
+
+/**
+ * Every solar and lunar eclipse between two instants (max-eclipse moments),
+ * found by walking the Swiss Ephemeris eclipse search forward.
+ */
+export function eclipsesBetween(fromUtcIso: string, toUtcIso: string): EclipseMoment[] {
+  ensureEphe();
+  const jdFrom = utcToJulianDayUT(fromUtcIso);
+  const jdTo = utcToJulianDayUT(toUtcIso);
+  const out: EclipseMoment[] = [];
+
+  let cursor = jdFrom;
+  for (let i = 0; i < 40 && cursor < jdTo; i++) {
+    const res = sweph.sol_eclipse_when_glob(cursor, C.SEFLG_SWIEPH, 0, false);
+    const jdMax = res.data[0];
+    if (jdMax > jdTo) break;
+    if (jdMax >= jdFrom) {
+      out.push({ jdMax, utc: jdToIso(jdMax), kind: "solar", type: solarTypeOf(res.flag) });
+    }
+    cursor = jdMax + 1; // step past this eclipse
+  }
+
+  cursor = jdFrom;
+  for (let i = 0; i < 40 && cursor < jdTo; i++) {
+    const res = sweph.lun_eclipse_when(cursor, C.SEFLG_SWIEPH, 0, false);
+    const jdMax = res.data[0];
+    if (jdMax > jdTo) break;
+    if (jdMax >= jdFrom) {
+      out.push({ jdMax, utc: jdToIso(jdMax), kind: "lunar", type: lunarTypeOf(res.flag) });
+    }
+    cursor = jdMax + 1;
+  }
+
+  return out.sort((a, b) => a.jdMax - b.jdMax);
+}
