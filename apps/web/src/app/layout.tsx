@@ -9,6 +9,7 @@ import { LocaleProvider } from "@/lib/i18n";
 import { UserProvider } from "@/components/UserProvider";
 import { CosmicDecor } from "@/components/CosmicDecor";
 import { CosmicBackground } from "@/components/CosmicBackground";
+import { CelestialBreadcrumbs } from "@/components/nav/CelestialBreadcrumbs";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -66,6 +67,7 @@ export default function RootLayout({
           </div>
           <CosmicDecor />
           <SiteHeader />
+          <CelestialBreadcrumbs />
           <main className="flex-1">{children}</main>
           <SiteFooter />
           <ListeningRoom />
