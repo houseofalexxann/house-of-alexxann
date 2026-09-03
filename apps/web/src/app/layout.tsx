@@ -10,6 +10,8 @@ import { UserProvider } from "@/components/UserProvider";
 import { CosmicDecor } from "@/components/CosmicDecor";
 import { CosmicBackground } from "@/components/CosmicBackground";
 import { CelestialBreadcrumbs } from "@/components/nav/CelestialBreadcrumbs";
+import { RegionAtmosphere } from "@/components/nav/RegionAtmosphere";
+import { CosmicPageTransition } from "@/components/nav/CosmicPageTransition";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
@@ -25,7 +27,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "House of Alexxann — Astrology, Western & Vedic",
+    default: "House of Alexxann · Astrology, Western & Vedic",
     template: "%s · House of Alexxann",
   },
   description:
@@ -44,7 +46,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fdfbfa",
+  themeColor: "#17121f",
   width: "device-width",
   initialScale: 1,
 };
@@ -65,10 +67,13 @@ export default function RootLayout({
           <div className="starfield" aria-hidden>
             <CosmicBackground />
           </div>
+          <RegionAtmosphere />
           <CosmicDecor />
           <SiteHeader />
           <CelestialBreadcrumbs />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            <CosmicPageTransition>{children}</CosmicPageTransition>
+          </main>
           <SiteFooter />
           <ListeningRoom />
           <PwaRegister />

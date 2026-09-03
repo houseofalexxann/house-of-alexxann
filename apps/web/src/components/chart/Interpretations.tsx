@@ -128,6 +128,8 @@ function Legend() {
 }
 
 export function InterpretationsPanel({ chart }: { chart: ChartResult }) {
+  // Read the clock once per mount so render stays pure.
+  const [now] = useState(() => Date.now());
   const vedic = chart.input.system === "vedic";
   const sun = chart.planets.find((p) => p.body === "sun");
   const moon = chart.planets.find((p) => p.body === "moon");
@@ -176,7 +178,6 @@ export function InterpretationsPanel({ chart }: { chart: ChartResult }) {
           <div>
             {(() => {
               const nak = moonNakshatra(chart.vimshottari.moonNakshatra.index);
-              const now = Date.now();
               const current = chart.vimshottari.mahadashas.find(
                 (m) => now >= Date.parse(m.start) && now < Date.parse(m.end)
               );

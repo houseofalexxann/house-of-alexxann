@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import type { ChartResult, Dignity } from "@hoa/engine";
 import { BODY_NAMES, PLANET_GLYPHS, SIGN_NAMES } from "./glyphs";
 
@@ -41,6 +43,8 @@ function dignityStyle(d: Dignity): string {
 }
 
 export function TraditionalPanel({ chart }: { chart: ChartResult }) {
+  // Read the clock once per mount so render stays pure.
+  const [now] = useState(() => Date.now());
   const t = chart.traditional;
   const mp = t.moonPhase;
 
@@ -191,7 +195,6 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
           {t.zodiacalReleasing && (
             <ol className="mt-3 space-y-1">
               {t.zodiacalReleasing.slice(0, 8).map((p, i) => {
-                const now = Date.now();
                 const current = now >= Date.parse(p.start) && now < Date.parse(p.end);
                 return (
                   <li

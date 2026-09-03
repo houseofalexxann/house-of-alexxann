@@ -16,7 +16,7 @@ export default async function AdminPromosPage() {
       <h1 className="text-3xl text-ink-900">Promo codes</h1>
       <p className="mt-1 text-sm text-ink-500">
         Discounts on readings and membership, and free-trial keys. Share a code
-        anywhere — visitors enter it at booking or on the Join page.
+        anywhere. Visitors enter it at booking or on the Join page.
       </p>
 
       <PromoCreateForm />
@@ -25,7 +25,7 @@ export default async function AdminPromosPage() {
         <h2 className="text-xl text-ink-900">Every code</h2>
         {promos.length === 0 ? (
           <p className="card mt-3 p-5 text-sm text-ink-500">
-            No codes yet — the form above mints the first one. ✦
+            No codes yet. The form above mints the first one. ✦
           </p>
         ) : (
           <div className="card mt-3 overflow-x-auto p-0">
@@ -59,7 +59,7 @@ export default async function AdminPromosPage() {
                     <td className="px-4 py-3 text-ink-500">
                       {p.expiresAt
                         ? DateTime.fromJSDate(p.expiresAt).toFormat("LLL d, yyyy")
-                        : "—"}
+                        : "·"}
                     </td>
                     <td className="px-4 py-3 text-ink-500">{p.note ?? ""}</td>
                     <td className="px-4 py-3 text-right">

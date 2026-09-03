@@ -55,7 +55,7 @@ function titleFor(e: TransitEvent): string {
     case "eclipse":
       return `${e.phase === "new moon" ? "Solar" : "Lunar"} eclipse in ${e.signName} (${e.eclipseType})`;
     case "cazimi":
-      return `${planet} cazimi — in the heart of the Sun`;
+      return `${planet} cazimi, in the heart of the Sun`;
   }
 }
 
@@ -86,10 +86,10 @@ function reflectionFor(e: TransitEvent): string {
       const asLunation = e.phase === "new moon" ? "a new moon" : "a full moon";
       return `A ${which} eclipse is ${asLunation} amplified: the lights meet close to the Moon's nodes, and traditional astrologers gave these moments special weight${
         house ? `, here landing in ${house.name}: ${house.topics}` : ""
-      }. The old advice is not fear but attention — eclipses mark chapters more than they cause events. Notice what surfaces; let it unfold before naming it.`;
+      }. The old advice is not fear but attention: eclipses mark chapters more than they cause events. Notice what surfaces; let it unfold before naming it.`;
     }
     case "cazimi":
-      return `${POINT_LABEL[e.transiting]} sits in the heart of the Sun — cazimi, the exact meeting with the Sun's own degree. In traditional doctrine a planet cazimi is strengthened rather than burned: a brief, clear window for matters of ${planetKey}.${
+      return `${POINT_LABEL[e.transiting]} sits in the heart of the Sun: cazimi, the exact meeting with the Sun's own degree. In traditional doctrine a planet cazimi is strengthened rather than burned: a brief, clear window for matters of ${planetKey}.${
         e.conjunction ? ` (This is the ${e.conjunction} conjunction${e.conjunction === "inferior" ? ", during the retrograde" : ""}.)` : ""
       }`;
   }
@@ -209,7 +209,7 @@ export function toICalendar(cal: PersonalCalendar, feedName: string): string {
       `DESCRIPTION:${esc(
         `${e.reflection}${
           e.provenance === "modern-practice"
-            ? " — Note: this reading draws on modern practice rather than the classical tradition."
+            ? " Note: this reading draws on modern practice rather than the classical tradition."
             : ""
         }`
       )}`,

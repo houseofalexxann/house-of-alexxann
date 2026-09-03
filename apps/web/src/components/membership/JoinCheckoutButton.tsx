@@ -1,11 +1,19 @@
 "use client";
 
 import { useState } from "react";
+import { useUser } from "@/components/UserProvider";
+import { formatMembershipPrice } from "@/lib/membership";
 
-/** Starts the $5/month subscription checkout and follows Stripe's URL. */
+/**
+ * Starts the monthly subscription checkout and follows Stripe's URL. The
+ * price on the button is the live one from settings, so a change in the
+ * admin shows here without a deploy.
+ */
 export function JoinCheckoutButton() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { membershipPriceCents } = useUser();
+  const price = formatMembershipPrice(membershipPriceCents);
 
   return (
     <span className="inline-flex flex-col items-start gap-2">
@@ -27,7 +35,7 @@ export function JoinCheckoutButton() {
           }
         }}
       >
-        {busy ? "Opening checkout…" : "Become a Venusian Doll — $5/month"}
+        {busy ? "Opening checkout…" : `Become a Venusian Doll for ${price} a month`}
       </button>
       {error && <span className="text-xs text-rose-600">{error}</span>}
     </span>

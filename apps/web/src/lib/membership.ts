@@ -60,9 +60,9 @@ export function isActiveMember(
 }
 
 export const PREMIUM_FEATURES = [
-  "The deeper chart — essential dignities, sect analysis, decans & bounds",
+  "The deeper chart: essential dignities, sect analysis, decans & bounds",
   "Lots of Fortune & Spirit + zodiacal releasing timelines",
-  "Live transits — the sky now, against your chart",
+  "Live transits: the sky now, against your chart",
   "Human Design bodygraph",
   "Tarot room",
   "Solar return charts for any year and place",

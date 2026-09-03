@@ -51,20 +51,20 @@ export default async function JoinPage({
         <h1 className="mt-2 text-4xl text-ink-900">Step behind the veil</h1>
         <p className="mx-auto mt-3 max-w-md text-ink-500">
           <strong className="text-ink-900">{priceLabel} a month</strong>{" "}
-          opens every room of the House — and a 10% embrace on every reading
+          opens every room of the House, and a 10% embrace on every reading
           with Alexandria.
         </p>
       </header>
 
       {params.welcome && !isMember && (
         <div className="card mt-8 border-rose-300/60 p-5 text-center text-sm text-ink-700">
-          ✦ Thank you — your payment is settling. The veil lifts within moments;
+          ✦ Thank you. Your payment is settling. The veil lifts within moments;
           refresh this page and it will greet you properly.
         </div>
       )}
       {params.canceled && (
         <div className="card mt-8 p-5 text-center text-sm text-ink-500">
-          No pressure at all — the House isn&#39;t going anywhere. The free rooms
+          No pressure at all. The House isn&#39;t going anywhere. The free rooms
           stay open, and this page will be here when you&#39;re ready.
         </div>
       )}
@@ -107,7 +107,7 @@ export default async function JoinPage({
               <span className="font-heading text-lg text-rose-500">1</span>
               <span>
                 {user ? (
-                  <>You&#39;re signed in as <strong>{user.email}</strong> — perfect.</>
+                  <>You&#39;re signed in as <strong>{user.email}</strong>, perfect.</>
                 ) : (
                   <>
                     <Link href="/signup" className="text-rose-600 hover:underline">
@@ -129,8 +129,8 @@ export default async function JoinPage({
                   <span className="mb-3 block">
                     <JoinCheckoutButton />
                     <span className="mt-1.5 block text-xs text-ink-400">
-                      Card checkout — renews itself monthly, cancel anytime, veil
-                      lifts on its own within moments.
+                      Card checkout renews itself monthly, cancel anytime, and the
+                      veil lifts on its own within moments.
                     </span>
                   </span>
                 )}
@@ -153,7 +153,7 @@ export default async function JoinPage({
                   </span>
                 ) : (
                   <span className="mt-2 block text-ink-500">
-                    Payment details are being polished — reach out through the{" "}
+                    Payment details are being polished. Reach out through the{" "}
                     <Link href="/faq" className="text-rose-600 hover:underline">
                       FAQ page
                     </Link>{" "}
@@ -167,7 +167,7 @@ export default async function JoinPage({
               <span>
                 {cardCheckout
                   ? "Card checkout lifts your veil automatically; for direct payments, Alexandria lifts it "
-                  : "Alexandria lifts your veil — "}
+                  : "Alexandria lifts your veil, "}
                 usually within the day. Your account turns{" "}
                 <strong>{TIER_NAMES.member}</strong> and every room opens.
               </span>
@@ -195,7 +195,7 @@ export default async function JoinPage({
 
       <p className="mt-6 text-center text-xs text-ink-400">
         Sliding scale, always: if {priceLabel} is a stretch this
-        season, write to the House — nobody is turned away from the sky.
+        season, write to the House. Nobody is turned away from the sky.
       </p>
     </div>
   );

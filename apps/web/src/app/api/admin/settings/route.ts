@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
     // A guard against a slipped decimal point turning $5 into $500.
     if (patch.membershipPriceCents > 100_000) {
       return NextResponse.json(
-        { error: "That membership price looks like a typo — the maximum is $1,000 a month." },
+        { error: "That membership price looks like a typo. The maximum is $1,000 a month." },
         { status: 400 }
       );
     }

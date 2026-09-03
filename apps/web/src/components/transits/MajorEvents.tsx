@@ -48,15 +48,15 @@ function describe(e: SkyEvent): { title: string; note: string; badge?: string } 
       return {
         title: `${solar ? "Solar" : "Lunar"} eclipse in ${e.signName}`,
         note: solar
-          ? "A new moon amplified — the lights meet by the Moon's nodes."
-          : "A full moon amplified — the Earth's shadow crosses the Moon.",
+          ? "A new moon amplified: the lights meet by the Moon's nodes."
+          : "A full moon amplified: the Earth's shadow crosses the Moon.",
         badge: `${e.eclipseType} ${solar ? "solar" : "lunar"} eclipse`,
       };
     }
     case "lunation":
       return e.phase === "new moon"
-        ? { title: `New Moon in ${e.signName}`, note: "The cycle begins again — a moment for starting, not finishing." }
-        : { title: `Full Moon in ${e.signName}`, note: "The month's culmination — things become visible." };
+        ? { title: `New Moon in ${e.signName}`, note: "The cycle begins again, a moment for starting rather than finishing." }
+        : { title: `Full Moon in ${e.signName}`, note: "The month's culmination. Things become visible." };
     case "station":
       return e.station === "retrograde"
         ? { title: `${name} stations retrograde`, note: "Traditionally read as a turn inward: review before relaunch.", badge: "retrograde begins" }
@@ -64,11 +64,11 @@ function describe(e: SkyEvent): { title: string; note: string; badge?: string } 
     case "cazimi":
       return {
         title: `${name} cazimi`,
-        note: `In the heart of the Sun — the exact meeting${e.conjunction ? ` (${e.conjunction} conjunction)` : ""}. Doctrine reads a planet here as briefly strengthened, not burned.`,
+        note: `In the heart of the Sun, the exact meeting${e.conjunction ? ` (${e.conjunction} conjunction)` : ""}. Doctrine reads a planet here as briefly strengthened, not burned.`,
         badge: "cazimi",
       };
     case "ingress":
-      return { title: `${name} enters ${e.signName}`, note: "A slow planet changes signs — the background weather shifts." };
+      return { title: `${name} enters ${e.signName}`, note: "A slow planet changes signs. The background weather shifts." };
     default:
       return { title: `${name}`, note: "" };
   }
@@ -107,7 +107,7 @@ export function MajorEvents() {
   if (error)
     return (
       <p className="text-center text-sm text-ink-500">
-        The ephemeris is catching its breath — refresh in a moment.
+        The ephemeris is catching its breath. Refresh in a moment.
       </p>
     );
   if (!events)

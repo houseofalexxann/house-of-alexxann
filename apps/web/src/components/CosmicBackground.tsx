@@ -6,10 +6,15 @@
  * depth), the twelve zodiac constellations assembling themselves one at a
  * time among the stars — lines drawing in, glyph glowing faintly — and, on
  * pointer devices, stars near the cursor linking into a delicate traveling
- * web. Tuned for the pearl ground; static single frame under
- * prefers-reduced-motion.
+ * web. Tuned for the pearl ground.
+ *
+ * Two things make it go still: prefers-reduced-motion, and the observatory
+ * routes (forms, payment, account, admin), where the sky holds one quiet,
+ * dimmer frame so nothing competes with the work at hand.
  */
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { isObservatory } from "@/lib/celestial-map";
 
 interface Star3D {
   x: number;
@@ -50,8 +55,24 @@ const PLACES: [number, number][] = [
 const CYCLE_MS = 15000; // one constellation's full life
 const HOLD = 0.55; // fraction of cycle at full glow
 
+function makeStars(count: number): Star3D[] {
+  return Array.from({ length: count }, (_, i) => ({
+    x: (Math.random() * 2 - 1) * 1.3,
+    y: (Math.random() * 2 - 1) * 1.3,
+    z: 0.25 + Math.random() * 1.35,
+    r: 0.5 + Math.random() * 1.4,
+    color: COLORS[i % COLORS.length],
+    tw: Math.random() * Math.PI * 2,
+  }));
+}
+
 export function CosmicBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // One sky for the whole visit: the stars are made once and kept, so going
+  // quiet on a form and lively again afterwards never reshuffles them.
+  const starsRef = useRef<Star3D[] | null>(null);
+  const pathname = usePathname() ?? "/";
+  const quiet = isObservatory(pathname);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -61,16 +82,11 @@ export function CosmicBackground() {
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const mobile = window.innerWidth < 640;
-    const stars: Star3D[] = Array.from({ length: mobile ? 70 : 150 }, (_, i) => ({
-      x: (Math.random() * 2 - 1) * 1.3,
-      y: (Math.random() * 2 - 1) * 1.3,
-      z: 0.25 + Math.random() * 1.35,
-      r: 0.5 + Math.random() * 1.4,
-      color: COLORS[i % COLORS.length],
-      tw: Math.random() * Math.PI * 2,
-    }));
+    const still = reduced || quiet;
+    const dim = quiet ? 0.55 : 1;
+    const stars = starsRef.current ?? (starsRef.current = makeStars(mobile ? 70 : 150));
 
-    // Pointer web state (desktop only).
+    // Pointer web state (desktop only, and only while the sky is alive).
     let mx = -9999;
     let my = -9999;
     const onPointer = (e: PointerEvent) => {
@@ -81,7 +97,7 @@ export function CosmicBackground() {
       mx = -9999;
       my = -9999;
     };
-    if (!mobile && !reduced) {
+    if (!mobile && !still) {
       window.addEventListener("pointermove", onPointer, { passive: true });
       window.addEventListener("pointerleave", onLeave);
     }
@@ -94,9 +110,9 @@ export function CosmicBackground() {
       canvas.width = canvas.clientWidth * dpr;
       canvas.height = canvas.clientHeight * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      // A still sky must repaint on resize by hand; a live one is about to anyway.
+      if (still) draw(performance.now());
     };
-    resize();
-    window.addEventListener("resize", resize);
 
     const smooth = (v: number) => v * v * (3 - 2 * v);
 
@@ -161,6 +177,7 @@ export function CosmicBackground() {
       const cx = w / 2;
       const cy = h / 2;
       ctx.clearRect(0, 0, w, h);
+      ctx.globalAlpha = dim;
 
       // Two faint wandering orbs — planets at the edge of attention.
       const orbs = [
@@ -188,7 +205,7 @@ export function CosmicBackground() {
         const sy = cy + s.y * h * 0.5 * proj - scroll * (0.02 + 0.07 * nearness);
         const wy = ((sy % (h + 40)) + h + 40) % (h + 40) - 20;
         if (sx < -10 || sx > w + 10) continue;
-        const twk = reduced ? 0.8 : 0.55 + 0.45 * Math.sin(t / 1100 + s.tw);
+        const twk = still ? 0.8 : 0.55 + 0.45 * Math.sin(t / 1100 + s.tw);
         const alpha = (0.16 + 0.3 * nearness) * twk;
         const radius = s.r * (0.5 + proj * 0.7);
         if (nearness > 0.8 && !mobile) {
@@ -228,11 +245,15 @@ export function CosmicBackground() {
       }
 
       // One zodiac constellation at a time, assembling among the stars.
-      drawConstellation(reduced ? CYCLE_MS * 0.4 : t, w, h);
+      drawConstellation(still ? CYCLE_MS * 0.4 : t, w, h);
+      ctx.globalAlpha = 1;
 
-      if (!reduced) raf = requestAnimationFrame(draw);
+      if (!still) raf = requestAnimationFrame(draw);
     };
-    raf = requestAnimationFrame(draw);
+
+    resize();
+    window.addEventListener("resize", resize);
+    if (!still) raf = requestAnimationFrame(draw);
 
     return () => {
       running = false;
@@ -241,7 +262,7 @@ export function CosmicBackground() {
       window.removeEventListener("pointermove", onPointer);
       window.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [quiet]);
 
   return (
     <canvas

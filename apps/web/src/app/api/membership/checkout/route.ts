@@ -5,7 +5,7 @@ import { baseUrl } from "@/lib/bookings";
 import { getSettings } from "@/lib/settings";
 import { discountedCents, findValidPromo } from "@/lib/promos";
 
-/** Starts a $5/month Venusian Doll subscription checkout for the signed-in user. */
+/** Starts a monthly Venusian Doll subscription checkout for the signed-in user, at the live settings price. */
 export async function POST(request: NextRequest) {
   const user = await sessionUser();
   if (!user) {
@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
   }
   if (!stripeEnabled()) {
     return NextResponse.json(
-      { error: "Card checkout isn't open yet — use the direct-pay options below." },
+      { error: "Card checkout isn't open yet. Use the direct-pay options below." },
       { status: 501 }
     );
   }

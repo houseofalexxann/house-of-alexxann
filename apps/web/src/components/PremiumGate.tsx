@@ -46,14 +46,14 @@ export function PremiumGate({
           <h3 className="mt-2 font-heading text-xl text-ink-900">{title}</h3>
           <p className="mt-2 text-sm leading-relaxed text-ink-500">
             This lives behind the veil. The{" "}
-            <strong className="text-ink-700">Venusian Doll</strong> membership —
-            {price} a month — lifts it on every room of the House
+            <strong className="text-ink-700">Venusian Doll</strong> membership,
+            {price} a month, lifts it on every room of the House
             {user ? "." : ", and your account is free to create."}{" "}
             Every reading with Alexandria includes all of it today.
           </p>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
             <Link href="/join" className="btn-gold text-sm">
-              Become a Venusian Doll — {price}
+              Become a Venusian Doll for {price}
             </Link>
             <Link href="/services" className="btn-ghost text-sm">
               Book a reading

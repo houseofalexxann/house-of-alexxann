@@ -35,7 +35,7 @@ export function ForgotForm() {
     return (
       <div className="mt-6 space-y-4 text-center">
         <p className="text-sm text-ink-700">
-          If that email belongs to the House, a reset link is on its way — it&apos;s
+          If that email belongs to the House, a reset link is on its way. It&apos;s
           good for 45 minutes. Check your spam folder if it hides.
         </p>
         <Link href="/login" className="text-sm text-rose-600 hover:underline">

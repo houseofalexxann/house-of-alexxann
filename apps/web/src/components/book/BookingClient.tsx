@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { DateTime } from "luxon";
 import {
   FORMAT_LABELS,
@@ -55,10 +55,12 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
   const [promoCode, setPromoCode] = useState("");
 
   const { user } = useUser();
-  const prefilled = useRef(false);
-  useEffect(() => {
-    if (prefilled.current || !user) return;
-    prefilled.current = true;
+  // Once the signed-in account arrives, fill any blank fields from it. This
+  // is React's "adjust state when a prop changes" pattern: it runs during
+  // render, guarded so it happens once per account, and needs no effect.
+  const [prefilledFor, setPrefilledFor] = useState<string | null>(null);
+  if (user && prefilledFor !== user.email) {
+    setPrefilledFor(user.email);
     setName((v) => v || user.name || "");
     setEmail((v) => v || user.email);
     if (user.profile) {
@@ -66,33 +68,52 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
       if (user.profile.birthTime) setBirthTime((v) => v || user.profile!.birthTime!);
       setBirthPlace((v) => v || user.profile!.placeLabel);
     }
-  }, [user]);
+  }
 
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const loadSlots = useCallback(async () => {
-    setSlotsLoading(true);
-    setSlotsError(null);
-    try {
-      const from = DateTime.utc().toISO();
-      const to = DateTime.utc().plus({ days: 30 }).toISO();
-      const res = await fetch(
-        `/api/slots?service=${service.slug}&from=${encodeURIComponent(from!)}&to=${encodeURIComponent(to!)}`
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? "Could not load times.");
-      setSlots(data.slots ?? []);
-    } catch (e) {
-      setSlotsError(e instanceof Error ? e.message : "Could not load times.");
-    } finally {
-      setSlotsLoading(false);
-    }
+  // The fetch is pure: it returns the slots or throws. State changes only
+  // in promise callbacks, so the effect never sets state synchronously.
+  const fetchSlots = useCallback(async (): Promise<Slot[]> => {
+    const from = DateTime.utc().toISO();
+    const to = DateTime.utc().plus({ days: 30 }).toISO();
+    const res = await fetch(
+      `/api/slots?service=${service.slug}&from=${encodeURIComponent(from!)}&to=${encodeURIComponent(to!)}`
+    );
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error ?? "Could not load times.");
+    return data.slots ?? [];
   }, [service.slug]);
 
   useEffect(() => {
-    void loadSlots();
-  }, [loadSlots]);
+    let cancelled = false;
+    fetchSlots()
+      .then((list) => {
+        if (cancelled) return;
+        setSlots(list);
+        setSlotsError(null);
+      })
+      .catch((e) => {
+        if (!cancelled) setSlotsError(e instanceof Error ? e.message : "Could not load times.");
+      })
+      .finally(() => {
+        if (!cancelled) setSlotsLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [fetchSlots]);
+
+  // After a clash (someone took the slot first), the list refreshes in place.
+  const refreshSlots = () => {
+    fetchSlots()
+      .then((list) => {
+        setSlots(list);
+        setSlotsError(null);
+      })
+      .catch((e) => setSlotsError(e instanceof Error ? e.message : "Could not load times."));
+  };
 
   // Group slots by client-local day.
   const byDay = useMemo(() => {
@@ -110,7 +131,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSlot) {
-      setError("Pick a time first — the calendar is at the top.");
+      setError("Pick a time first. The calendar is at the top.");
       return;
     }
     setSubmitting(true);
@@ -138,7 +159,7 @@ export function BookingClient({ service, directPayAvailable, checkoutAvailable }
       });
       const data = await res.json();
       if (!res.ok) {
-        if (res.status === 409) void loadSlots();
+        if (res.status === 409) refreshSlots();
         throw new Error(data.error ?? "Booking failed.");
       }
       window.location.href = data.paymentUrl;

@@ -136,6 +136,37 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Each region's own weather: a still wash of colour high in the sky behind
+   every page of a section, arriving with a slow fade (RegionAtmosphere). */
+.region-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  animation: atmosphere-arrive 900ms ease-out both;
+}
+@keyframes atmosphere-arrive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Arrival: each page fades up as it mounts. Opacity only, so nothing fixed
+   or sticky inside is disturbed; no exit animation, so the back button and
+   scroll restoration stay native (CosmicPageTransition). */
+.page-arrive {
+  animation: page-arrive 480ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes page-arrive {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .region-atmosphere,
+  .page-arrive {
+    animation: none;
+  }
+}
+
 /* ————— Shared surfaces ————— */
 /* Cards read as panels of glass suspended among the stars: the cosmos shows
    through, and a faint constellation-thread glow rides the top edge. */

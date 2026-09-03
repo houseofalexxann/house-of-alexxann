@@ -4,7 +4,8 @@ import { DateTime } from "luxon";
 import { prisma } from "@/lib/db";
 import { sessionUser } from "@/lib/user-auth";
 import { isAdmin } from "@/lib/admin-auth";
-import { isActiveMember, TIER_NAMES } from "@/lib/membership";
+import { formatMembershipPrice, isActiveMember, TIER_NAMES } from "@/lib/membership";
+import { getSettings } from "@/lib/settings";
 import { calendarToken } from "@/lib/calendar-token";
 import { buildPersonalCalendar } from "@/lib/personal-calendar";
 import { POINT_LABEL } from "@/lib/transit-meanings";
@@ -26,8 +27,9 @@ function ordinal(n: number): string {
 }
 
 export default async function CalendarPage() {
-  const [user, adminSession] = await Promise.all([sessionUser(), isAdmin()]);
+  const [user, adminSession, settings] = await Promise.all([sessionUser(), isAdmin(), getSettings()]);
   const member = isActiveMember(user) || adminSession;
+  const priceLabel = formatMembershipPrice(settings.membershipPriceCents);
 
   if (!user && !adminSession) {
     return (
@@ -62,7 +64,7 @@ export default async function CalendarPage() {
             and a feed you can subscribe to in any calendar app.
           </p>
           <Link href="/join" className="btn-gold mt-6 inline-flex text-sm">
-            Become a {TIER_NAMES.member} — $5/month
+            Become a {TIER_NAMES.member} for {priceLabel} a month
           </Link>
         </div>
       </Shell>

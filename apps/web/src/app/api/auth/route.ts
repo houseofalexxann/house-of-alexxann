@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           error:
-            "The House can't send email quite yet — please reach out to Alexandria directly and she'll reset your password for you.",
+            "The House can't send email quite yet. Please reach out to Alexandria directly and she'll reset your password for you.",
         },
         { status: 503 }
       );
@@ -130,7 +130,7 @@ export async function POST(request: NextRequest) {
 
   if (data.mode === "reset") {
     const invalid = NextResponse.json(
-      { error: "That reset link has expired or already been used — request a fresh one." },
+      { error: "That reset link has expired or already been used. Request a fresh one." },
       { status: 400 }
     );
     const token = parseResetToken(data.token);
@@ -149,7 +149,7 @@ export async function POST(request: NextRequest) {
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing?.passwordHash) {
       return NextResponse.json(
-        { error: "That email already has an account — try signing in." },
+        { error: "That email already has an account. Try signing in." },
         { status: 409 }
       );
     }

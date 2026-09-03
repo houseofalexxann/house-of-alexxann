@@ -19,7 +19,7 @@ function DayRow({ d }: { d: Day }) {
       <span className="mt-0.5 shrink-0"><MoonPhaseIcon phase={d.phase} /></span>
       <span className="text-sm leading-relaxed text-ink-700">
         Moon in <span className="text-rose-600">{d.moon}</span>
-        {d.events.length > 0 && <> — {d.events.join(" · ")}</>}
+        {d.events.length > 0 && <> · {d.events.join(" · ")}</>}
       </span>
     </li>
   );
@@ -44,7 +44,7 @@ export function SkyWeek() {
       .catch(() => setError(true));
   }, []);
 
-  if (error) return <p className="text-sm text-ink-500">The sky is shy right now — try a refresh.</p>;
+  if (error) return <p className="text-sm text-ink-500">The sky is shy right now. Try a refresh.</p>;
   if (!days) return <p className="text-sm text-ink-500">Reading the week&#39;s sky…</p>;
 
   return (
@@ -69,7 +69,7 @@ export function SkyWeek() {
         </p>
       )}
       <p className="mt-4 text-center text-xs text-ink-400">
-        The world&#39;s sky — for these moments landed in <em>your</em> chart,
+        This is the world&#39;s sky. For these moments landed in <em>your</em> chart,
         see your personal calendar.
       </p>
     </div>

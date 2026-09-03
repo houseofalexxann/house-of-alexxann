@@ -70,21 +70,37 @@ export function HumanDesignClient() {
   const [error, setError] = useState<string | null>(null);
   const debounce = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { user } = useUser();
-  const prefilled = useRef(false);
+  const profile = user?.profile ?? null;
 
-  // Carry-through: signed-in members' saved details flow into this tab.
+  // Carry-through: signed-in members' saved details flow into this tab. Date
+  // and time are adjusted during render (guarded, once per account); the
+  // place needs a geocode round-trip, so that part stays an effect and only
+  // sets state once the answer is back.
+  const [prefilledFor, setPrefilledFor] = useState<string | null>(null);
+  if (user && profile && prefilledFor !== user.email) {
+    setPrefilledFor(user.email);
+    setDate((d) => d || profile.birthDate);
+    if (profile.birthTime) setTime((t) => t || profile.birthTime!);
+  }
+  const placeLabel = profile?.placeLabel ?? null;
   useEffect(() => {
-    if (prefilled.current || !user?.profile) return;
-    prefilled.current = true;
-    setDate((d) => d || user.profile!.birthDate);
-    if (user.profile.birthTime) setTime((t) => t || user.profile!.birthTime!);
-    (async () => {
-      const r = await fetch(`/api/geocode?q=${encodeURIComponent(user.profile!.placeLabel)}`)
-        .then((x) => x.json()).catch(() => ({ results: [] }));
-      const first = (r.results ?? [])[0];
-      if (first) { setPlace(first); setPlaceQuery(first.label); }
-    })();
-  }, [user]);
+    if (!placeLabel) return;
+    let cancelled = false;
+    fetch(`/api/geocode?q=${encodeURIComponent(placeLabel)}`)
+      .then((x) => x.json())
+      .catch(() => ({ results: [] }))
+      .then((r) => {
+        if (cancelled) return;
+        const first = (r.results ?? [])[0] as PlaceResult | undefined;
+        if (first) {
+          setPlace((p) => p ?? first);
+          setPlaceQuery((q) => q || first.label);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [placeLabel]);
 
   const onPlace = (q: string) => {
     setPlaceQuery(q);

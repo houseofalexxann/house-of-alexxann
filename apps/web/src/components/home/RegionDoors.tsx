@@ -2,38 +2,25 @@ import Link from "next/link";
 import { CELESTIAL_MAP } from "@/lib/celestial-map";
 
 /**
- * One House, every door — as distinct celestial regions rather than a grid
- * of identical cards (design doc, Scene 3). Each door carries its region's
- * own light: the Solar Constellation is gold-rose, the Lunar Mansions
- * indigo, the Geometric Body crystalline, the Arcana a violet nebula. The
- * names, routes and blurbs come from the celestial map, so the homepage and
- * the atlas can never disagree.
+ * One House, every door, as distinct celestial regions rather than a grid of
+ * identical cards (design doc, Scene 3). Each door carries its region's own
+ * light, read from the celestial map so the homepage, the atlas and the
+ * atmosphere behind each section can never disagree. My Orbit is a member's
+ * room, reached from the header once signed in, so it is not a front door.
  */
-const ATMOSPHERE: Record<string, { glow: string; accent: string }> = {
-  "/studio": { glow: "245,169,184", accent: "#f5a9b8" },
-  "/western": { glow: "236,190,120", accent: "#ecbe78" },
-  "/vedic": { glow: "125,145,255", accent: "#a7b4ff" },
-  "/human-design": { glow: "184,166,220", accent: "#cdbfe8" },
-  "/tarot": { glow: "205,125,225", accent: "#dea3ea" },
-  "/transits": { glow: "91,206,250", accent: "#8ed7f8" },
-  "/blog": { glow: "246,233,216", accent: "#f6e9d8" },
-  "/codex": { glow: "165,140,230", accent: "#c3adf0" },
-  "/services": { glow: "245,169,184", accent: "#f8bcc9" },
-};
-
 export function RegionDoors() {
-  const doors = CELESTIAL_MAP.filter((r) => r.href in ATMOSPHERE);
+  const doors = CELESTIAL_MAP.filter((r) => r.href !== "/calendar");
   return (
     <section className="py-20">
       <h2 className="text-center text-3xl text-ink-900 sm:text-4xl">One House. Every door.</h2>
       <p className="mx-auto mt-3 max-w-2xl text-center leading-relaxed text-ink-500">
         Western and Vedic astrology, Human Design, tarot, the living sky, and a
-        library that explains it all — computed with the Swiss Ephemeris and
+        library that explains it all, computed with the Swiss Ephemeris and
         written like a friend who tells the truth.
       </p>
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {doors.map((r) => {
-          const a = ATMOSPHERE[r.href];
+          const a = r.tone;
           return (
             <Link
               key={r.href}

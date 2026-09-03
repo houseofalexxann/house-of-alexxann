@@ -24,8 +24,6 @@ export default async function AdminClientsPage() {
     prisma.user.findMany({ include: { profiles: { orderBy: { createdAt: "desc" }, take: 1 } } }),
   ]);
 
-  const userByEmail = new Map(users.map((u) => [u.email.toLowerCase(), u]));
-
   interface Client {
     name: string;
     email: string;

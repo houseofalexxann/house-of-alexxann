@@ -155,7 +155,7 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
         setLoading(false);
       }
     },
-    [form, houseWestern, houseVedic, ayanamsa]
+    [form, houseWestern, houseVedic, ayanamsa, user]
   );
 
   const switchSystem = (sys: System) => {

@@ -15,7 +15,7 @@ export function ResetForm({ token }: { token: string }) {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== confirm) {
-      setError("Those passwords don't match — try again.");
+      setError("Those passwords don't match. Try again.");
       return;
     }
     setBusy(true);

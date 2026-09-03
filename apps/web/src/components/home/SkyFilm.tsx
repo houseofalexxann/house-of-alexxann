@@ -8,7 +8,8 @@
  * and out into dawn. Trans-pastel palette throughout. Honors
  * prefers-reduced-motion with a static hero.
  */
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { usePrefersReducedMotion } from "@/lib/use-reduced-motion";
 import Link from "next/link";
 
 interface Chapter {
@@ -30,16 +31,16 @@ const CHAPTERS: Chapter[] = [
     glyph: "✦",
     eyebrow: "Western · Vedic · Modern & Mystical",
     title: "The sky you were born under still remembers you.",
-    line: "Cast your natal chart free — Western or Vedic, computed with professional-grade precision — then sit with Alexandria for a reading that makes it yours.",
+    line: "Cast your natal chart free, Western or Vedic, computed with professional-grade precision. Then sit with Alexandria for a reading that makes it yours.",
   },
   {
     key: "western",
     rail: "The chart",
     glyph: "♈︎",
     title: "Western astrology",
-    line: "Your tropical natal chart — wheel, houses, aspects, the deeper dignities. Free, always.",
+    line: "Your tropical natal chart: wheel, houses, aspects, the deeper dignities. Free, always.",
     href: "/western",
-    cta: "Cast your chart — free",
+    cta: "Cast your chart, free",
   },
   {
     key: "vedic",
@@ -55,7 +56,7 @@ const CHAPTERS: Chapter[] = [
     rail: "The sky now",
     glyph: "☉︎",
     title: "The sky now",
-    line: "Today's astro weather free — the 7-day forecast for Venusian Dolls.",
+    line: "Today's astro weather free. The 7-day forecast for Venusian Dolls.",
     href: "/transits",
     cta: "Read today's sky",
   },
@@ -253,15 +254,7 @@ export function SkyFilm() {
   const chapterRefs = useRef<(HTMLDivElement | null)[]>([]);
   const railRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const hintRef = useRef<HTMLParagraphElement>(null);
-  const [reduced, setReduced] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduced(mq.matches);
-    const onChange = () => setReduced(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
     if (reduced !== false) return;
@@ -504,7 +497,7 @@ export function SkyFilm() {
         </h1>
         <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-700">{c.line}</p>
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <Link href="/studio" className="btn-gold">✦ Cast your chart — free</Link>
+          <Link href="/studio" className="btn-gold">✦ Cast your chart, free</Link>
           <Link href="/services" className="btn-ghost">Book a reading</Link>
         </div>
       </section>
@@ -581,7 +574,7 @@ export function SkyFilm() {
             <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
               {i === 0 ? (
                 <>
-                  <Link href="/studio" className="btn-gold">✦ Cast your chart — free</Link>
+                  <Link href="/studio" className="btn-gold">✦ Cast your chart, free</Link>
                   <Link href="/services" className="btn-ghost !border-white/40 !text-white hover:!border-rose-300">
                     Book a reading
                   </Link>

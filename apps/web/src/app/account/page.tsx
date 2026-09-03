@@ -80,7 +80,7 @@ export default async function AccountPage() {
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <Link href="/join" className="btn-gold inline-flex text-sm">
-                  Become a {TIER_NAMES.member} — {priceLabel}
+                  Become a {TIER_NAMES.member} for {priceLabel}
                 </Link>
                 <Link href="/services" className="btn-ghost inline-flex text-sm">
                   Book a reading
@@ -96,7 +96,7 @@ export default async function AccountPage() {
           </h2>
           {bookings.length === 0 ? (
             <p className="mt-2 text-sm text-ink-500">
-              Nothing booked yet — the calendar is open.
+              Nothing booked yet. The calendar is open.
             </p>
           ) : (
             <ul className="mt-3 space-y-2 text-sm">
@@ -120,7 +120,7 @@ export default async function AccountPage() {
             <p className="mt-2 text-sm text-ink-500">
               Cast a chart in the{" "}
               <Link href="/western" className="text-rose-600 hover:underline">Studio</Link>{" "}
-              and it can live here — saved charts arrive with the dashboard&#39;s
+              and it can live here. Saved charts arrive with the dashboard&#39;s
               next furnishing.
             </p>
           ) : (

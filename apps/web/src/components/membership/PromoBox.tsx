@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useUser } from "@/components/UserProvider";
+import { formatMembershipPrice } from "@/lib/membership";
 
 /**
  * "Have a code?" on /join: trial codes lift the veil on the spot; membership
@@ -19,6 +21,8 @@ export function PromoBox({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [appliedCode, setAppliedCode] = useState<string | null>(null);
+  const { membershipPriceCents } = useUser();
+  const usual = formatMembershipPrice(membershipPriceCents);
 
   const apply = async () => {
     setBusy(true);
@@ -37,15 +41,15 @@ export function PromoBox({
           month: "long",
           day: "numeric",
         });
-        setMessage(`✦ The veil is lifted — every room is yours through ${until}.`);
+        setMessage(`✦ The veil is lifted. Every room is yours through ${until}.`);
         setTimeout(() => window.location.reload(), 1800);
       } else {
         const price = `$${(data.priceCents / 100).toFixed(2)}`;
         setAppliedCode(code);
         setMessage(
           checkoutEnabled
-            ? `✦ Code applied — your price is ${price}/month. Check out below.`
-            : `✦ Code applied — send ${price} instead of the usual $5.`
+            ? `✦ Code applied. Your price is ${price} a month. Check out below.`
+            : `✦ Code applied. Send ${price} instead of the usual ${usual}.`
         );
       }
     } catch (err) {

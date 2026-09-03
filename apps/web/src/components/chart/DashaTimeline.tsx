@@ -13,7 +13,8 @@ function fmt(iso: string): string {
 }
 
 export function DashaTimeline({ dasha }: { dasha: VimshottariDasha }) {
-  const now = Date.now();
+  // Read the clock once per mount so render stays pure.
+  const [now] = useState(() => Date.now());
   const currentIdx = dasha.mahadashas.findIndex(
     (m) => now >= Date.parse(m.start) && now < Date.parse(m.end)
   );

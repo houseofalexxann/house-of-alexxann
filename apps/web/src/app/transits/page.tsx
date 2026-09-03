@@ -4,9 +4,9 @@ import { SkyWeek } from "@/components/transits/SkyWeek";
 import { MajorEvents } from "@/components/transits/MajorEvents";
 
 export const metadata: Metadata = {
-  title: "The sky now — transits, eclipses & the week ahead",
+  title: "The sky now: transits, eclipses & the week ahead",
   description:
-    "The living sky: eclipses, new and full moons, retrograde stations and cazimis for the weeks ahead, plus a 7-day forecast — computed with the Swiss Ephemeris.",
+    "The living sky: eclipses, new and full moons, retrograde stations and cazimis for the weeks ahead, plus a 7-day forecast, computed with the Swiss Ephemeris.",
 };
 
 export default function TransitsPage() {
@@ -18,8 +18,8 @@ export default function TransitsPage() {
         </p>
         <h1 className="text-4xl text-ink-900 sm:text-5xl">The sky, right now</h1>
         <p className="mx-auto mt-4 max-w-xl leading-relaxed text-ink-500">
-          The moments worth circling — eclipses, lunations, stations and
-          cazimis — then the week ahead, day by day. All of it computed, none
+          The moments worth circling: eclipses, lunations, stations and
+          cazimis. Then the week ahead, day by day. All of it computed, none
           of it guessed.
         </p>
       </header>

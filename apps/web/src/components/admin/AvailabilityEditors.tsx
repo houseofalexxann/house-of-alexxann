@@ -38,12 +38,6 @@ function toMinutes(hhmm: string): number {
   return h * 60 + m;
 }
 
-/** Minutes from midnight → "HH:mm" (for <input type="time"> values). */
-function toHHmm(minutes: number): string {
-  const h = Math.floor(minutes / 60);
-  const m = minutes % 60;
-  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`;
-}
 
 /** Minutes from midnight → friendly 12-hour label, e.g. "9:30 AM". */
 function fmtTime(minutes: number): string {
@@ -106,7 +100,7 @@ export function WeeklyRulesEditor({ rules }: { rules: RuleDto[] }) {
       </p>
 
       {rules.length === 0 ? (
-        <p className="mt-4 text-sm text-ink-400">No weekly windows yet — add one below.</p>
+        <p className="mt-4 text-sm text-ink-400">No weekly windows yet. Add one below.</p>
       ) : (
         <div className="mt-4 overflow-x-auto">
           <table className="w-full text-left text-sm">
