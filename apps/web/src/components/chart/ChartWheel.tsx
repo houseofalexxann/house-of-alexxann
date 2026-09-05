@@ -39,7 +39,7 @@ const R_DISC = 150; // the aspect disc
 const R_ANGLE_LABEL = 336; // AC / DC / MC / IC, outside the band
 const R_TRANSIT_GLYPH = 358; // transit ring
 const R_TRANSIT_LABEL = 380; // transit degree labels, staggered outward to 396
-const TRANSIT_PAD = 70; // extra viewBox on each side when the transit ring is drawn
+const TRANSIT_PAD = 70; // extra viewBox on each side when the transit ring is drawn (labels reach 396 + half a label; the guide ring sits at 416, inside 420)
 
 /** Minimum angular gap between neighbouring glyphs, in degrees. */
 const MIN_GAP = 8.5;
@@ -216,7 +216,7 @@ export function ChartWheel({ chart, className, transits, starHits }: Props) {
 
       {/* Transit ring, faint, outside everything */}
       {hasTransits && (
-        <circle cx={cx} cy={cy} r={R_TRANSIT_LABEL + 26} fill="none" stroke="#dbe9f1" strokeWidth="1" strokeDasharray="3 4" />
+        <circle cx={cx} cy={cy} r={R_TRANSIT_LABEL + 36} fill="none" stroke="#dbe9f1" strokeWidth="1" strokeDasharray="3 4" />
       )}
 
       {/* Ground */}
