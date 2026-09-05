@@ -3,18 +3,58 @@
  * Everything else in the engine goes through this module, so the
  * underlying library can be swapped or mocked in one place.
  */
+import * as fs from "fs";
 import * as path from "path";
 import sweph from "sweph";
-import type { Ayanamsa, Body, HouseSystem, NodeType } from "./types";
+import type { Ayanamsa, Body, ExtraBody, HouseSystem, NodeType } from "./types";
 import { AYANAMSA_IDS, HOUSE_SYSTEM_CODES } from "./constants";
 
 const C = sweph.constants;
 
 let epheInitialized = false;
+let epheDir: string | null = null;
+
+/**
+ * Where the bundled Swiss Ephemeris data files (1800–2400 AD: sepl, semo,
+ * seas) actually live. When the engine is bundled by Next.js, `__dirname`
+ * becomes a virtual path and the files are not there, so the planets quietly
+ * fall back to the Moshier ephemeris and the asteroids fail outright. This
+ * looks in every place the files can be, in order, and keeps the first one
+ * that holds the asteroid file.
+ */
+export function resolveEpheDir(): string | null {
+  if (epheDir) return epheDir;
+  const cwd = process.cwd();
+  const candidates = [
+    process.env.HOA_EPHE_PATH,
+    path.join(__dirname, "..", "ephe"),
+    path.join(cwd, "node_modules", "@hoa", "engine", "ephe"),
+    path.join(cwd, "..", "..", "packages", "engine", "ephe"),
+    path.join(cwd, "packages", "engine", "ephe"),
+    path.join(cwd, "..", "..", "node_modules", "@hoa", "engine", "ephe"),
+  ].filter((p): p is string => Boolean(p));
+  for (const dir of candidates) {
+    try {
+      if (fs.existsSync(path.join(dir, "seas_18.se1"))) {
+        epheDir = dir;
+        return dir;
+      }
+    } catch {
+      // keep looking
+    }
+  }
+  return null;
+}
+
 function ensureEphe(): void {
   if (!epheInitialized) {
-    // Bundled Swiss Ephemeris data files (1800–2400 AD): sepl/semo/seas.
-    sweph.set_ephe_path(path.join(__dirname, "..", "ephe"));
+    const dir = resolveEpheDir();
+    if (dir) {
+      sweph.set_ephe_path(dir);
+    } else {
+      // Planets still compute (Moshier fallback); asteroids will report clearly.
+      console.warn("[hoa-engine] Swiss Ephemeris data files not found; using the built-in Moshier ephemeris.");
+    }
     epheInitialized = true;
   }
 }
@@ -97,6 +137,42 @@ export function bodyPosition(
 
   const res = sweph.calc_ut(jdUT, id, calcFlags(opts.sidereal));
   if (res.flag < 0) throw new Error(`calc_ut(${body}) failed: ${res.error}`);
+  return {
+    longitude: norm360(res.data[0]),
+    latitude: res.data[1],
+    speed: res.data[3],
+  };
+}
+
+/**
+ * Asteroids and points. Chiron, Ceres, Pallas, Juno and Vesta come from the
+ * bundled asteroid ephemeris (seas_18.se1); Lilith is the mean lunar apogee,
+ * which needs no file.
+ */
+const EXTRA_IDS: Record<ExtraBody, number> = {
+  chiron: C.SE_CHIRON,
+  ceres: C.SE_CERES,
+  pallas: C.SE_PALLAS,
+  juno: C.SE_JUNO,
+  vesta: C.SE_VESTA,
+  lilith: C.SE_MEAN_APOG,
+};
+
+export function extraPosition(
+  jdUT: number,
+  body: ExtraBody,
+  opts: { sidereal: boolean; ayanamsa: Ayanamsa }
+): RawPosition {
+  ensureEphe();
+  if (opts.sidereal) setSiderealMode(opts.ayanamsa);
+  const res = sweph.calc_ut(jdUT, EXTRA_IDS[body], calcFlags(opts.sidereal));
+  if (res.flag < 0) {
+    throw new Error(
+      resolveEpheDir()
+        ? `calc_ut(${body}) failed: ${res.error}`
+        : `The asteroid ephemeris files are not available on this server, so ${body} cannot be computed.`
+    );
+  }
   return {
     longitude: norm360(res.data[0]),
     latitude: res.data[1],

@@ -52,10 +52,25 @@ export { nakshatraOf, navamsaSign } from "./vedic";
 export { vimshottariDasha } from "./dasha";
 export { separation } from "./aspects";
 export { utcToJulianDayUT } from "./ephemeris";
+export {
+  FIXED_STARS,
+  equatorialToEcliptic,
+  fixedStarPositions,
+  precessionInLongitude,
+  starConjunctions,
+  type StarPointRef,
+} from "./fixed-stars";
+export { TRANSIT_ORBS, transitAspects, type NatalPointRef } from "./transit-snapshot";
+
+import { extraPosition } from "./ephemeris";
+import type { ExtraBody, ExtraPosition } from "./types";
 
 const ENGINE_VERSION = "0.1.0";
 
-function houseOf(longitude: number, cusps: number[]): number {
+/** Every asteroid and point the engine can add to a wheel, in display order. */
+export const EXTRA_BODIES: ExtraBody[] = ["chiron", "ceres", "pallas", "juno", "vesta", "lilith"];
+
+export function houseOf(longitude: number, cusps: number[]): number {
   for (let h = 0; h < 12; h++) {
     const span = norm360(cusps[(h + 1) % 12] - cusps[h]);
     const offset = norm360(longitude - cusps[h]);
@@ -131,6 +146,35 @@ export function computeChart(input: ChartInput): ChartResult {
   const moon = planets.find((p) => p.body === "moon")!;
   const sun = planets.find((p) => p.body === "sun")!;
 
+  // Asteroids and points, only on request: they share the natal cusps. One
+  // body that cannot be computed (no asteroid file on the server, a date
+  // outside the file) is reported, never allowed to take the chart down.
+  const extrasUnavailable: ExtraBody[] = [];
+  const extras: ExtraPosition[] | null = input.extras?.length
+    ? input.extras.flatMap((body) => {
+        try {
+          const raw = extraPosition(jdUT, body, opts);
+          const { sign, degreeInSign } = signOf(raw.longitude);
+          return [
+            {
+              body,
+              longitude: raw.longitude,
+              latitude: raw.latitude,
+              speed: raw.speed,
+              retrograde: raw.speed < 0,
+              sign,
+              degreeInSign,
+              formatted: formatDegreeInSign(degreeInSign),
+              house: houseCusps ? houseOf(raw.longitude, houseCusps) : null,
+            },
+          ];
+        } catch {
+          extrasUnavailable.push(body);
+          return [];
+        }
+      })
+    : null;
+
   return {
     input: {
       utc: input.utc,
@@ -145,6 +189,8 @@ export function computeChart(input: ChartInput): ChartResult {
     julianDayUT: jdUT,
     ayanamsaValue: sidereal ? ayanamsaValue(jdUT, ayanamsa) : null,
     planets,
+    extras,
+    extrasUnavailable,
     angles,
     houseCusps,
     aspects: findAspects(planets, input.orbs),

@@ -37,6 +37,63 @@ export type AspectType =
   | "trine"
   | "opposition";
 
+/** Asteroids and calculated points that can be added to a Western wheel. */
+export type ExtraBody = "chiron" | "ceres" | "pallas" | "juno" | "vesta" | "lilith";
+
+export interface ExtraPosition {
+  body: ExtraBody;
+  longitude: number;
+  latitude: number;
+  speed: number;
+  retrograde: boolean;
+  sign: number;
+  degreeInSign: number;
+  formatted: string;
+  house: number | null;
+}
+
+/** A fixed star as catalogued: J2000.0 equatorial coordinates plus its traditional reading. */
+export interface FixedStar {
+  name: string;
+  bayer?: string;
+  constellation: string;
+  /** Right ascension, J2000.0, degrees. */
+  raDeg: number;
+  /** Declination, J2000.0, degrees. */
+  decDeg: number;
+  magnitude: number;
+  /** Traditional planetary nature after Ptolemy and Robson, e.g. "Mars, Jupiter". */
+  nature: string;
+  /** A short traditional keynote, paraphrased. */
+  keynote: string;
+}
+
+export interface FixedStarPosition extends FixedStar {
+  /** Tropical ecliptic longitude of date, 0–360. */
+  longitude: number;
+  eclipticLatitude: number;
+  sign: number;
+  degreeInSign: number;
+  formatted: string;
+}
+
+export interface StarConjunction {
+  star: string;
+  point: Body | ExtraBody | "ascendant" | "midheaven";
+  /** Degrees from exact, by longitude. */
+  orb: number;
+  starLongitude: number;
+}
+
+export interface TransitAspect {
+  transiting: Body;
+  natal: Body | "ascendant" | "midheaven";
+  type: AspectType;
+  angle: number;
+  orb: number;
+  applying: boolean | null;
+}
+
 export interface ChartInput {
   /** Birth instant in UTC, ISO-8601 (e.g. "1879-03-14T10:50:00Z"). */
   utc: string;
@@ -58,6 +115,8 @@ export interface ChartInput {
   timeKnown?: boolean;
   /** Per-aspect orb overrides in degrees (western aspects). */
   orbs?: Partial<Record<AspectType, number>>;
+  /** Asteroids and points to compute alongside the planets. */
+  extras?: ExtraBody[];
 }
 
 export interface PlanetPosition {
@@ -243,6 +302,10 @@ export interface ChartResult {
   /** Ayanamsa value in degrees at the birth instant (vedic only). */
   ayanamsaValue: number | null;
   planets: PlanetPosition[];
+  /** Asteroids and points, only when requested via ChartInput.extras. */
+  extras: ExtraPosition[] | null;
+  /** Requested extras that could not be computed (missing data file, date out of range). */
+  extrasUnavailable: ExtraBody[];
   /** Null when birth time is unknown. */
   angles: Angles | null;
   /** 12 house cusp longitudes (index 0 = house 1); null when time unknown. */
