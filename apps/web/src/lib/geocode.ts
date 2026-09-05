@@ -95,6 +95,15 @@ export function localBirthToUtc(birth: LocalBirth): ResolvedInstant {
     }
   }
 
+  // A wall time inside a spring-forward gap does not exist; Luxon quietly
+  // moves it an hour on rather than failing. Say so, since the chart is then
+  // cast for a different minute than the one typed.
+  if (dt.toFormat("HH:mm") !== time) {
+    warnings.push(
+      `${time} did not exist in ${birth.timezone.replace(/_/g, " ")} on ${birth.date} (clocks sprang forward that night). The chart is cast for ${dt.toFormat("h:mm a")} local time instead.`
+    );
+  }
+
   return {
     utc: dt.toUTC().toISO({ suppressMilliseconds: true })!,
     localUsed: dt.toISO({ suppressMilliseconds: true, includeOffset: true })!,
