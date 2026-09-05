@@ -79,7 +79,7 @@ export function localBirthToUtc(birth: LocalBirth): ResolvedInstant {
   const time = birth.timeKnown ? birth.time : "12:00";
   if (!birth.timeKnown) {
     warnings.push(
-      "Birth time unknown — positions are cast for local noon; houses, the Ascendant and the Moon's exact degree are omitted or approximate."
+      "Birth time unknown: positions are cast for local noon; houses, the Ascendant and the Moon's exact degree are omitted or approximate."
     );
   }
 

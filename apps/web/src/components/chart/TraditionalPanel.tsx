@@ -58,9 +58,9 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
               Sect
             </h4>
             <p className="mt-2 text-lg text-ink-900">
-              A <span className="text-rose-600">{t.sect.sect}</span> chart —{" "}
+              A <span className="text-rose-600">{t.sect.sect}</span> chart.{" "}
               <span className="astro-glyph">{PLANET_GLYPHS[t.sect.lightLeader]}</span>{" "}
-              the {t.sect.lightLeader === "sun" ? "Sun" : "Moon"} leads your sect.
+              The {t.sect.lightLeader === "sun" ? "Sun" : "Moon"} leads your sect.
             </p>
             <p className="mt-2 text-sm leading-relaxed text-ink-500">
               Its benefic of sect is{" "}
@@ -91,7 +91,7 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
       {/* Essential dignities */}
       <div>
         <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
-          Essential dignity — how at home each planet is
+          Essential dignity: how at home each planet is
         </h4>
         <div className="flex flex-wrap gap-2">
           {t.dignities.map((d) => (
@@ -130,11 +130,11 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
       {/* Decans & Egyptian bounds — the finer rulers under each placement */}
       <div>
         <h4 className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
-          Decans &amp; bounds — the finer rulers
+          Decans &amp; bounds: the finer rulers
         </h4>
         <p className="mb-3 text-xs leading-relaxed text-ink-400">
           Every degree sits inside a ten-degree <em>decan</em> (Chaldean face)
-          and an unequal <em>Egyptian bound</em> — sub-rulers the Hellenistic
+          and an unequal <em>Egyptian bound</em>, sub-rulers the Hellenistic
           astrologers read for texture.{" "}
           <a href="/codex" className="text-rose-600 underline-offset-2 hover:underline">
             Full tables in the Codex →
@@ -182,7 +182,7 @@ export function TraditionalPanel({ chart }: { chart: ChartResult }) {
       {t.lots && (
         <div>
           <h4 className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
-            Lots &amp; the chapters of spirit — zodiacal releasing
+            Lots &amp; the chapters of spirit: zodiacal releasing
           </h4>
           <p className="text-sm text-ink-700">
             <span className="mr-4">

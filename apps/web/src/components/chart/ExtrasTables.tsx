@@ -96,9 +96,10 @@ export function FixedStarTable({
   if (conjunctions.length === 0) {
     return (
       <p className="text-sm leading-relaxed text-ink-500">
-        No catalogued star sits within one degree of your planets or angles. That is
-        common: fixed stars are read only by close conjunction, and most charts have
-        one or two at most. {stars.length} stars were checked.
+        No catalogued star sits within one degree of your planets or angles. With{" "}
+        {stars.length} stars at a one-degree orb that is unusual; most charts pick up
+        a few. Fixed stars are read only by close conjunction, so nothing here is
+        missing, the sky simply kept its distance.
       </p>
     );
   }
