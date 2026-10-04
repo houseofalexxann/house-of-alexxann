@@ -281,3 +281,61 @@ input, select, textarea {
 .plate input, .plate select, .plate textarea {
   color-scheme: light;
 }
+
+/* ————— Astro weather ————— */
+/* The sky dome on /weather: threads breathe, glyphs drift, the day's light
+   pulses, the week's cards rise in. All of it gated behind .wx-animate, which
+   the component only adds once the motion preference is known to allow it,
+   and switched off again here under reduced motion as a second guard. */
+.wx-animate .wx-thread {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 0;
+  animation:
+    wx-draw 1600ms cubic-bezier(0.22, 0.61, 0.36, 1) both,
+    wx-breathe 5200ms ease-in-out 1600ms infinite;
+}
+.wx-animate .wx-float {
+  animation: wx-float 7000ms ease-in-out infinite;
+}
+.wx-animate .wx-glow {
+  animation: wx-glow 6400ms ease-in-out infinite;
+}
+.wx-animate .wx-halo {
+  animation: wx-halo 4800ms ease-in-out infinite;
+}
+.wx-animate .wx-rise {
+  animation: wx-rise 600ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+}
+@keyframes wx-draw {
+  from { stroke-dashoffset: 1200; opacity: 0; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes wx-breathe {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.55); }
+}
+@keyframes wx-float {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-4px); }
+}
+@keyframes wx-glow {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+@keyframes wx-halo {
+  0%, 100% { opacity: 0.1; r: 26; }
+  50% { opacity: 0.22; r: 32; }
+}
+@keyframes wx-rise {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wx-animate .wx-thread,
+  .wx-animate .wx-float,
+  .wx-animate .wx-glow,
+  .wx-animate .wx-halo,
+  .wx-animate .wx-rise {
+    animation: none;
+  }
+}

@@ -61,6 +61,23 @@ export {
   type StarPointRef,
 } from "./fixed-stars";
 export { TRANSIT_ORBS, transitAspects, type NatalPointRef } from "./transit-snapshot";
+export {
+  classifyWeather,
+  skyWeatherAt,
+  weekWeather,
+  MOON_ORB_BONUS,
+  WEATHER_BODIES,
+  WEATHER_CONDITIONS,
+  WEATHER_ORBS,
+  type SkyWeather,
+  type SkyWeatherDay,
+  type WeatherAspect,
+  type WeatherConditions,
+  type WeatherHighlight,
+  type WeatherMoon,
+  type WeatherPlanet,
+  type WeatherScore,
+} from "./weather";
 
 import { extraPosition } from "./ephemeris";
 import type { ExtraBody, ExtraPosition } from "./types";

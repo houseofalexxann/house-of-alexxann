@@ -41,7 +41,7 @@ export interface PersonalCalendar {
   computedFor: { name: string; birthUtc: string; ascendantSign: number };
 }
 
-function titleFor(e: TransitEvent): string {
+export function titleFor(e: TransitEvent): string {
   const planet = POINT_LABEL[e.transiting] ?? e.transiting;
   switch (e.kind) {
     case "aspect":
@@ -59,7 +59,7 @@ function titleFor(e: TransitEvent): string {
   }
 }
 
-function reflectionFor(e: TransitEvent): string {
+export function reflectionFor(e: TransitEvent): string {
   const house = e.natalHouse ? HOUSE_TOPICS[e.natalHouse] : undefined;
   const planetKey = PLANET_SIGNIFICATION[e.transiting]?.keynote ?? "";
   switch (e.kind) {
@@ -95,7 +95,7 @@ function reflectionFor(e: TransitEvent): string {
   }
 }
 
-function whereFor(e: TransitEvent): string {
+export function whereFor(e: TransitEvent): string {
   if (!e.natalHouse) return "";
   const h = HOUSE_TOPICS[e.natalHouse];
   return `${ordinal(e.natalHouse)} house, ${h.name}`;

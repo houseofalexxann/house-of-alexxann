@@ -22,6 +22,9 @@ export default function TransitsPage() {
           cazimis. Then the week ahead, day by day. All of it computed, none
           of it guessed.
         </p>
+        <Link href="/weather" className="btn-ghost mt-5 inline-flex text-sm">
+          ☽ Today&#39;s astro weather, animated
+        </Link>
       </header>
 
       {/* Dates worth circling */}

@@ -86,6 +86,22 @@ Still queued (large, multi-part): public accounts + membership paywall + dashboa
 - **Domain**: houseofalexxann.com is UNREGISTERED (whois no-match) — Alexandria to register it at any registrar; then point DNS at the host and set NEXT_PUBLIC_BASE_URL.
 - **Logo**: 4 Canva candidates generated (links in session notes) for her to choose from.
 
+## 2026-09-30 — Astro weather (daily and weekly forecast, animated)
+
+New room at `/weather`, "The Weather Glass" on the celestial map. The engine
+gains `weather.ts` (`skyWeatherAt`, `weekWeather`, `classifyWeather`): the
+sky at a moment reduced to tight-orb contacts with a deterministic reading
+into six conditions (still, clear, tender, shifting, charged, turbulent) per
+Ptolemy's doctrine of configurations; 15 tests. The web layer puts words on
+it with provenance (`lib/weather-meanings.ts`) and lands it in a member's
+chart (`lib/personal-weather.ts`: Moon's whole-sign house today, transits in
+orb now, exact hits over the week). The dome (`components/weather/WeatherSky`)
+draws planets along an ecliptic arc with the Moon at its real phase and the
+day's contacts as breathing threads; all motion gated behind the known
+motion preference. Today is free for every doll; the rest of the week and the
+personal layer are Venusian Doll rooms. Added `scripts/dev-member.mjs` so
+member rooms can be exercised against the local database.
+
 ## Decision log
 
 | # | Decision | Why |
