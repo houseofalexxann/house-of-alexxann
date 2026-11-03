@@ -5,6 +5,12 @@
  */
 export async function register() {
   if (process.env.NEXT_RUNTIME !== "nodejs") return;
+  // On Vercel the hourly cron (vercel.json → /api/cron/reminders) owns this
+  // job. A timer inside a serverless instance would fire against a database
+  // connection the platform has already closed, which is exactly the
+  // "tick failed" error the logs used to show. Local and self-hosted runs
+  // keep the ticker so reminders work without external cron.
+  if (process.env.VERCEL) return;
   const { sendDueReminders } = await import("@/lib/bookings");
 
   const tick = async () => {
