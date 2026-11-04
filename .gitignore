@@ -20,3 +20,13 @@ var/
 .DS_Store
 npm-debug.log*
 coverage/
+
+# Local Claude permission allowlists capture real commands (and once captured credentials): never commit.
+.claude/settings.local.json
+# Every env flavour stays local.
+.env.production
+.env.production.local
+.env.development
+.env.development.local
+.env.test
+.env.test.local
