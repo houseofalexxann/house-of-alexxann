@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { hardNavigate } from "@/lib/navigate";
 
 export function LoginClient() {
   const [email, setEmail] = useState("");
@@ -22,7 +23,7 @@ export function LoginClient() {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error ?? "Sign-in failed.");
       }
-      window.location.href = "/admin";
+      hardNavigate("/admin");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign-in failed.");
       setBusy(false);
