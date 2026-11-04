@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { hardNavigate } from "@/lib/navigate";
 
 const inputCls =
   "w-full rounded-lg border border-pearl-400 bg-pearl-200/80 px-3 py-2 text-ink-900 focus:border-rose-400 focus:outline-none";
@@ -27,7 +28,7 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
-      window.location.href = "/account";
+      hardNavigate("/account");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setBusy(false);

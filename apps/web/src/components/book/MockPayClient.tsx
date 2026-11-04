@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { hardNavigate } from "@/lib/navigate";
 
 const METHODS = [
   { key: "card", label: "💳 Card" },
@@ -27,7 +28,7 @@ export function MockPayClient({ token }: { token: string }) {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Payment failed.");
-      window.location.href = `/book/confirmation?token=${token}&paid=1`;
+      hardNavigate(`/book/confirmation?token=${token}&paid=1`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Payment failed.");
       setBusy(false);
