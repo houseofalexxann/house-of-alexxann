@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createBooking } from "@/lib/bookings";
+import { BookingError, createBooking } from "@/lib/bookings";
+import { rateLimit } from "@/lib/rate-limit";
 
 const BookingRequest = z.object({
   serviceSlug: z.string().min(1),
@@ -20,6 +21,11 @@ const BookingRequest = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  // Each hold sends an email and blocks a slot: a handful per quarter hour
+  // is a person, more is a script.
+  const limited = rateLimit(request, "bookings", 6, 900);
+  if (limited) return limited;
+
   let body: unknown;
   try {
     body = await request.json();
@@ -40,9 +46,13 @@ export async function POST(request: NextRequest) {
       paymentUrl,
     });
   } catch (err) {
+    if (err instanceof BookingError) {
+      return NextResponse.json({ error: err.message }, { status: 409 });
+    }
+    console.error("[bookings] failed:", err instanceof Error ? err.message : err);
     return NextResponse.json(
-      { error: err instanceof Error ? err.message : "Booking failed." },
-      { status: 409 }
+      { error: "The booking could not be made just now. Nothing was held; please try again in a moment." },
+      { status: 500 }
     );
   }
 }

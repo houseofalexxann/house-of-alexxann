@@ -83,15 +83,18 @@ export async function POST(request: NextRequest) {
   const western = input.system === "western";
   const wantsExtras = western && (Boolean(input.extras?.length) || Boolean(input.fixedStars) || Boolean(input.transit));
 
+  const [user, admin] = await Promise.all([
+    sessionUser().catch(() => null),
+    isAdmin().catch(() => false),
+  ]);
+  const member = admin || isActiveMember(user);
+
   // Asteroids, fixed stars and transits live behind the veil.
-  if (wantsExtras) {
-    const [user, admin] = await Promise.all([sessionUser(), isAdmin()]);
-    if (!(admin || isActiveMember(user))) {
-      return NextResponse.json(
-        { error: `Asteroids, fixed stars and transits are a ${TIER_NAMES.member} room. Sign in as a member to add them.` },
-        { status: 403 }
-      );
-    }
+  if (wantsExtras && !member) {
+    return NextResponse.json(
+      { error: `Asteroids, fixed stars and transits are a ${TIER_NAMES.member} room. Sign in as a member to add them.` },
+      { status: 403 }
+    );
   }
 
   try {
@@ -174,8 +177,20 @@ export async function POST(request: NextRequest) {
       };
     }
 
+    // The deeper chart (essential dignities, decans and bounds, lots and
+    // zodiacal releasing) is a members' room, so it leaves the server only
+    // for members. Sect, moon phase and angle contacts stay: the free
+    // insights are built from them.
+    const shared = member
+      ? chart
+      : {
+          ...chart,
+          planets: chart.planets.map((p) => ({ ...p, decan: undefined, term: undefined })),
+          traditional: { ...chart.traditional, dignities: [], lots: null, zodiacalReleasing: null },
+        };
+
     return NextResponse.json({
-      chart,
+      chart: shared,
       fixedStars,
       transits,
       resolved,

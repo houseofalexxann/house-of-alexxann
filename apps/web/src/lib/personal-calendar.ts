@@ -167,7 +167,7 @@ export function buildPersonalCalendar(
 
 /** RFC 5545 feed of the calendar, subscribable in any calendar app. */
 export function toICalendar(cal: PersonalCalendar, feedName: string): string {
-  const esc = (s: string) => s.replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
+  const esc = (s: string) => s.replace(/\r/g, "").replace(/([,;\\])/g, "\\$1").replace(/\n/g, "\\n");
   const stamp = (iso: string) => iso.replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
   const lines: string[] = [
     "BEGIN:VCALENDAR",

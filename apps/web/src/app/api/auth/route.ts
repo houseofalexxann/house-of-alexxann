@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import {
   clearUserSession,
   hashPassword,
+  needsRehash,
   sessionUser,
   setUserSession,
   verifyPassword,
@@ -137,17 +138,22 @@ export async function POST(request: NextRequest) {
     if (!token) return invalid;
     const user = await prisma.user.findUnique({ where: { id: token.userId } });
     if (!user || !tokenMatchesUser(token.fp, user.passwordHash)) return invalid;
-    await prisma.user.update({
+    // The new hash also ends every other session this account had open.
+    const updated = await prisma.user.update({
       where: { id: user.id },
       data: { passwordHash: hashPassword(data.password) },
     });
-    await setUserSession(user.id);
+    await setUserSession(updated);
     return NextResponse.json({ ok: true });
   }
 
   if (data.mode === "signup") {
     const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing?.passwordHash) {
+    // A row that already has a password is taken. A row that carries any
+    // role beyond seeker (the House Mother's seeded account) is never
+    // claimable from the public door, password or not: that path is the
+    // admin sign-in. Both answer the same way, so the door gives nothing away.
+    if (existing && (existing.passwordHash || existing.role !== "seeker")) {
       return NextResponse.json(
         { error: "That email already has an account. Try signing in." },
         { status: 409 }
@@ -166,7 +172,7 @@ export async function POST(request: NextRequest) {
             passwordHash: hashPassword(data.password),
           },
         });
-    await setUserSession(user.id);
+    await setUserSession(user);
     return NextResponse.json({ ok: true });
   }
 
@@ -177,7 +183,12 @@ export async function POST(request: NextRequest) {
       { status: 401 }
     );
   }
-  await setUserSession(user.id);
+  // Hashes made at the old cost are upgraded the moment they verify.
+  if (needsRehash(user.passwordHash)) {
+    user.passwordHash = hashPassword(data.password);
+    await prisma.user.update({ where: { id: user.id }, data: { passwordHash: user.passwordHash } });
+  }
+  await setUserSession(user);
   return NextResponse.json({ ok: true });
 }
 

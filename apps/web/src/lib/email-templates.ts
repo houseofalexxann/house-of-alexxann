@@ -8,6 +8,21 @@ import { FORMAT_LABELS, type SessionFormat } from "./services";
 import type { SchedulerSettings } from "./settings";
 import type { Mail } from "./email";
 
+/** HTML-escape anything that arrived from a form or a settings field. */
+function esc(v: string | number | null | undefined): string {
+  return String(v ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+/** Subjects are one line: a line break in a name must never become a header. */
+function line(v: string): string {
+  return v.replace(/[\r\n]+/g, " ").trim();
+}
+
 function fmtWhen(b: Booking): string {
   return DateTime.fromJSDate(b.startUtc)
     .setZone(b.clientTz)
@@ -21,13 +36,13 @@ function formatKey(b: Booking): SessionFormat {
 function deliveryLine(b: Booking, s: SchedulerSettings): string {
   switch (formatKey(b)) {
     case "video":
-      return s.videoLink;
+      return esc(s.videoLink);
     case "phone":
       return b.clientPhone
-        ? `Alexandria will call you at ${b.clientPhone}.`
-        : s.phoneNumber;
+        ? `Alexandria will call you at ${esc(b.clientPhone)}.`
+        : esc(s.phoneNumber);
     case "in-person":
-      return s.inPersonAddress;
+      return esc(s.inPersonAddress);
   }
 }
 
@@ -41,7 +56,7 @@ function shell(title: string, inner: string): string {
           <div style="color:#57405f;font-size:22px;letter-spacing:0.04em;padding-top:6px;">House of Alexxann</div>
         </td></tr>
         <tr><td style="padding:28px 36px;color:#6b5375;font-size:15px;line-height:1.65;">
-          <h1 style="margin:0 0 16px;font-size:22px;font-weight:500;color:#45304b;">${title}</h1>
+          <h1 style="margin:0 0 16px;font-size:22px;font-weight:500;color:#45304b;">${esc(title)}</h1>
           ${inner}
         </td></tr>
         <tr><td style="padding:18px 36px 26px;border-top:1px solid #f4e3ea;color:#a794b0;font-size:12px;text-align:center;">
@@ -56,7 +71,7 @@ function shell(title: string, inner: string): string {
 
 function detailRows(b: Booking, svc: Service, s: SchedulerSettings): string {
   const rows: [string, string][] = [
-    ["Reading", svc.title],
+    ["Reading", esc(svc.title)],
     ["When", fmtWhen(b)],
     ["Length", `${svc.durationMinutes} minutes`],
     ["Format", FORMAT_LABELS[formatKey(b)]],
@@ -79,16 +94,16 @@ export function confirmationEmail(
 ): Mail {
   const when = fmtWhen(b);
   const inner = `
-  <p>Dear ${b.clientName},</p>
+  <p>Dear ${esc(b.clientName)},</p>
   <p>Your time is held. Alexandria is looking forward to sitting with your chart.</p>
   <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:18px 0;padding:0;">${detailRows(b, svc, s)}</table>
-  ${b.birthDate ? `<p style="color:#8d7797;font-size:13px;">You shared birth details (${b.birthDate}${b.birthTime ? `, ${b.birthTime}` : ""}${b.birthPlace ? `, ${b.birthPlace}` : ""}) — your chart will be cast and ready before we begin.</p>` : `<p style="color:#8d7797;font-size:13px;">If you'd like your chart prepared in advance, reply with your birth date, exact time and city.</p>`}
+  ${b.birthDate ? `<p style="color:#8d7797;font-size:13px;">You shared birth details (${esc(b.birthDate)}${b.birthTime ? `, ${esc(b.birthTime)}` : ""}${b.birthPlace ? `, ${esc(b.birthPlace)}` : ""}). Your chart will be cast and ready before we begin.</p>` : `<p style="color:#8d7797;font-size:13px;">If you'd like your chart prepared in advance, reply with your birth date, exact time and city.</p>`}
   <p style="margin:22px 0;"><a href="${baseUrl}/book/confirmation?token=${b.token}" style="background:#d4638f;color:#ffffff;text-decoration:none;padding:10px 22px;border-radius:999px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;">View your booking</a></p>
   <p>A reminder will reach you the day before. Need to reschedule? Just reply to this email.</p>
   <p style="margin-bottom:0;">Under the same sky,<br/>Alexandria</p>`;
   return {
     to: b.clientEmail,
-    subject: `You're booked — ${svc.title}, ${when}`,
+    subject: line(`You're booked: ${svc.title}, ${when}`),
     html: shell("Your reading is confirmed", inner),
     text: [
       `Dear ${b.clientName},`,
@@ -129,21 +144,21 @@ export function directPayEmail(
     ? `<table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:14px 0;">${options
         .map(
           (o) =>
-            `<tr><td style="padding:6px 0;color:#8d7797;font-size:13px;width:120px;">${o.label}</td><td style="padding:6px 0;color:#45304b;font-size:14px;">${o.value}</td></tr>`
+            `<tr><td style="padding:6px 0;color:#8d7797;font-size:13px;width:120px;">${esc(o.label)}</td><td style="padding:6px 0;color:#45304b;font-size:14px;">${esc(o.value)}</td></tr>`
         )
         .join("")}</table>`
     : `<p style="color:#8d7797;font-size:13px;">Payment details will follow in a personal note from Alexandria.</p>`;
   const inner = `
-  <p>Dear ${b.clientName},</p>
-  <p>Your time is being held for <strong style="color:#b14c77;">${svc.title}</strong> on ${when}.</p>
+  <p>Dear ${esc(b.clientName)},</p>
+  <p>Your time is being held for <strong style="color:#b14c77;">${esc(svc.title)}</strong> on ${when}.</p>
   <p>To confirm it, send <strong style="color:#45304b;">${amount}</strong> using whichever is easiest:</p>
   ${optionsHtml}
-  <p style="color:#8d7797;font-size:13px;">Please include your name in the payment note. As soon as it arrives, you'll receive your confirmation email — your slot is safely held in the meantime.</p>
+  <p style="color:#8d7797;font-size:13px;">Please include your name in the payment note. As soon as it arrives, you'll receive your confirmation email. Your slot is safely held in the meantime.</p>
   <p style="margin:22px 0;"><a href="${baseUrl}/book/confirmation?token=${b.token}" style="background:#d4638f;color:#ffffff;text-decoration:none;padding:10px 22px;border-radius:999px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;">View your booking</a></p>
   <p style="margin-bottom:0;">Under the same sky,<br/>Alexandria</p>`;
   return {
     to: b.clientEmail,
-    subject: `Almost booked — send ${amount} to confirm your ${svc.title}`,
+    subject: line(`Almost booked: send ${amount} to confirm your ${svc.title}`),
     html: shell("One step left: payment", inner),
     text: [
       `Dear ${b.clientName},`,
@@ -165,15 +180,15 @@ export function reminderEmail(
 ): Mail {
   const when = fmtWhen(b);
   const inner = `
-  <p>Dear ${b.clientName},</p>
-  <p>A gentle reminder — your <strong style="color:#b14c77;">${svc.title}</strong> with Alexandria is tomorrow:</p>
+  <p>Dear ${esc(b.clientName)},</p>
+  <p>A gentle reminder: your <strong style="color:#b14c77;">${esc(svc.title)}</strong> with Alexandria is tomorrow:</p>
   <table role="presentation" cellpadding="0" cellspacing="0" style="width:100%;margin:18px 0;">${detailRows(b, svc, s)}</table>
   <p>Find a quiet corner, bring your questions, and arrive as you are.</p>
   <p style="margin:22px 0;"><a href="${baseUrl}/book/confirmation?token=${b.token}" style="background:#d4638f;color:#ffffff;text-decoration:none;padding:10px 22px;border-radius:999px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;">Booking details</a></p>
   <p style="margin-bottom:0;">See you under the sky,<br/>Alexandria</p>`;
   return {
     to: b.clientEmail,
-    subject: `Tomorrow: your ${svc.title} with Alexandria`,
+    subject: line(`Tomorrow: your ${svc.title} with Alexandria`),
     html: shell("Your reading is tomorrow", inner),
     text: [
       `Dear ${b.clientName},`,
@@ -189,10 +204,10 @@ export function reminderEmail(
 
 export function passwordResetEmail(name: string | null, to: string, link: string): Mail {
   const inner = `
-  <p>${name ? `Dear ${name},` : "Hello,"}</p>
-  <p>Someone — hopefully you — asked for a new password for this account. The link below is good for <strong style="color:#b14c77;">45 minutes</strong>:</p>
+  <p>${name ? `Dear ${esc(name)},` : "Hello,"}</p>
+  <p>Someone, hopefully you, asked for a new password for this account. The link below is good for <strong style="color:#b14c77;">45 minutes</strong>:</p>
   <p style="margin:22px 0;text-align:center;"><a href="${link}" style="background:#d4638f;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:999px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;">Choose a new password</a></p>
-  <p style="color:#8d7797;font-size:13px;">If you didn't ask for this, simply ignore it — your password stays exactly as it is, and your place in the House is safe.</p>`;
+  <p style="color:#8d7797;font-size:13px;">If you didn't ask for this, simply ignore it. Your password stays exactly as it is, and your place in the House is safe.</p>`;
   return {
     to,
     subject: "A new key to the House",
@@ -203,7 +218,7 @@ export function passwordResetEmail(name: string | null, to: string, link: string
       `Reset your House of Alexxann password with this link (valid 45 minutes):`,
       link,
       ``,
-      `If you didn't ask for this, ignore this email — nothing changes.`,
+      `If you didn't ask for this, ignore this email. Nothing changes.`,
     ].join("\n"),
   };
 }

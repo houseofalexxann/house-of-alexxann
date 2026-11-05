@@ -989,7 +989,7 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
               The traditional layer: sect, essential dignity, your natal moon
               phase, decans &amp; bounds, lots and zodiacal releasing.
             </p>
-            <PremiumGate title="The deeper chart is a members' room">
+            <PremiumGate title="The deeper chart is a members' room" preview={false}>
               <TraditionalPanel chart={chart} />
             </PremiumGate>
           </section>

@@ -14,7 +14,7 @@ export interface Slot {
 }
 
 /** Pending bookings hold their slot this long before expiring. */
-const PENDING_HOLD_MINUTES = 30;
+export const PENDING_HOLD_MINUTES = 30;
 
 export async function availableSlots(
   serviceSlug: string,

@@ -5,7 +5,7 @@
 import { DateTime } from "luxon";
 import { type Booking, Prisma } from "@prisma/client";
 import { prisma } from "./db";
-import { isSlotFree } from "./slots";
+import { isSlotFree, PENDING_HOLD_MINUTES } from "./slots";
 import { getSettings } from "./settings";
 import { priceTiers, serviceBySlug, type PriceTierKey, type SessionFormat } from "./services";
 import { createCheckoutSession, stripeEnabled } from "./stripe";
@@ -42,15 +42,41 @@ export interface CreateBookingInput {
   notes?: string;
 }
 
+/** A refusal written for the person booking; anything else is an internal fault. */
+export class BookingError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "BookingError";
+  }
+}
+
+async function releaseStaleHolds(serviceId: string, startUtc: Date): Promise<void> {
+  const now = Date.now();
+  await prisma.booking.updateMany({
+    where: {
+      serviceId,
+      startUtc,
+      status: "pending",
+      paymentStatus: "unpaid",
+      OR: [
+        { paymentMode: "direct", createdAt: { lt: new Date(now - 24 * 3600_000) } },
+        { paymentMode: { not: "direct" }, createdAt: { lt: new Date(now - PENDING_HOLD_MINUTES * 60_000) } },
+        { paymentMode: null, createdAt: { lt: new Date(now - PENDING_HOLD_MINUTES * 60_000) } },
+      ],
+    },
+    data: { status: "canceled" },
+  });
+}
+
 export async function createBooking(
   input: CreateBookingInput
 ): Promise<{ booking: Booking; paymentUrl: string }> {
   const serviceDef = serviceBySlug(input.serviceSlug);
   const service = await prisma.service.findUnique({ where: { slug: input.serviceSlug } });
-  if (!service || !serviceDef) throw new Error("Unknown service.");
+  if (!service || !serviceDef) throw new BookingError("Unknown service.");
 
   if (!serviceDef.formats.includes(input.format)) {
-    throw new Error("That session format isn't offered for this reading.");
+    throw new BookingError("That session format isn't offered for this reading.");
   }
 
   // In production, card checkout only exists once Stripe is configured —
@@ -60,16 +86,39 @@ export async function createBooking(
     !stripeEnabled() &&
     process.env.NODE_ENV === "production"
   ) {
-    throw new Error(
-      "Card checkout isn't open quite yet — choose the direct-pay option (Venmo / Cash App / Zelle / PayPal)."
+    throw new BookingError(
+      "Card checkout isn't open quite yet. Choose the direct-pay option (Venmo / Cash App / Zelle / PayPal)."
     );
   }
 
   const tier = priceTiers(serviceDef).find((t) => t.key === input.priceTier);
-  if (!tier) throw new Error("Unknown price tier.");
+  if (!tier) throw new BookingError("Unknown price tier.");
+
+  const start = DateTime.fromISO(input.startUtc, { zone: "utc" });
+  const end = start.plus({ minutes: service.durationMinutes });
+
+  // A visitor may hold a few times while they decide, not the whole calendar.
+  const openHolds = await prisma.booking.count({
+    where: {
+      clientEmail: { equals: input.clientEmail, mode: "insensitive" },
+      status: "pending",
+      paymentStatus: "unpaid",
+      createdAt: { gt: new Date(Date.now() - 24 * 3600_000) },
+    },
+  });
+  if (openHolds >= 3) {
+    throw new BookingError(
+      "You already have a few times held. Settle one of those first, or write to the House and Alexandria will sort it out."
+    );
+  }
+
+  // A hold whose grace period has lapsed is released before the slot is
+  // checked, so the unique index that guards the race never keeps a dead
+  // hold alive on a time the calendar is offering.
+  await releaseStaleHolds(service.id, start.toJSDate());
 
   if (!(await isSlotFree(input.serviceSlug, input.startUtc))) {
-    throw new Error("That time was just taken — please pick another slot.");
+    throw new BookingError("That time was just taken. Please pick another slot.");
   }
 
   // Venusian Dolls (members) get their discount on every reading, applied server-side.
@@ -82,13 +131,16 @@ export async function createBooking(
   let promo = null;
   if (input.promoCode?.trim()) {
     const found = await findValidPromo(input.promoCode, "readings");
-    if ("error" in found) throw new Error(found.error);
+    if ("error" in found) throw new BookingError(found.error);
     promo = found.promo;
     discounted = discountedCents(discounted, promo);
   }
 
-  const start = DateTime.fromISO(input.startUtc, { zone: "utc" });
-  const end = start.plus({ minutes: service.durationMinutes });
+  // The redemption is taken first, atomically against the cap; a booking
+  // that then fails to hold its slot gives it back.
+  if (promo && !(await redeemPromo(promo))) {
+    throw new BookingError("That code has reached its limit.");
+  }
 
   let booking: Booking;
   try {
@@ -118,6 +170,11 @@ export async function createBooking(
       },
     });
   } catch (err) {
+    if (promo) {
+      await prisma.promoCode
+        .update({ where: { id: promo.id }, data: { redemptions: { decrement: 1 } } })
+        .catch(() => undefined);
+    }
     // The partial unique index (serviceId, startUtc) on active bookings is
     // the atomic backstop for the check-then-create race: a concurrent second
     // insert for the same slot fails here even though isSlotFree passed.
@@ -125,14 +182,10 @@ export async function createBooking(
       err instanceof Prisma.PrismaClientKnownRequestError &&
       err.code === "P2002"
     ) {
-      throw new Error("That time was just taken — please pick another slot.");
+      throw new BookingError("That time was just taken. Please pick another slot.");
     }
     throw err;
   }
-
-  // Count the promo use once the slot is truly held. (Abandoned checkouts
-  // keep the count — acceptable slack for a solo practice.)
-  if (promo) await redeemPromo(promo);
 
   if (input.paymentMethod === "direct") {
     // Send payment instructions; the slot is held while Alexandria awaits

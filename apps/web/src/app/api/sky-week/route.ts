@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server";
+import { sessionUser } from "@/lib/user-auth";
+import { isAdmin } from "@/lib/admin-auth";
+import { isActiveMember } from "@/lib/membership";
 import { DateTime } from "luxon";
 import { computeChart, moonPhase, SIGN_NAMES } from "@hoa/engine";
 
@@ -95,5 +98,16 @@ export async function GET() {
     }
   }
 
-  return NextResponse.json({ days, background });
+  // Today is open to every doll; the rest of the week leaves the server only
+  // for members and the House Mother.
+  const [user, admin] = await Promise.all([
+    sessionUser().catch(() => null),
+    isAdmin().catch(() => false),
+  ]);
+  const member = admin || isActiveMember(user);
+  return NextResponse.json({
+    days: member ? days : days.slice(0, 1),
+    background,
+    locked: member ? 0 : Math.max(0, days.length - 1),
+  });
 }

@@ -141,7 +141,7 @@ export default async function AdminClientsPage() {
       });
     } catch (err) {
       // One unresolvable birthplace must never break the book.
-      console.error('[client-book] chart failed for', c.email, err);
+      console.error("[client-book] chart failed:", err instanceof Error ? err.message : err);
     }
   }
 

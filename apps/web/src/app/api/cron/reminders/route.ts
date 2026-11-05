@@ -8,6 +8,10 @@ import { sendDueReminders } from "@/lib/bookings";
  */
 export async function GET(request: NextRequest) {
   const secret = process.env.CRON_SECRET;
+  if (!secret && process.env.NODE_ENV === "production") {
+    console.error("[reminders] CRON_SECRET is not set; refusing to run unauthenticated in production");
+    return NextResponse.json({ error: "Cron is not configured." }, { status: 503 });
+  }
   if (secret) {
     const auth = request.headers.get("authorization");
     if (auth !== `Bearer ${secret}`) {
