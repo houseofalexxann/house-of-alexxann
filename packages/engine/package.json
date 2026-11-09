@@ -14,7 +14,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "sweph": "2.10.3-7"
+    "sweph": "2.10.3-8"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
