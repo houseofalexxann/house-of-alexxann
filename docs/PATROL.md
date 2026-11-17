@@ -25,6 +25,8 @@ since a routine that runs unattended is yours to approve.
   dependencies. Both have broken the build before.
 - Major version bumps of next, prisma, sweph, stripe, typescript, eslint,
   vitest and @supabase are done by hand, one at a time, with a build.
+- `npm ci` in a fresh copy of this repo needs a `DATABASE_URL` in the
+  environment for the Prisma step; a placeholder address is enough.
 - In `~/alexandria-method`, stage only the files the patrol changed. Leave
   `CLAUDE.md`, `ai-operating-system/` and `Claude outputs/` alone.
 - Copy on either site is not changed by the patrol.
@@ -51,6 +53,8 @@ since a routine that runs unattended is yours to approve.
    - House of Alexxann: `/api/cron/reminders` without its secret is 401.
      Signed out, `/api/sky-week` returns one day and `/api/chart` returns no
      dignities or lots. A chart request with asteroids, signed out, is 403.
+     A sign-in posted with `Origin: https://example.com` is 403, and one
+     posted as plain text is 415.
    - Alexandria Method: `/auth/callback?next=/%5Cexample.com` redirects to
      the site's own `/admin`, never to another site. Every `/api/cron/*`
      route without the Authorization header is 401, and a `?key=` in the
