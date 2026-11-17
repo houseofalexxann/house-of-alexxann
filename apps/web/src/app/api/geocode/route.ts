@@ -5,7 +5,7 @@ import { rateLimit } from "@/lib/rate-limit";
 export async function GET(request: NextRequest) {
   // Typing a city is a few dozen requests at most; the upstream geocoder and
   // the data cache should never be anyone's free proxy.
-  const limited = rateLimit(request, "geocode", 40, 60);
+  const limited = await rateLimit(request, "geocode", 40, 60, { shared: false });
   if (limited) return limited;
   const q = (request.nextUrl.searchParams.get("q") ?? "").trim().slice(0, 100);
   if (q.length < 2) return NextResponse.json({ results: [] });

@@ -7,7 +7,14 @@ import { hardNavigate } from "@/lib/navigate";
 const inputCls =
   "w-full rounded-lg border border-pearl-400 bg-pearl-200/80 px-3 py-2 text-ink-900 focus:border-rose-400 focus:outline-none";
 
-export function AuthForm({ mode }: { mode: "signup" | "login" }) {
+export function AuthForm({
+  mode,
+  confirmToken,
+}: {
+  mode: "signup" | "login";
+  /** Set when sign-in was reached from an email confirmation link. */
+  confirmToken?: string;
+}) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -23,12 +30,14 @@ export function AuthForm({ mode }: { mode: "signup" | "login" }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(
-          mode === "signup" ? { mode, name, email, password } : { mode, email, password }
+          mode === "signup"
+            ? { mode, name, email, password }
+            : { mode, email, password, ...(confirmToken ? { confirming: true } : {}) }
         ),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error ?? "Something went wrong.");
-      hardNavigate("/account");
+      hardNavigate(confirmToken ? `/confirm?token=${encodeURIComponent(confirmToken)}` : "/account");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
       setBusy(false);

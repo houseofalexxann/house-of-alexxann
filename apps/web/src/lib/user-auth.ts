@@ -12,6 +12,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { User } from "@prisma/client";
 import { prisma } from "./db";
+import { safeEqual } from "./safe-equal";
 
 const COOKIE = "hoa_user";
 const SESSION_DAYS = 30;
@@ -90,6 +91,50 @@ export async function clearUserSession(): Promise<void> {
   (await cookies()).delete(COOKIE);
 }
 
+/**
+ * A browser that has signed in to an account before carries a "known device"
+ * cookie for it. The per-account limit on sign-in tries exists to stop
+ * guessing from many addresses at once, but on its own it would also let
+ * anyone who knows a member's email keep her locked out. A known device is
+ * exempt from that limit (never from the per-visitor one), so the person who
+ * actually uses the account is not the one who pays. The cookie is bound to
+ * the current password: change the password and every known device is
+ * forgotten.
+ */
+const KNOWN_COOKIE = "hoa_known";
+
+function knownValue(user: { id: string; passwordHash: string | null }): string {
+  return `${user.id}.${sign(`known:${user.id}:${sessionFingerprint(user.passwordHash)}`).slice(0, 32)}`;
+}
+
+export async function rememberDevice(user: { id: string; passwordHash: string | null }): Promise<void> {
+  (await cookies()).set(KNOWN_COOKIE, knownValue(user), {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    maxAge: 365 * 86400,
+    path: "/",
+  });
+}
+
+export async function isKnownDevice(user: { id: string; passwordHash: string | null }): Promise<boolean> {
+  const value = (await cookies()).get(KNOWN_COOKIE)?.value;
+  if (!value) return false;
+  return safeEqual(value, knownValue(user));
+}
+
+/**
+ * A hash of a password nobody has, at the current cost. A sign-in try for
+ * an address with no account is checked against this, so the time the
+ * answer takes says nothing about whether the account exists.
+ */
+/** The same, at the older cost that hashes made before the upgrade still carry. */
+export const LEGACY_DECOY_HASH =
+  "7557998d70653a48576e48465afe4a98:35158431e254c3aae111d4b69126f41b69defaf509403df71a43875b4e21533dc202658dc31dd0925066bbe269695b861ac8f23d003636d8c5ae7dbcff62e5e7";
+
+export const DECOY_HASH =
+  "s2:9f59de3eab25b3dff7a5e4da09353a6f:a7e2fa8ebc817be4cc74e60953fe3ede35eae135b4cb9a32e6f34a82156a7ba09c3345bb67a924ce5c2dd95c87f82068971bcd68a78ed97e589c2c6172965212";
+
 /** The signed-in user, or null. */
 export async function sessionUser(): Promise<User | null> {
   const token = (await cookies()).get(COOKIE)?.value;
@@ -99,14 +144,13 @@ export async function sessionUser(): Promise<User | null> {
   const [userId, expiresStr, fp, mac] = parts;
   const payload = `${userId}.${expiresStr}.${fp}`;
   const expected = sign(payload);
-  if (mac.length !== expected.length) return null;
-  if (!timingSafeEqual(Buffer.from(mac), Buffer.from(expected))) return null;
+  if (!safeEqual(mac, expected)) return null;
   if (Number(expiresStr) < Date.now()) return null;
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user) return null;
   // The password changed since this session was opened: the session is over.
   const want = sessionFingerprint(user.passwordHash);
-  if (fp.length !== want.length || !timingSafeEqual(Buffer.from(fp), Buffer.from(want))) return null;
+  if (!safeEqual(fp, want)) return null;
   return user;
 }
 

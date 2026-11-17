@@ -80,8 +80,7 @@ export function parseSessionToken(token: string | undefined): AdminSubject | nul
   const [, expiresStr, subject, fingerprint, mac] = parts;
   const payload = `admin.${expiresStr}.${subject}.${fingerprint}`;
   const expected = sign(payload);
-  if (mac.length !== expected.length) return null;
-  if (!timingSafeEqual(Buffer.from(mac), Buffer.from(expected))) return null;
+  if (!safeEqual(mac, expected)) return null;
   const expires = Number(expiresStr);
   if (!Number.isFinite(expires) || expires <= Date.now()) return null;
   return { subject, fingerprint };

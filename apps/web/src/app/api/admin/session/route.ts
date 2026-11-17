@@ -8,8 +8,8 @@ import {
   type AdminSubject,
 } from "@/lib/admin-auth";
 import { prisma } from "@/lib/db";
-import { hashPassword, needsRehash, verifyPassword } from "@/lib/user-auth";
-import { rateLimit } from "@/lib/rate-limit";
+import { hashPassword, needsRehash, verifyPassword, DECOY_HASH, isKnownDevice, rememberDevice } from "@/lib/user-auth";
+import { rateLimit, rateLimitKey } from "@/lib/rate-limit";
 
 /**
  * Admin sign-in. Primary path: the House Mother's own account (User row with
@@ -22,7 +22,7 @@ import { rateLimit } from "@/lib/rate-limit";
  * public sign-up can never claim the row.
  */
 export async function POST(request: NextRequest) {
-  const limited = rateLimit(request, "admin-session", 10, 900);
+  const limited = await rateLimit(request, "admin-session", 10, 900);
   if (limited) return limited;
 
   const { email, password } = (await request.json().catch(() => ({}))) as {
@@ -40,20 +40,39 @@ export async function POST(request: NextRequest) {
     .findUnique({ where: { email: email.trim().toLowerCase() } })
     .catch(() => null);
 
+  // Ten tries per address per quarter hour, from anywhere: guessing spread
+  // across many visitors still meets one counter at this door too. A
+  // browser that has opened this account before is exempt, so hammering the
+  // door cannot keep the House Mother out of her own house.
+  const known = account ? await isKnownDevice(account) : false;
+  if (!known && !(await rateLimitKey("admin-login-email", email, 10, 900))) {
+    return NextResponse.json(
+      { error: "Too many tries. Wait a few minutes before trying this door again." },
+      { status: 429 }
+    );
+  }
+
   let subject: AdminSubject | null = null;
 
-  if (account?.role === "admin" && account.passwordHash && verifyPassword(password, account.passwordHash)) {
+  // A password check is paid for whether or not the address is an admin's,
+  // so the time the answer takes does not point at the right address.
+  const adminHash = account?.role === "admin" ? account.passwordHash : null;
+  const accountMatches = verifyPassword(password, adminHash ?? DECOY_HASH) && Boolean(adminHash);
+
+  if (account?.role === "admin" && account.passwordHash && accountMatches) {
     let hash = account.passwordHash;
     if (needsRehash(hash)) {
       hash = hashPassword(password);
       await prisma.user.update({ where: { id: account.id }, data: { passwordHash: hash } });
     }
     subject = { subject: account.id, fingerprint: accountFingerprint(hash) };
+    await rememberDevice({ id: account.id, passwordHash: hash });
   } else if (checkCredentials(email, password)) {
     if (account?.role === "admin" && !account.passwordHash) {
       const hash = hashPassword(password);
       await prisma.user.update({ where: { id: account.id }, data: { passwordHash: hash } });
       subject = { subject: account.id, fingerprint: accountFingerprint(hash) };
+      await rememberDevice({ id: account.id, passwordHash: hash });
     } else {
       const env = envFingerprint();
       subject = env ? { subject: "env", fingerprint: env } : null;

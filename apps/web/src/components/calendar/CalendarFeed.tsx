@@ -6,11 +6,30 @@ import { useState } from "react";
  * Subscribe box for the personal calendar feed. The URL is a bearer
  * credential, so it stays hidden until asked for and is labeled as private.
  */
-export function CalendarFeed({ url }: { url: string }) {
+export function CalendarFeed({ url: initialUrl }: { url: string }) {
+  const [url, setUrl] = useState(initialUrl);
   const [shown, setShown] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [reset, setReset] = useState<"idle" | "working" | "done" | "error">("idle");
 
   if (!url) return null;
+
+  async function resetAddress() {
+    setReset("working");
+    try {
+      const res = await fetch("/api/calendar/reset", { method: "POST" });
+      const data = (await res.json().catch(() => null)) as { url?: string } | null;
+      if (res.ok && data?.url) {
+        setUrl(data.url);
+        setCopied(false);
+        setReset("done");
+      } else {
+        setReset("error");
+      }
+    } catch {
+      setReset("error");
+    }
+  }
 
   return (
     <section className="card mt-6 p-6">
@@ -46,9 +65,28 @@ export function CalendarFeed({ url }: { url: string }) {
             <a href={url} className="btn-ghost text-xs" download="house-of-alexxann.ics">
               Download once (.ics)
             </a>
+            <button
+              type="button"
+              className="btn-ghost text-xs"
+              onClick={resetAddress}
+              disabled={reset === "working"}
+            >
+              {reset === "working" ? "Resetting..." : "Reset this address"}
+            </button>
           </div>
+          {reset === "done" && (
+            <p className="mt-3 text-xs leading-relaxed text-ink-900" role="status">
+              Done. The old address no longer works. Subscribe again with the new one above.
+            </p>
+          )}
+          {reset === "error" && (
+            <p className="mt-3 text-xs leading-relaxed text-rose-600" role="alert">
+              The address could not be reset just now. Try again in a moment.
+            </p>
+          )}
           <p className="mt-3 text-xs leading-relaxed text-ink-400">
             Keep this address private: anyone who has it can read your calendar.
+            If it ever gets out, reset it and the old one stops working.
             In Apple Calendar choose File, then New Calendar Subscription. In
             Google Calendar choose Other calendars, then From URL.
           </p>

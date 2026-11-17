@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { BookingError, createBooking } from "@/lib/bookings";
 import { rateLimit } from "@/lib/rate-limit";
+import { sessionUser } from "@/lib/user-auth";
 
 const BookingRequest = z.object({
   serviceSlug: z.string().min(1),
@@ -23,7 +24,7 @@ const BookingRequest = z.object({
 export async function POST(request: NextRequest) {
   // Each hold sends an email and blocks a slot: a handful per quarter hour
   // is a person, more is a script.
-  const limited = rateLimit(request, "bookings", 6, 900);
+  const limited = await rateLimit(request, "bookings", 6, 900);
   if (limited) return limited;
 
   let body: unknown;
@@ -40,7 +41,9 @@ export async function POST(request: NextRequest) {
     );
   }
   try {
-    const { booking, paymentUrl } = await createBooking(parsed.data);
+    // A booking made while signed in belongs to that account from the start.
+    const user = await sessionUser().catch(() => null);
+    const { booking, paymentUrl } = await createBooking({ ...parsed.data, userId: user?.id });
     return NextResponse.json({
       bookingToken: booking.token,
       paymentUrl,

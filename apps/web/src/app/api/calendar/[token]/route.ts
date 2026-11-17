@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { userIdFromCalendarToken } from "@/lib/calendar-token";
+import { parseCalendarToken } from "@/lib/calendar-token";
 import { isActiveMember } from "@/lib/membership";
 import { buildPersonalCalendar, toICalendar } from "@/lib/personal-calendar";
 
@@ -14,12 +14,16 @@ export async function GET(
   { params }: { params: Promise<{ token: string }> }
 ) {
   const { token } = await params;
-  const userId = userIdFromCalendarToken(token);
-  if (!userId) {
+  const parsed = parseCalendarToken(token);
+  if (!parsed) {
     return NextResponse.json({ error: "Unknown calendar." }, { status: 404 });
   }
 
-  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const user = await prisma.user.findUnique({ where: { id: parsed.userId } });
+  // An address made before its owner last reset the feed is retired.
+  if (user && user.feedVersion !== parsed.version) {
+    return NextResponse.json({ error: "Unknown calendar." }, { status: 404 });
+  }
   if (!user || !isActiveMember(user)) {
     return NextResponse.json(
       { error: "This calendar belongs to a Venusian Doll membership that isn't active." },

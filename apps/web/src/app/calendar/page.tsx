@@ -116,7 +116,7 @@ export default async function CalendarPage() {
     byMonth.set(key, list);
   }
 
-  const feedUrl = user ? `${baseUrl()}/api/calendar/${calendarToken(user.id)}` : "";
+  const feedUrl = user ? `${baseUrl()}/api/calendar/${calendarToken(user.id, user.feedVersion)}` : "";
   const p = cal.profection;
 
   return (

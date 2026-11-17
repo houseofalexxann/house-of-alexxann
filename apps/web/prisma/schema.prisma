@@ -52,8 +52,17 @@ model User {
   memberUntil     DateTime?
   /** One free trial per account, ever. */
   trialRedeemedAt DateTime?
+  /**
+   * Set once this address has proved it reads its own inbox (a confirmation
+   * link or a password reset). Until then the account is not shown bookings
+   * that were made with the address but outside the account.
+   */
+  emailVerifiedAt DateTime?
+  /** Raised to retire every calendar feed address this account has handed out. */
+  feedVersion  Int      @default(0)
   createdAt    DateTime @default(now())
   profiles     BirthProfile[]
+  bookings     Booking[]
 }
 
 /**
@@ -140,6 +149,9 @@ model Booking {
   clientName    String
   clientEmail   String
   clientPhone   String?
+  /** The account that was signed in when this was booked, if any. */
+  userId        String?
+  user          User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
   format        SessionFormat
   startUtc      DateTime
   endUtc        DateTime
@@ -166,6 +178,7 @@ model Booking {
 
   @@index([startUtc])
   @@index([status, startUtc])
+  @@index([userId])
   // A partial unique index (active bookings only) is added by migration
   // 20260710_booking_slot_guard — it enforces one live booking per
   // (serviceId, startUtc) at the database level, closing the check-then-insert
@@ -394,4 +407,15 @@ model CrossRef {
   note   String?
 
   @@unique([fromId, toId, type])
+}
+
+/**
+ * Shared counters for the rate limiter, so a limit holds across every
+ * serverless instance. Keys are hashed before they are stored: this table
+ * never holds an IP address or an email address.
+ */
+model RateLimit {
+  key     String   @id
+  count   Int      @default(0)
+  resetAt DateTime
 }

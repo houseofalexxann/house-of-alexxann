@@ -27,6 +27,11 @@ for (const [name, hint] of required) {
   }
 }
 
+if (!process.env.RESEND_API_KEY || process.env.RESEND_API_KEY.trim() === "") {
+  console.warn("\n! RESEND_API_KEY is not set: booking confirmations, password resets and email confirmation links cannot be sent.");
+  console.warn("  Add it in Vercel, Project, Settings, Environment Variables, then Redeploy.");
+}
+
 const db = normalizeDbUrl(process.env.DATABASE_URL);
 if (db && !db.startsWith("postgres")) {
   console.error(`\n✗ DATABASE_URL doesn't look like a Postgres connection string (should start with postgresql://).`);

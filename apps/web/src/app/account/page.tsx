@@ -2,18 +2,33 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { requireUser } from "@/lib/user-auth";
 import { prisma } from "@/lib/db";
+import { exactEmail } from "@/lib/bookings";
 import { getSettings } from "@/lib/settings";
 import { LogoutButton } from "@/components/auth/LogoutButton";
+import { ConfirmEmailPrompt } from "@/components/auth/ConfirmEmailPrompt";
 import { isActiveMember, TIER_NAMES, formatMembershipPrice } from "@/lib/membership";
 
 export const metadata: Metadata = { title: "Your House" };
 
-export default async function AccountPage() {
+export default async function AccountPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ confirm?: string }>;
+}) {
   const user = await requireUser();
+  const { confirm } = await searchParams;
+  // Sessions booked while signed in to this account are always shown.
+  // Sessions that only share the address are shown once the address has
+  // proved it is this person's: anyone can type any email into a sign-up
+  // form, and a session is nobody else's business.
+  const mine = [
+    { userId: user.id },
+    ...(user.emailVerifiedAt ? [{ clientEmail: exactEmail(user.email) }] : []),
+  ];
   const [profiles, bookings, settings] = await Promise.all([
     prisma.birthProfile.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" } }),
     prisma.booking.findMany({
-      where: { clientEmail: user.email, startUtc: { gte: new Date() } },
+      where: { OR: mine, startUtc: { gte: new Date() } },
       include: { service: true },
       orderBy: { startUtc: "asc" },
       take: 5,
@@ -94,9 +109,16 @@ export default async function AccountPage() {
           <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
             Upcoming sessions
           </h2>
+          {confirm === "done" && user.emailVerifiedAt && (
+            <p className="mt-2 text-xs text-ink-900" role="status">
+              Your email is confirmed.
+            </p>
+          )}
           {bookings.length === 0 ? (
             <p className="mt-2 text-sm text-ink-500">
-              Nothing booked yet. The calendar is open.
+              {user.emailVerifiedAt
+                ? "Nothing booked yet. The calendar is open."
+                : "Any session you have booked is safe. Confirm your email and the ones booked with this address appear here."}
             </p>
           ) : (
             <ul className="mt-3 space-y-2 text-sm">
@@ -110,6 +132,7 @@ export default async function AccountPage() {
               ))}
             </ul>
           )}
+          {!user.emailVerifiedAt && <ConfirmEmailPrompt email={user.email} />}
         </section>
 
         <section className="card p-6 sm:col-span-2">

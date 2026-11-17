@@ -17,7 +17,7 @@ const Body = z.object({ code: z.string().min(1).max(60) });
  *   (counted when the payment actually happens).
  */
 export async function POST(request: NextRequest) {
-  const limited = rateLimit(request, "promo", 10, 600);
+  const limited = await rateLimit(request, "promo", 10, 600);
   if (limited) return limited;
 
   const parsed = Body.safeParse(await request.json().catch(() => null));

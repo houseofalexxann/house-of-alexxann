@@ -33,6 +33,7 @@ export async function sendMail(mail: Mail): Promise<{ delivered: "resend" | "out
         html: mail.html,
         text: mail.text,
       }),
+      signal: AbortSignal.timeout(10_000),
     });
     if (!res.ok) {
       throw new Error(`Resend failed: ${res.status} ${await res.text()}`);

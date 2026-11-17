@@ -19,6 +19,14 @@ export function baseUrl(): string {
   return process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 }
 
+/**
+ * Prisma runs a case-insensitive "equals" as ILIKE, where "_" and "%" are
+ * wildcards. An address is matched as written, so those are escaped first.
+ */
+export function exactEmail(email: string) {
+  return { equals: email.replace(/[\\%_]/g, "\\$&"), mode: "insensitive" as const };
+}
+
 export interface CreateBookingInput {
   serviceSlug: string;
   startUtc: string;
@@ -26,6 +34,8 @@ export interface CreateBookingInput {
   clientName: string;
   clientEmail: string;
   clientPhone?: string;
+  /** The account signed in when the booking was made, if any. */
+  userId?: string;
   clientTz: string;
   priceTier: PriceTierKey;
   /**
@@ -100,7 +110,7 @@ export async function createBooking(
   // A visitor may hold a few times while they decide, not the whole calendar.
   const openHolds = await prisma.booking.count({
     where: {
-      clientEmail: { equals: input.clientEmail, mode: "insensitive" },
+      clientEmail: exactEmail(input.clientEmail),
       status: "pending",
       paymentStatus: "unpaid",
       createdAt: { gt: new Date(Date.now() - 24 * 3600_000) },
@@ -150,6 +160,7 @@ export async function createBooking(
         clientName: input.clientName,
         clientEmail: input.clientEmail,
         clientPhone: input.clientPhone ?? null,
+        userId: input.userId ?? null,
         format: input.format.replace("-", "_") as never,
         startUtc: start.toJSDate(),
         endUtc: end.toJSDate(),

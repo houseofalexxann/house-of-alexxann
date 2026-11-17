@@ -4,7 +4,8 @@
  * account's CURRENT password hash — the moment the password changes, every
  * outstanding token for that account dies, making links single-use.
  */
-import { createHmac, timingSafeEqual } from "node:crypto";
+import { createHmac } from "node:crypto";
+import { safeEqual } from "./safe-equal";
 import type { User } from "@prisma/client";
 import { secret } from "./user-auth";
 
@@ -31,8 +32,7 @@ export function parseResetToken(token: string): { userId: string; fp: string } |
   if (parts.length !== 4) return null;
   const [userId, expiresStr, fp, mac] = parts;
   const expected = hmac(`${userId}.${expiresStr}.${fp}`);
-  if (mac.length !== expected.length) return null;
-  if (!timingSafeEqual(Buffer.from(mac), Buffer.from(expected))) return null;
+  if (!safeEqual(mac, expected)) return null;
   if (!/^\d+$/.test(expiresStr) || Number(expiresStr) < Date.now()) return null;
   return { userId, fp };
 }

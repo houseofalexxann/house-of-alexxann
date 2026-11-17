@@ -222,3 +222,24 @@ export function passwordResetEmail(name: string | null, to: string, link: string
     ].join("\n"),
   };
 }
+
+export function confirmEmailMessage(name: string | null, to: string, link: string): Mail {
+  const inner = `
+  <p>${name ? `Dear ${esc(name)},` : "Hello,"}</p>
+  <p>One small step: confirm that this inbox is yours. Once you do, any session booked with this address appears in your House.</p>
+  <p style="margin:22px 0;text-align:center;"><a href="${link}" style="background:#d4638f;color:#ffffff;text-decoration:none;padding:12px 24px;border-radius:999px;font-family:Arial,sans-serif;font-size:14px;font-weight:600;">Confirm my email</a></p>
+  <p style="color:#8d7797;font-size:13px;">The link is good for <strong style="color:#b14c77;">24 hours</strong> and asks you to sign in if you aren't already. If you didn't create an account here, simply ignore this and nothing happens.</p>`;
+  return {
+    to,
+    subject: "Confirm your email for the House",
+    html: shell("Confirm your email", inner),
+    text: [
+      name ? `Dear ${name},` : "Hello,",
+      ``,
+      `Confirm that this inbox is yours (link valid 24 hours; it asks you to sign in if you aren't already):`,
+      link,
+      ``,
+      `If you didn't create an account here, ignore this email. Nothing happens.`,
+    ].join("\n"),
+  };
+}
