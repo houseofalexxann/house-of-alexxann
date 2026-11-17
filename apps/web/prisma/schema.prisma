@@ -112,10 +112,20 @@ model BirthProfile {
   timezone   String
   utc        DateTime // resolved birth instant
   notes      String?
+  /**
+   * True for the one profile that is the account holder's own chart: the
+   * calendar, the weather and the prefilled forms read this one. Every
+   * other profile on the account is a chart saved for someone else.
+   * (True by default so that a row written by the code that came before
+   * saved charts, which only ever wrote the holder's own, is read right.)
+   */
+  isSelf     Boolean   @default(true)
   userId     String?
   user       User?     @relation(fields: [userId], references: [id])
   charts     Chart[]
   createdAt  DateTime  @default(now())
+
+  @@index([userId])
 }
 
 model Chart {

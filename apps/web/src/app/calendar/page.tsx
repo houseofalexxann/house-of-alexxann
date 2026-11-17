@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { DateTime } from "luxon";
-import { prisma } from "@/lib/db";
 import { sessionUser } from "@/lib/user-auth";
 import { isAdmin } from "@/lib/admin-auth";
 import { formatMembershipPrice, isActiveMember, TIER_NAMES } from "@/lib/membership";
@@ -11,6 +10,7 @@ import { buildPersonalCalendar } from "@/lib/personal-calendar";
 import { POINT_LABEL } from "@/lib/transit-meanings";
 import { baseUrl } from "@/lib/bookings";
 import { CalendarFeed } from "@/components/calendar/CalendarFeed";
+import { selfProfile } from "@/lib/profiles";
 
 export const dynamic = "force-dynamic";
 
@@ -71,12 +71,7 @@ export default async function CalendarPage() {
     );
   }
 
-  const profile = user
-    ? await prisma.birthProfile.findFirst({
-        where: { userId: user.id },
-        orderBy: { createdAt: "desc" },
-      })
-    : null;
+  const profile = user ? await selfProfile(user.id) : null;
 
   if (!profile) {
     return (

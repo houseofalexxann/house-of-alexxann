@@ -21,7 +21,11 @@ export default async function AdminClientsPage() {
       include: { service: true },
       orderBy: { startUtc: "desc" },
     }),
-    prisma.user.findMany({ include: { profiles: { orderBy: { createdAt: "desc" }, take: 1 } } }),
+    // Only each account's own chart belongs in the client book; charts a
+    // client saved for other people are theirs alone.
+    prisma.user.findMany({
+      include: { profiles: { where: { isSelf: true }, orderBy: { createdAt: "desc" }, take: 1 } },
+    }),
   ]);
 
   interface Client {

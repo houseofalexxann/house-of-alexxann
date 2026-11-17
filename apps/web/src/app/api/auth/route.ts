@@ -26,6 +26,7 @@ import { isActiveMember } from "@/lib/membership";
 import { getSettings } from "@/lib/settings";
 import { inboxAllows, rateLimit, rateLimitKey } from "@/lib/rate-limit";
 import { isAdmin } from "@/lib/admin-auth";
+import { selfProfile } from "@/lib/profiles";
 
 const Signup = z.object({
   mode: z.literal("signup"),
@@ -50,7 +51,7 @@ const Reset = z.object({
   password: z.string().min(8).max(200),
 });
 
-/** GET: current session (+ latest birth profile so every tab can prefill). */
+/** GET: current session (+ the account's own saved chart so every tab can prefill). */
 export async function GET() {
   const [user, adminSession, settings] = await Promise.all([
     sessionUser(),
@@ -69,6 +70,9 @@ export async function GET() {
         isMember: true,
         memberUntil: null,
         role: "admin",
+        // The admin key opens every room but has no account behind it, so
+        // there is nowhere to keep saved charts.
+        hasAccount: false,
         profile: null,
       },
       membershipPriceCents,
@@ -76,10 +80,7 @@ export async function GET() {
   }
   if (!user) return NextResponse.json({ user: null, membershipPriceCents });
 
-  const profile = await prisma.birthProfile.findFirst({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-  });
+  const profile = await selfProfile(user.id);
   return NextResponse.json({
     user: {
       name: user.name,
@@ -87,12 +88,16 @@ export async function GET() {
       isMember: isActiveMember(user) || adminSession,
       memberUntil: !user.isMember && user.memberUntil ? user.memberUntil : null,
       role: adminSession ? "admin" : user.role,
+      hasAccount: true,
       profile: profile
         ? {
             name: profile.name,
             birthDate: profile.birthDate,
             birthTime: profile.birthTime,
             placeLabel: profile.placeLabel,
+            latitude: profile.latitude,
+            longitude: profile.longitude,
+            timezone: profile.timezone,
           }
         : null,
     },

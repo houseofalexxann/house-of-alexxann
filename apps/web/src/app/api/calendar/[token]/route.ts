@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { parseCalendarToken } from "@/lib/calendar-token";
 import { isActiveMember } from "@/lib/membership";
 import { buildPersonalCalendar, toICalendar } from "@/lib/personal-calendar";
+import { selfProfile } from "@/lib/profiles";
 
 /**
  * Subscribable iCal feed of a member's personal timing calendar. The token is
@@ -31,10 +32,9 @@ export async function GET(
     );
   }
 
-  const profile = await prisma.birthProfile.findFirst({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-  });
+  // The feed follows the account holder's own chart, never one she saved
+  // for someone else.
+  const profile = await selfProfile(user.id);
   if (!profile) {
     return NextResponse.json(
       { error: "Save your birth details in the Studio first, then the calendar has something to read." },

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DateTime } from "luxon";
 import { skyWeatherAt, weekWeather } from "@hoa/engine";
-import { prisma } from "@/lib/db";
 import { sessionUser } from "@/lib/user-auth";
 import { isAdmin } from "@/lib/admin-auth";
 import { formatMembershipPrice, isActiveMember, TIER_NAMES } from "@/lib/membership";
@@ -19,6 +18,7 @@ import {
 import { personalToday, personalWeek } from "@/lib/personal-weather";
 import { WeatherMeter, WeatherSky } from "@/components/weather/WeatherSky";
 import { WeekStrip, type StripDay } from "@/components/weather/WeekStrip";
+import { selfProfile } from "@/lib/profiles";
 
 export const dynamic = "force-dynamic";
 
@@ -44,7 +44,7 @@ export default async function WeatherPage() {
   const priceLabel = formatMembershipPrice(settings.membershipPriceCents);
   const profile =
     member && user
-      ? await prisma.birthProfile.findFirst({ where: { userId: user.id }, orderBy: { createdAt: "desc" } })
+      ? await selfProfile(user.id)
       : null;
   const personal = profile
     ? { today: personalToday(profile, nowIso), week: personalWeek(profile, nowIso) }

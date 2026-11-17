@@ -135,12 +135,12 @@ export async function rateLimit(
   bucket: string,
   limit: number,
   windowSeconds: number,
-  opts: { shared?: boolean } = {}
+  opts: { shared?: boolean; message?: string } = {}
 ): Promise<NextResponse | null> {
   const ok = await allows(`${bucket}:${clientIp(request)}`, limit, windowSeconds, opts.shared ?? true);
   if (ok) return null;
   return NextResponse.json(
-    { error: "Slow down a moment, love — try again shortly." },
+    { error: opts.message ?? "Slow down a moment, love — try again shortly." },
     { status: 429 }
   );
 }

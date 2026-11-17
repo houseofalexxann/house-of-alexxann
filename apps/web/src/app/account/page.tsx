@@ -7,6 +7,10 @@ import { getSettings } from "@/lib/settings";
 import { LogoutButton } from "@/components/auth/LogoutButton";
 import { ConfirmEmailPrompt } from "@/components/auth/ConfirmEmailPrompt";
 import { isActiveMember, TIER_NAMES, formatMembershipPrice } from "@/lib/membership";
+import { savedProfiles } from "@/lib/profiles";
+import { FREE_OTHER_CHARTS } from "@/lib/saved-charts";
+import { SavedChartsShelf } from "@/components/account/SavedChartsShelf";
+import { isAdmin } from "@/lib/admin-auth";
 
 export const metadata: Metadata = { title: "Your House" };
 
@@ -17,6 +21,8 @@ export default async function AccountPage({
 }) {
   const user = await requireUser();
   const { confirm } = await searchParams;
+  // The House Mother's key counts as membership here, as it does everywhere.
+  const adminKey = await isAdmin().catch(() => false);
   // Sessions booked while signed in to this account are always shown.
   // Sessions that only share the address are shown once the address has
   // proved it is this person's: anyone can type any email into a sign-up
@@ -26,7 +32,7 @@ export default async function AccountPage({
     ...(user.emailVerifiedAt ? [{ clientEmail: exactEmail(user.email) }] : []),
   ];
   const [profiles, bookings, settings] = await Promise.all([
-    prisma.birthProfile.findMany({ where: { userId: user.id }, orderBy: { createdAt: "desc" } }),
+    savedProfiles(user.id),
     prisma.booking.findMany({
       where: { OR: mine, startUtc: { gte: new Date() } },
       include: { service: true },
@@ -137,34 +143,12 @@ export default async function AccountPage({
 
         <section className="card p-6 sm:col-span-2">
           <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-400">
-            Your birth details
+            Your charts
           </h2>
-          {profiles.length === 0 ? (
-            <p className="mt-2 text-sm text-ink-500">
-              Cast a chart in the{" "}
-              <Link href="/western" className="text-rose-600 hover:underline">Studio</Link>{" "}
-              and it can live here. Saved charts arrive with the dashboard&#39;s
-              next furnishing.
-            </p>
-          ) : (
-            <ul className="mt-3 space-y-2 text-sm">
-              {profiles.map((p) => (
-                <li key={p.id} className="flex flex-wrap justify-between gap-2">
-                  <span className="text-ink-900">{p.name}</span>
-                  <span className="text-ink-500">
-                    {p.birthDate}
-                    {p.birthTime ? ` · ${p.birthTime}` : ""} · {p.placeLabel}
-                  </span>
-                  <Link
-                    className="text-rose-600 hover:underline"
-                    href={`/western?name=${encodeURIComponent(p.name)}&date=${p.birthDate}${p.birthTime ? `&time=${p.birthTime}` : ""}&place=${encodeURIComponent(p.placeLabel)}`}
-                  >
-                    Cast →
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          <SavedChartsShelf
+            initial={profiles}
+            othersAllowed={isActiveMember(user) || adminKey ? null : FREE_OTHER_CHARTS}
+          />
         </section>
       </div>
     </div>

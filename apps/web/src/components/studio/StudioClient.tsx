@@ -22,6 +22,8 @@ import { InterpretationsPanel } from "@/components/chart/Interpretations";
 import { TraditionalPanel } from "@/components/chart/TraditionalPanel";
 import { PremiumGate } from "@/components/PremiumGate";
 import { useUser } from "@/components/UserProvider";
+import { SavedChartPicker, SaveChartControl } from "./SavedCharts";
+import type { SavedProfile } from "@/lib/saved-charts";
 import { PLANET_GLYPHS, SIGN_NAMES } from "@/components/chart/glyphs";
 import { ChartKey } from "@/components/chart/ChartKey";
 import { ALL_EXTRAS, EXTRA_KEY, GRAHA_ABBR, PLANET_KEY } from "@/lib/chart-key";
@@ -96,6 +98,23 @@ interface BirthForm {
   place: PlaceResult | null;
 }
 
+/**
+ * The signed-in account's saved charts. "none" means there is no account
+ * behind this session (signed out, or the admin key alone); null means the
+ * question could not be answered just now, so whatever we had stays.
+ */
+async function fetchSavedProfiles(): Promise<SavedProfile[] | "none" | null> {
+  try {
+    const res = await fetch("/api/profile");
+    if (res.status === 401) return "none";
+    if (!res.ok) return null;
+    const data = (await res.json()) as { profiles?: SavedProfile[] };
+    return data.profiles ?? [];
+  } catch {
+    return null;
+  }
+}
+
 export function StudioClient({ initialSystem = "western", locked = false }: { initialSystem?: System; locked?: boolean } = {}) {
   const [form, setForm] = useState<BirthForm>({
     name: "",
@@ -116,9 +135,25 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
   // Western additions (members only): asteroids, fixed stars, a transit overlay.
   const [additions, setAdditions] = useState<Additions>(NO_ADDITIONS);
 
-  const { user, membershipPriceCents } = useUser();
+  const { user, loading: sessionLoading, membershipPriceCents, refresh: refreshSession } = useUser();
   const member = Boolean(user && (user.isMember || user.role === "admin"));
   const [result, setResult] = useState<ChartResponse | null>(null);
+  // The birth details the chart on screen was cast from (the form may have
+  // been edited since), and the account's saved charts.
+  const [castForm, setCastForm] = useState<BirthForm | null>(null);
+  const [saved, setSaved] = useState<SavedProfile[]>([]);
+  // False until the list has answered once: until then the session's own
+  // chart stands in, so "replace" is never mislabelled as a first save.
+  const [savedLoaded, setSavedLoaded] = useState(false);
+  const refreshSaved = useCallback(async (): Promise<void> => {
+    const list = await fetchSavedProfiles();
+    if (Array.isArray(list)) {
+      setSaved(list);
+      setSavedLoaded(true);
+    }
+  }, []);
+  // A note about a saved-chart link that could not be opened.
+  const [profileNote, setProfileNote] = useState<"signin" | "missing" | "retry" | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const wheelRef = useRef<HTMLDivElement>(null);
@@ -161,11 +196,22 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
     }, 300);
   };
 
+  // Inside compute, "form" is the set of details being cast: the live form,
+  // or details handed in directly (a saved chart, before state has landed).
+  const liveForm = form;
   const compute = useCallback(
     async (
       sys: System,
-      opts?: { houseSystem?: HouseSystem; ayanamsa?: Ayanamsa; additions?: Additions; reveal?: boolean }
+      opts?: {
+        houseSystem?: HouseSystem;
+        ayanamsa?: Ayanamsa;
+        additions?: Additions;
+        reveal?: boolean;
+        /** Cast these details instead of the form's (state has not landed yet). */
+        form?: BirthForm;
+      }
     ) => {
+      const form = opts?.form ?? liveForm;
       if (!form.date || !form.place || (form.timeKnown && !form.time)) {
         setError("Please provide a birth date, time (or mark it unknown) and place.");
         return;
@@ -209,32 +255,80 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
         if (seq !== castSeq.current) return; // a newer cast has superseded this one
         if (!res.ok) throw new Error(data.error ?? "Chart computation failed.");
         setResult(data as ChartResponse);
+        setCastForm(form);
         if (opts?.reveal) revealResult();
-        // Carry-through rule: signed-in casts save your birth details so
-        // every tab (Vedic, Human Design, booking) prefills from them.
-        if (user && form.place) {
-          void fetch("/api/profile", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: form.name || user.name || "My chart",
-              birthDate: form.date,
-              birthTime: form.timeKnown ? form.time : null,
-              placeLabel: form.place.label,
-              latitude: form.place.latitude,
-              longitude: form.place.longitude,
-              timezone: form.place.timezone,
-            }),
-          });
-        }
+        // Nothing is saved here. Keeping a chart is a choice made with the
+        // buttons under it; the account's own chart then prefills every room.
       } catch (e) {
         if (seq === castSeq.current) setError(e instanceof Error ? e.message : "Something went wrong.");
       } finally {
         if (seq === castSeq.current) setLoading(false);
       }
     },
-    [form, houseWestern, houseVedic, ayanamsa, user, revealResult, additions, member]
+    [liveForm, houseWestern, houseVedic, ayanamsa, revealResult, additions, member]
   );
+
+  // Saved charts
+  // Saved charts live in an account. The House Mother's admin key alone
+  // opens every room but has no account behind it.
+  const hasAccount = Boolean(user && user.hasAccount !== false);
+  const saveMode = !user ? "visitor" : hasAccount ? "account" : "keyholder";
+  useEffect(() => {
+    if (!hasAccount) return;
+    let alive = true;
+    void fetchSavedProfiles().then((list) => {
+      if (alive && Array.isArray(list)) {
+        setSaved(list);
+        setSavedLoaded(true);
+      }
+    });
+    return () => {
+      alive = false;
+    };
+  }, [hasAccount]);
+  // The own chart as the session knows it (exact place included).
+  const sessionOwn: SavedProfile | null =
+    user?.profile && user.profile.latitude !== undefined && user.profile.longitude !== undefined && user.profile.timezone
+      ? {
+          id: "own",
+          name: user.profile.name,
+          birthDate: user.profile.birthDate,
+          birthTime: user.profile.birthTime,
+          placeLabel: user.profile.placeLabel,
+          latitude: user.profile.latitude,
+          longitude: user.profile.longitude,
+          timezone: user.profile.timezone,
+          isSelf: true,
+        }
+      : null;
+
+  /** The same, from inside an effect: state is set after the effect has returned. */
+  const loadProfileDeferred = (p: SavedProfile) => {
+    void Promise.resolve().then(() => loadProfile(p, initialSystem));
+  };
+
+  /** Put a saved chart in the form and cast it, with its exact place and time. */
+  const loadProfile = (p: SavedProfile, sys: System = system) => {
+    const next: BirthForm = {
+      name: p.name,
+      date: p.birthDate,
+      time: p.birthTime ?? "",
+      timeKnown: Boolean(p.birthTime),
+      place: {
+        id: 0,
+        name: p.placeLabel,
+        label: p.placeLabel,
+        latitude: p.latitude,
+        longitude: p.longitude,
+        timezone: p.timezone,
+        country: "",
+      },
+    };
+    setForm(next);
+    setPlaceQuery(p.placeLabel);
+    setPlaceOpen(false);
+    void compute(sys, { form: next, reveal: true });
+  };
 
   // Toggling an addition recasts the chart immediately when one is on screen.
   const updateAdditions = (patch: Partial<Additions>) => {
@@ -404,13 +498,43 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
   // "cast this client's chart" links — and auto-cast when complete.
   const prefilledRef = useRef(false);
   useEffect(() => {
-    if (prefilledRef.current) return;
+    // Prefill happens once, and never after the person has cast anything
+    // herself: saving her own chart refreshes the session, and that must
+    // not recast what is already on screen.
+    if (prefilledRef.current || castSeq.current > 0) return;
     const q = new URLSearchParams(window.location.search);
+    // A saved chart, opened from the account page: wait for the session,
+    // then cast it from its stored place and time (no place lookup).
+    const profileId = q.get("profile");
+    if (profileId) {
+      prefilledRef.current = true;
+      void fetchSavedProfiles().then((list) => {
+        // Could not ask just now: say so, and leave the link as it is so a
+        // reload tries again.
+        if (list === null) return setProfileNote("retry");
+        // Handled once: the link should not reopen the chart on a later
+        // visit. (Done here, after the router has settled, not during mount.)
+        window.history.replaceState(null, "", window.location.pathname);
+        if (list === "none") return setProfileNote("signin");
+        setSaved(list);
+        setSavedLoaded(true);
+        const picked = list.find((p) => p.id === profileId);
+        if (picked) loadProfile(picked, initialSystem);
+        else setProfileNote("missing");
+      });
+      return;
+    }
     let date = q.get("date");
     let place = q.get("place");
     let time = q.get("time");
     let name = q.get("name");
-    // Carry-through: fall back to the signed-in member's saved details.
+    // Carry-through: the account's own chart, cast from its stored place
+    // and time, with no place lookup to go astray.
+    if ((!date || !place) && sessionOwn) {
+      prefilledRef.current = true;
+      loadProfileDeferred(sessionOwn);
+      return;
+    }
     if ((!date || !place) && user?.profile) {
       date = user.profile.birthDate;
       place = user.profile.placeLabel;
@@ -456,6 +580,7 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
         const chartData = await chartRes.json();
         if (chartRes.ok) {
           setResult(chartData as ChartResponse);
+          setCastForm(nextForm);
           revealResult();
         }
       } catch {
@@ -479,6 +604,31 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
           Vedic, free. Exact time and place give the truest chart.
         </p>
       </header>
+
+      {hasAccount && <SavedChartPicker profiles={saved} onPick={(p) => loadProfile(p)} disabled={loading} />}
+      {profileNote && (
+        <p className="mx-auto mb-4 max-w-3xl text-center text-sm text-ink-700" role="status">
+          {profileNote === "signin" ? (
+            <>
+              That link opens a saved chart.{" "}
+              <a href="/login" className="text-rose-600 hover:underline">
+                Sign in
+              </a>{" "}
+              and open it from your account.
+            </>
+          ) : profileNote === "retry" ? (
+            <>
+              That chart could not be opened just now. Reload this page, or open it again from{" "}
+              <a href="/account" className="text-rose-600 hover:underline">
+                your account
+              </a>
+              .
+            </>
+          ) : (
+            "That chart is not on this account. It may have been removed."
+          )}
+        </p>
+      )}
 
       {/* ——— Birth data form ——— */}
       <form
@@ -667,6 +817,30 @@ export function StudioClient({ initialSystem = "western", locked = false }: { in
       {/* ——— Results ——— */}
       {chart && result && (
         <div ref={resultRef} className="mt-14 scroll-mt-24">
+          {castForm?.place && !sessionLoading && (
+            <SaveChartControl
+              // A new cast is a new chart: start the control fresh.
+              key={`${castForm.date}|${castForm.timeKnown ? castForm.time : ""}|${castForm.place.latitude}|${castForm.place.longitude}|${castForm.name}`}
+              mode={saveMode}
+              ownFallback={savedLoaded ? null : sessionOwn}
+              accountName={user?.name ?? null}
+              details={{
+                name: castForm.name,
+                birthDate: castForm.date,
+                birthTime: castForm.timeKnown ? castForm.time : null,
+                placeLabel: castForm.place.label,
+                latitude: castForm.place.latitude,
+                longitude: castForm.place.longitude,
+                timezone: castForm.place.timezone,
+              }}
+              profiles={saved}
+              onSaved={async (kind) => {
+                await refreshSaved();
+                // The own chart feeds the other rooms through the session.
+                if (kind === "self") await refreshSession();
+              }}
+            />
+          )}
           {/* System toggle + settings */}
           <div className="flex flex-wrap items-center justify-center gap-3">
             {/* Sliding Western ⇄ Vedic switch (hidden on locked per-system tabs) */}

@@ -41,6 +41,11 @@
 ## Incident quick answers
 - **Site down / erroring:** Vercel → Deployments → promote the previous READY
   deployment ("Instant Rollback"), then debug at leisure.
+  One limit: do not roll back to a build from before saved charts (released
+  2026-11-17, migration `20261117224935_saved_charts`). Older code does not
+  know which saved chart is a person's own, so it would read a chart kept
+  for someone else as theirs and could overwrite it. Fix forward instead, or
+  roll back only to a build that already has `lib/profiles.ts`.
 - **Bad deploy suspected:** `get_runtime_errors` via the Vercel MCP, or
   Vercel → Observability.
 - **Sessions compromised:** rotate SESSION_SECRET (see RECOVERY.md).

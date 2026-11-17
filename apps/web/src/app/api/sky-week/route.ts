@@ -9,7 +9,7 @@ import { computeChart, moonPhase, SIGN_NAMES } from "@hoa/engine";
  * The week's sky, CHANI-forecast style: for each of the next 7 days — the
  * Moon's sign & phase, planetary sign ingresses, retrograde stations, and
  * exact transiting aspects (orb < 1°). Global astro weather (personal
- * transits-to-natal join once saved birth profiles land).
+ * transits-to-natal live in the member rooms: the calendar and the weather).
  */
 export const dynamic = "force-dynamic";
 

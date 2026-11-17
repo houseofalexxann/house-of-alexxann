@@ -36,11 +36,12 @@ try {
   });
 
   // The suite's reference chart: Dallas, 1992-09-30 17:59 local.
-  const existing = await prisma.birthProfile.findFirst({ where: { userId: user.id } });
+  const existing = await prisma.birthProfile.findFirst({ where: { userId: user.id, isSelf: true } });
   if (!existing) {
     await prisma.birthProfile.create({
       data: {
         name: "Venus Test",
+        isSelf: true,
         birthDate: "1992-09-30",
         birthTime: "17:59",
         timeKnown: true,

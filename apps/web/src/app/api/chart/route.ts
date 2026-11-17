@@ -13,18 +13,9 @@ import { localBirthToUtc } from "@/lib/geocode";
 import { sessionUser } from "@/lib/user-auth";
 import { isAdmin } from "@/lib/admin-auth";
 import { isActiveMember, TIER_NAMES } from "@/lib/membership";
+import { BirthDateString } from "@/lib/birth-input";
 
-/** A calendar date inside the years the bundled ephemeris covers. */
-const DateString = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .refine(
-    (d) => {
-      const year = Number(d.slice(0, 4));
-      return year >= 1800 && year <= 2399;
-    },
-    { message: "Dates between the years 1800 and 2399 are supported." }
-  );
+const DateString = BirthDateString;
 
 const ChartRequest = z.object({
   name: z.string().max(120).optional(),

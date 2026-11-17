@@ -118,8 +118,8 @@ export default async function ConfirmationPage({
             </Link>
           </div>
           <p className="mx-auto mt-6 max-w-sm text-xs leading-relaxed text-ink-400">
-            Client accounts — with saved charts and session history — are
-            coming soon. Your booking email is all you need for now.
+            A free account keeps your chart and shows your upcoming sessions.
+            Your booking email is all you need for this one.
           </p>
         </div>
       </div>
